@@ -1,12 +1,11 @@
-<!DO<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profesyonel Kredi & Finansman Hesaplayıcı</title>
+    <title>Kredi & Finansman Hesaplayıcı</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .result-card { transition: all 0.3s ease; }
         .fade-in { animation: fadeIn 0.6s ease forwards; }
         @keyframes fadeIn {
             0% { opacity: 0; transform: translateY(20px); }
@@ -19,17 +18,20 @@
         .info-box.warning { background: #fefce8; border-left-color: #eab308; }
         .info-box.tip { background: #ecfdf5; border-left-color: #10b981; }
         .input-disabled { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+        @media (min-width: 768px) {
+            .form-grid { gap: 1.5rem; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 p-4 md:p-8 font-sans antialiased">
+<body class="bg-slate-50 p-4 md:p-6 font-sans antialiased">
 
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-6xl mx-auto">
 
-        <div class="text-center mb-8">
+        <div class="text-center mb-6">
             <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">
                 💰 Kredi & Finansman Hesaplayıcı
             </h1>
-            <p class="text-slate-500 text-sm md:text-base mt-1">
+            <p class="text-slate-500 text-sm md:text-base">
                 Banka (faizli) ve Tasarruf Finansman Şirketi karşılaştırmalı hesaplama aracı
             </p>
             <p class="text-xs text-slate-400 mt-1">
@@ -39,12 +41,12 @@
 
         <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 form-grid">
 
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">Kredi Türü</label>
-                        <select id="krediTuru" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition">
+                        <select id="krediTuru" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400">
                             <option value="konut">🏠 Konut Kredisi</option>
                             <option value="arac">🚗 Araç Kredisi</option>
                             <option value="ihtiyac">🛒 İhtiyaç Kredisi</option>
@@ -54,7 +56,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">Finansman Türü</label>
-                        <select id="finansmanTuru" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition">
+                        <select id="finansmanTuru" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400">
                             <option value="banka">🏦 Banka (Faizli)</option>
                             <option value="sirket">📦 Tasarruf Finansman Şirketi</option>
                         </select>
@@ -164,14 +166,18 @@
 
         </div>
 
-        <p class="text-center text-xs text-slate-400 mt-6">
-            Profesyonel Kredi Hesaplayıcı · Mobil / Masaüstü Uyumlu · © 2025
-        </p>
+        <!-- ALT BİLGİ – Mutinous Technology -->
+        <div class="mt-6 text-center text-sm text-slate-500 border-t border-slate-200 pt-4">
+            <p>Mutinous Technology © 2006 Yapım.</p>
+            <p class="text-xs mt-1">
+                <a href="https://www.youtube.com/@MutinousTube" target="_blank" class="text-blue-600 hover:underline">📺 YouTube Kanalımız</a>
+            </p>
+        </div>
+
     </div>
 
     <script>
         (function() {
-            // DOM referansları
             const tutarInput = document.getElementById('tutar');
             const vadeInput = document.getElementById('vade');
             const faizInput = document.getElementById('faizOran');
@@ -195,68 +201,55 @@
             const tabloGovde = document.getElementById('tabloGovde');
             const tabloBilgi = document.getElementById('tabloBilgi');
 
-            // Kredi türüne göre faiz oranları (10.07.2026 piyasa ortalamaları)
             const faizOranlari = {
                 konut: 3.70,
                 arac: 2.90,
                 ihtiyac: 4.20
             };
 
-            // Kredi türüne göre açıklama notları
             const krediNotlari = {
                 konut: '🏡 Konut kredilerinde faizler genellikle daha düşüktür, ilk ev indirimi avantajından yararlanabilirsiniz.',
                 arac: '🚗 Araç kredilerinde vade genellikle 60 ay ile sınırlıdır, faiz oranları konuta göre yüksek olabilir.',
                 ihtiyac: '🛒 İhtiyaç kredilerinde faiz oranları en yüksek seviyededir, vade genellikle 36 ayı geçmez.'
             };
 
-            // Input'ları güncelle
             function updateInputs() {
                 const krediTip = krediTuru.value;
                 const finansman = finansmanTuru.value;
 
-                // Kredi notu
                 krediNotu.textContent = krediNotlari[krediTip] || '';
 
-                // Banka ise faiz input'u aktif, kar input'u pasif
                 if (finansman === 'banka') {
                     faizInput.disabled = false;
                     faizInput.classList.remove('input-disabled');
                     karPayiInput.disabled = true;
                     karPayiInput.classList.add('input-disabled');
-                    // Faiz oranını kredi türüne göre ayarla
                     faizInput.value = faizOranlari[krediTip] || 3.70;
                     faizNotu.textContent = `📊 Güncel ${krediTip === 'konut' ? 'konut' : krediTip === 'arac' ? 'araç' : 'ihtiyaç'} kredisi ortalaması: %${faizOranlari[krediTip] || 3.70} (10.07.2026)`;
                     karNotu.textContent = '';
-                    // İlk ev container'ını göster/gizle
                     if (krediTip === 'konut') {
                         ilkEvContainer.style.display = 'flex';
                     } else {
                         ilkEvContainer.style.display = 'none';
                         ilkEvCheck.checked = false;
                     }
-                } else { // Şirket
+                } else {
                     faizInput.disabled = true;
                     faizInput.classList.add('input-disabled');
                     karPayiInput.disabled = false;
                     karPayiInput.classList.remove('input-disabled');
-                    // Kar payını varsayılan 5.0 yap (kullanıcı değiştirebilir)
                     karPayiInput.value = 5.0;
                     faizNotu.textContent = '';
                     karNotu.textContent = '📊 Sektörde yaygın tahmini oran: %5 (şirkete göre değişir)';
-                    // Şirket seçiliyken ilk ev indirimi geçersiz
                     ilkEvContainer.style.display = 'none';
                     ilkEvCheck.checked = false;
                 }
             }
 
-            // Değişiklik olaylarını dinle
             krediTuru.addEventListener('change', updateInputs);
             finansmanTuru.addEventListener('change', updateInputs);
-
-            // Sayfa ilk yüklendiğinde güncelle
             updateInputs();
 
-            // Hesapla fonksiyonu (öncekiyle aynı)
             function hesapla() {
                 let tutar = parseFloat(tutarInput.value);
                 let vade = parseInt(vadeInput.value);
