@@ -2,35 +2,58 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gelişmiş Finansman Hesaplayıcı</title>
+    <title>Finansal Hesaplayıcı</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 p-4">
-
-<div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
-    <h1 class="text-2xl font-bold text-slate-800 mb-6">Finansman Karşılaştırma Aracı</h1>
-    
-    <div class="grid md:grid-cols-2 gap-6">
-        <!-- Girdi Paneli -->
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold text-slate-700">Tutar (TL)</label>
-                <input type="number" id="amount" class="w-full p-3 border border-slate-300 rounded-lg" value="1500000">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-slate-700">Vade (Ay)</label>
-                <input type="number" id="months" class="w-full p-3 border border-slate-300 rounded-lg" value="120">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-slate-700">Faiz / Oran (%)</label>
-                <input type="number" id="rate" step="0.01" class="w-full p-3 border border-slate-300 rounded-lg" value="2.5" placeholder="Banka için aylık faiz, Şirket için organizasyon ücreti">
-            </div>
-            <div class="flex gap-2">
-                <button onclick="calculate('bank')" class="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold">Banka Kredisi</button>
-                <button onclick="calculate('company')" class="flex-1 bg-emerald-600 text-white py-3 rounded-lg font-bold">Finansman Şirketi</button>
-            </div>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4">Hesaplama Aracı</h2>
+        
+        <div class="mb-4">
+            <label>Tutar (TL):</label>
+            <input type="number" id="tutar" class="w-full border p-2 rounded" value="1500000">
         </div>
+        <div class="mb-4">
+            <label>Vade (Ay):</label>
+            <input type="number" id="vade" class="w-full border p-2 rounded" value="120">
+        </div>
+        <div class="mb-4">
+            <label>Faiz/Oran (%):</label>
+            <input type="number" id="oran" step="0.01" class="w-full border p-2 rounded" value="2.5">
+        </div>
+
+        <div class="flex gap-2">
+            <button onclick="hesapla('banka')" class="bg-blue-500 text-white p-2 rounded flex-1">Banka (Faizli)</button>
+            <button onclick="hesapla('sirket')" class="bg-green-500 text-white p-2 rounded flex-1">Tasarruf Şirketi</button>
+        </div>
+
+        <div id="cikti" class="mt-6 p-4 bg-gray-50 rounded hidden">
+            <p>Aylık Taksit: <span id="taksit" class="font-bold"></span> TL</p>
+        </div>
+    </div>
+
+    <script>
+        function hesapla(tip) {
+            const P = parseFloat(document.getElementById('tutar').value);
+            const n = parseFloat(document.getElementById('vade').value);
+            const r = parseFloat(document.getElementById('oran').value) / 100;
+            let m = 0;
+
+            if (tip === 'banka') {
+                // Banka: Eşit taksitli kredi formülü
+                m = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            } else {
+                // Şirket: (Ana para + (Ana para * Organizasyon Oranı)) / Vade
+                m = (P + (P * r)) / n;
+            }
+
+            document.getElementById('taksit').innerText = m.toFixed(2);
+            document.getElementById('cikti').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+
 
 
         
