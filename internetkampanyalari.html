@@ -12,11 +12,12 @@
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        .tablo-scroll { max-height: 300px; overflow-y: auto; }
+        .tablo-scroll { max-height: 400px; overflow-y: auto; overflow-x: auto; }
         .tablo-scroll table { width: 100%; border-collapse: collapse; }
         .tablo-scroll th { position: sticky; top: 0; background: #f1f5f9; z-index: 2; }
         .info-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 0.75rem 1rem; border-radius: 0.5rem; }
         .info-box.warning { background: #fefce8; border-left-color: #eab308; }
+        .info-box.tip { background: #ecfdf5; border-left-color: #10b981; }
     </style>
 </head>
 <body class="bg-slate-50 p-4 md:p-8 font-sans antialiased">
@@ -44,6 +45,7 @@
                             <option value="arac">🚗 Araç Kredisi</option>
                             <option value="ihtiyac">🛒 İhtiyaç Kredisi</option>
                         </select>
+                        <p id="krediNotu" class="text-xs text-slate-500 mt-1"></p>
                     </div>
 
                     <div>
@@ -56,12 +58,18 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">Çekilmek İstenen Tutar (₺)</label>
-                        <input type="number" id="tutar" value="1500000" step="1000" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <input type="number" id="tutar" value="1500000" step="1000" min="1" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">Vade (Ay)</label>
-                        <input type="number" id="vade" value="120" step="1" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <input type="number" id="vade" value="120" step="1" min="1" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">Ek Masraf (dosya, sigorta vb.) (₺)</label>
+                        <input type="number" id="ekMasraf" value="0" step="100" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <p class="text-xs text-slate-400 mt-1">Bu tutar toplam maliyete eklenir ve taksitlere yansıtılır.</p>
                     </div>
                 </div>
 
@@ -70,19 +78,21 @@
                         <label class="block text-sm font-semibold text-slate-700">
                             Aylık Faiz Oranı (%) <span class="font-normal text-slate-400">(Banka için)</span>
                         </label>
-                        <input type="number" id="faizOran" value="2.5" step="0.01" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <input type="number" id="faizOran" value="2.5" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">
                             Organizasyon / Kar Payı (%) <span class="font-normal text-slate-400">(Şirket için)</span>
                         </label>
-                        <input type="number" id="karPayi" value="5.0" step="0.1" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <input type="number" id="karPayi" value="5.0" step="0.1" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
                     </div>
 
                     <div class="flex items-center space-x-3 pt-2">
                         <input type="checkbox" id="ilkEv" class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-400" />
-                        <label for="ilkEv" class="text-sm font-medium text-slate-700">🏡 İlk ev sahibi mi? (Devlet desteği indirimi)</label>
+                        <label for="ilkEv" class="text-sm font-medium text-slate-700">🏡 İlk ev sahibi indirimi (%)</label>
+                        <input type="number" id="indirimOran" value="20" min="0" max="100" class="w-20 border border-slate-300 rounded-lg p-1 text-center" />
+                        <span class="text-xs text-slate-400">(sadece konut + banka)</span>
                     </div>
 
                     <button id="hesaplaBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition shadow-md hover:shadow-lg text-lg">
@@ -107,7 +117,7 @@
                         <p id="toplamFaiz" class="text-2xl font-bold text-red-700">₺0</p>
                     </div>
                     <div class="bg-purple-50 p-4 rounded-xl text-center">
-                        <p class="text-xs text-purple-600 font-semibold uppercase">Efektif Oran (yıllık)</p>
+                        <p class="text-xs text-purple-600 font-semibold uppercase">Efektif Yıllık Oran</p>
                         <p id="efektifOran" class="text-2xl font-bold text-purple-700">%0</p>
                     </div>
                 </div>
@@ -140,8 +150,8 @@
                     <div class="info-box warning">
                         <span class="font-bold">📌 Tasarruf Finansman Şirketlerinde</span> organizasyon ücreti toplam maliyete eklenir ve vadeye eşit olarak dağıtılır. Bu sistem faizsizdir, ancak kar payı işler.
                     </div>
-                    <div class="info-box">
-                        <span class="font-bold">⚠️ Uyarı:</span> Bu hesaplama bilgilendirme amaçlıdır. Bankalar ve şirketler farklı oranlar, masraflar (sigorta, dosya masrafı vb.) uygulayabilir. Kesin sonuçlar için ilgili kurumla görüşünüz.
+                    <div class="info-box tip">
+                        <span class="font-bold">💡 İpucu:</span> Ek masrafları (dosya, sigorta, ekspertiz) girerek gerçekçi maliyeti görebilirsiniz. Tüm hesaplamalar bilgilendirme amaçlıdır, kesin sonuçlar için bankanızla görüşün.
                     </div>
                 </div>
             </div>
@@ -159,9 +169,12 @@
             const vadeInput = document.getElementById('vade');
             const faizInput = document.getElementById('faizOran');
             const karPayiInput = document.getElementById('karPayi');
+            const ekMasrafInput = document.getElementById('ekMasraf');
             const krediTuru = document.getElementById('krediTuru');
             const finansmanTuru = document.getElementById('finansmanTuru');
             const ilkEvCheck = document.getElementById('ilkEv');
+            const indirimOranInput = document.getElementById('indirimOran');
+            const krediNotu = document.getElementById('krediNotu');
             const hesaplaBtn = document.getElementById('hesaplaBtn');
 
             const sonucAlani = document.getElementById('sonucAlani');
@@ -172,23 +185,40 @@
             const tabloGovde = document.getElementById('tabloGovde');
             const tabloBilgi = document.getElementById('tabloBilgi');
 
+            function updateKrediNotu() {
+                const tip = krediTuru.value;
+                const notlar = {
+                    konut: '🏡 Konut kredilerinde faizler genellikle daha düşüktür, ilk ev indirimi avantajından yararlanabilirsiniz.',
+                    arac: '🚗 Araç kredilerinde vade genellikle 60 ay ile sınırlıdır, faiz oranları konuta göre yüksek olabilir.',
+                    ihtiyac: '🛒 İhtiyaç kredilerinde faiz oranları en yüksek seviyededir, vade genellikle 36 ayı geçmez.'
+                };
+                krediNotu.textContent = notlar[tip] || '';
+            }
+            krediTuru.addEventListener('change', updateKrediNotu);
+            updateKrediNotu();
+
             function hesapla() {
                 let tutar = parseFloat(tutarInput.value);
                 let vade = parseInt(vadeInput.value);
                 let faiz = parseFloat(faizInput.value) / 100;
                 let karPayi = parseFloat(karPayiInput.value) / 100;
+                let ekMasraf = parseFloat(ekMasrafInput.value) || 0;
                 const finansman = finansmanTuru.value;
                 const krediTip = krediTuru.value;
                 const ilkEv = ilkEvCheck.checked;
+                let indirimOran = parseFloat(indirimOranInput.value) || 0;
+                if (indirimOran < 0) indirimOran = 0;
+                if (indirimOran > 100) indirimOran = 100;
 
                 if (isNaN(tutar) || tutar <= 0) { alert('Geçerli bir tutar giriniz.'); return; }
                 if (isNaN(vade) || vade < 1) { alert('Vade en az 1 ay olmalı.'); return; }
                 if (finansman === 'banka' && (isNaN(faiz) || faiz < 0)) { alert('Geçerli faiz oranı giriniz.'); return; }
                 if (finansman === 'sirket' && (isNaN(karPayi) || karPayi < 0)) { alert('Geçerli organizasyon oranı giriniz.'); return; }
+                if (isNaN(ekMasraf) || ekMasraf < 0) { alert('Ek masraf negatif olamaz.'); return; }
 
                 let indirim = 0;
                 if (finansman === 'banka' && krediTip === 'konut' && ilkEv) {
-                    indirim = 0.20;
+                    indirim = indirimOran / 100;
                 }
 
                 let efektifYillik = 0;
@@ -200,17 +230,19 @@
                 if (finansman === 'banka') {
                     const r = faiz * (1 - indirim);
                     if (r === 0) {
-                        aylik = tutar / vade;
+                        aylik = (tutar + ekMasraf) / vade;
                     } else {
-                        aylik = tutar * r * Math.pow(1 + r, vade) / (Math.pow(1 + r, vade) - 1);
+                        aylik = (tutar + ekMasraf) * r * Math.pow(1 + r, vade) / (Math.pow(1 + r, vade) - 1);
                     }
                     toplamOdeme = aylik * vade;
                     toplamMaliyet = toplamOdeme - tutar;
-                    if (vade > 0 && tutar > 0) {
-                        efektifYillik = ((toplamOdeme / tutar) - 1) / (vade / 12) * 100;
+                    if (r > 0 && vade > 0) {
+                        efektifYillik = (Math.pow(1 + r, 12) - 1) * 100;
+                    } else {
+                        efektifYillik = 0;
                     }
 
-                    let kalan = tutar;
+                    let kalan = tutar + ekMasraf;
                     for (let i = 1; i <= vade; i++) {
                         const faizKismi = kalan * r;
                         const anaKismi = aylik - faizKismi;
@@ -221,29 +253,34 @@
                             break;
                         }
                         kalan = kalan - anaKismi;
+                        if (kalan < 0.01) kalan = 0;
                         tabloVerileri.push({ ay: i, taksit: aylik, ana: anaKismi, faiz: faizKismi, kalan: kalan });
-                        if (kalan < 0.01) break;
+                        if (kalan <= 0) break;
                     }
 
                 } else {
-                    // Tasarruf Finansman Şirketi
-                    const toplamTutar = tutar * (1 + karPayi);
+                    const toplamTutar = (tutar + ekMasraf) * (1 + karPayi);
                     aylik = toplamTutar / vade;
                     toplamOdeme = toplamTutar;
                     toplamMaliyet = toplamOdeme - tutar;
                     if (vade > 0 && tutar > 0) {
-                        efektifYillik = ((toplamOdeme / tutar) - 1) / (vade / 12) * 100;
+                        efektifYillik = ((toplamOdeme / (tutar + ekMasraf)) - 1) / (vade / 12) * 100;
+                    } else {
+                        efektifYillik = 0;
                     }
 
-                    const anaPayi = tutar / vade;
-                    const karPayiAy = (tutar * karPayi) / vade;
-                    let kalan = tutar;
+                    const anaPayi = (tutar + ekMasraf) / vade;
+                    const karPayiAy = ((tutar + ekMasraf) * karPayi) / vade;
+                    let kalan = tutar + ekMasraf;
                     for (let i = 1; i <= vade; i++) {
                         if (i === vade) {
                             tabloVerileri.push({ ay: i, taksit: aylik, ana: kalan, faiz: karPayiAy, kalan: 0 });
                         } else {
-                            tabloVerileri.push({ ay: i, taksit: aylik, ana: anaPayi, faiz: karPayiAy, kalan: kalan - anaPayi });
-                            kalan = kalan - anaPayi;
+                            const ana = anaPayi;
+                            const kar = karPayiAy;
+                            kalan = kalan - ana;
+                            if (kalan < 0.01) kalan = 0;
+                            tabloVerileri.push({ ay: i, taksit: aylik, ana: ana, faiz: kar, kalan: kalan });
                         }
                     }
                 }
@@ -254,9 +291,8 @@
                 efektifOran.innerText = '%' + efektifYillik.toFixed(2);
 
                 tabloGovde.innerHTML = '';
-                let satirSayisi = Math.min(tabloVerileri.length, 120);
-                const gosterilecek = tabloVerileri.slice(0, satirSayisi);
-                gosterilecek.forEach(item => {
+                const satirSayisi = tabloVerileri.length;
+                tabloVerileri.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.className = 'border-b border-slate-100 hover:bg-slate-50';
                     tr.innerHTML = `
@@ -268,11 +304,7 @@
                     `;
                     tabloGovde.appendChild(tr);
                 });
-                if (tabloVerileri.length > satirSayisi) {
-                    tabloBilgi.innerText = `(ilk ${satirSayisi} ay gösteriliyor, toplam ${tabloVerileri.length} ay)`;
-                } else {
-                    tabloBilgi.innerText = `(toplam ${tabloVerileri.length} ay)`;
-                }
+                tabloBilgi.innerText = `(toplam ${satirSayisi} ay)`;
 
                 sonucAlani.classList.remove('hidden');
                 sonucAlani.classList.add('fade-in');
