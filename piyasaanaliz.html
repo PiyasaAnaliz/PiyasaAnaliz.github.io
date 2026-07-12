@@ -1,3 +1,7 @@
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NE_bc-axYxg?si=Ei4tHlxJ9RKp1Ehb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/POJ3vGpKLl0?si=UgHV53Z8WUtYByjo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -321,4 +325,262 @@
             <div id="tab-crypto" class="finance-tab-content">
                 <div class="finance-table-wrapper">
                     <table class="finance-table">
-                        <thead><tr><th>Kripto Pa
+                        <thead><tr><th>Kripto Para</th><th>Fiyat (USD)</th><th>Fiyat (TRY)</th><th>Değişim</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>BTC</strong> - Bitcoin</td><td id="val-btc-usd">$96,450.00</td><td id="val-btc-try">4,537,243.00 TL</td><td class="txt-up" id="chg-btc">+%1.85</td></tr>
+                            <tr><td><strong>ETH</strong> - Ethereum</td><td id="val-eth-usd">$3,420.50</td><td id="val-eth-try">160,911.00 TL</td><td class="txt-down" id="chg-eth">-%0.42</td></tr>
+                            <tr><td><strong>SOL</strong> - Solana</td><td id="val-sol-usd">$184.20</td><td id="val-sol-try">8,665.30 TL</td><td class="txt-up" id="chg-sol">+%3.15</td></tr>
+                            <tr><td><strong>BNB</strong> - Binance Coin</td><td id="val-bnb-usd">$612.00</td><td id="val-bnb-try">28,790.00 TL</td><td class="txt-up" id="chg-bnb">+%0.22</td></tr>
+                            <tr><td><strong>XRP</strong> - Ripple</td><td id="val-xrp-usd">$0.92</td><td id="val-xrp-try">43.28 TL</td><td class="txt-down" id="chg-xrp">-%1.10</td></tr>
+                            <tr><td><strong>ADA</strong> - Cardano</td><td id="val-ada-usd">$0.65</td><td id="val-ada-try">30.58 TL</td><td class="txt-up" id="chg-ada">+%0.45</td></tr>
+                            <tr><td><strong>DOT</strong> - Polkadot</td><td id="val-dot-usd">$7.20</td><td id="val-dot-try">338.71 TL</td><td class="txt-down" id="chg-dot">-%0.15</td></tr>
+                            <tr><td><strong>AVAX</strong> - Avalanche</td><td id="val-avax-usd">$34.80</td><td id="val-avax-try">1,637.11 TL</td><td class="txt-up" id="chg-avax">+%2.10</td></tr>
+                            <tr><td><strong>DOGE</strong> - Dogecoin</td><td id="val-doge-usd">$0.18</td><td id="val-doge-try">8.47 TL</td><td class="txt-neutral" id="chg-doge">%0.00</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== 6. ÇEVİRİCİ ===== -->
+            <div id="tab-calculator" class="finance-tab-content">
+                <div class="calculator-box">
+                    <h4>Canlı Döviz & Altın Çevirici</h4>
+                    <div class="calc-row">
+                        <div class="input-group">
+                            <label>Miktar:</label>
+                            <input type="number" id="calc-amount" value="1" oninput="calculateFinance()">
+                        </div>
+                        <div class="input-group">
+                            <label>Kaynak Birim:</label>
+                            <select id="calc-from" onchange="calculateFinance()">
+                                <option value="1">TRY (Türk Lirası)</option>
+                                <option value="USD" selected>USD (Dolar)</option>
+                                <option value="EUR">EUR (Euro)</option>
+                                <option value="GBP">GBP (Sterlin)</option>
+                                <option value="GRAM">Gram Altın</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Hedef Birim:</label>
+                            <select id="calc-to" onchange="calculateFinance()">
+                                <option value="USD">USD (Dolar)</option>
+                                <option value="1" selected>TRY (Türk Lirası)</option>
+                                <option value="EUR">EUR (Euro)</option>
+                                <option value="GBP">GBP (Sterlin)</option>
+                                <option value="GRAM">Gram Altın</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calc-result-zone">
+                        <span class="result-label">İşlem Sonucu:</span>
+                        <div id="calc-result-value">Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 7. FAİZ HESAPLAYICI ===== -->
+            <div id="tab-interest" class="finance-tab-content">
+                <div class="calculator-box">
+                    <h4>Mevduat Faizi Hesaplayıcı</h4>
+                    <div class="calc-row">
+                        <div class="input-group">
+                            <label>Anapara (TL):</label>
+                            <input type="number" id="interest-principal" value="100000" oninput="calculateInterest()">
+                        </div>
+                        <div class="input-group">
+                            <label>Yıllık Faiz Oranı (%):</label>
+                            <input type="number" id="interest-rate" value="45" oninput="calculateInterest()">
+                        </div>
+                        <div class="input-group">
+                            <label>Vade (Gün):</label>
+                            <input type="number" id="interest-days" value="32" oninput="calculateInterest()">
+                        </div>
+                    </div>
+                    <div class="interest-results-wrapper">
+                        <div class="interest-result-card">
+                            <span class="result-label">Net Faiz Getirisi:</span>
+                            <div id="interest-net-gain" class="txt-up">0.00 TL</div>
+                        </div>
+                        <div class="interest-result-card">
+                            <span class="result-label">Vade Sonu Toplam Tutar:</span>
+                            <div id="interest-total-amount">0.00 TL</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 11px; color: #64748b; margin-top: 10px;">* Hesaplamada %5 stopaj kesintisi düşülmüştür.</p>
+                </div>
+            </div>
+
+            <!-- ===== HIZLI YÖNLENDİRMELER ===== -->
+            <div class="banknote">
+                💡 <strong>Hızlı Yönlendirmeler:</strong> 
+                <a href="bankakampanyalari.html" target="_blank" style="background:#ff4500;padding:2px 10px;border-radius:4px;color:#fff;">🏦 Kampanya</a>
+                <a href="parakazan.html" target="_blank" style="background:#f59e0b;padding:2px 10px;border-radius:4px;color:#fff;">💰 Para Kazan</a>
+                <a href="https://piyasaanaliz.github.io" target="_blank" style="background:#60a5fa;padding:2px 10px;border-radius:4px;color:#fff;">🏠 Ana Sayfa</a>
+            </div>
+
+            <!-- ===== ALT BİLGİ VE LİNKLER ===== -->
+            <div class="finance-footer">
+                <p class="warning-text">⚠️ Piyasa verileri anlık olarak simüle edilmektedir. Yatırım tavsiyesi değildir.</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="https://piyasaanaliz.github.io" target="_blank" rel="noopener" style="color: #60a5fa;">🏠 Ana Sayfa</a>
+                    <a href="bankakampanyalari.html" target="_blank" rel="noopener" style="color: #ff4500; font-weight: 700;">🏦 Banka Kampanyaları</a>
+                    <a href="parakazan.html" target="_blank" rel="noopener" style="color: #fbbf24; font-weight: 700;">💰 Para Kazan</a>
+                    <a href="https://www.youtube.com/@PiyasaAnalizim" target="_blank" rel="noopener" style="color: #ff4500;">▶️ YouTube</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">© 2026 PiyasaAnaliz Finans | Veriler Canlı Olarak Güncellenir | <a href="https://piyasaanaliz.github.io" target="_blank">piyasaanaliz.github.io</a></div>
+    </div>
+
+    <script>
+        // Kapsamlı Başlangıç Fiyat Matrisi (TÜM LİSTE DAHİL)
+        let liveRates = {
+            USD: 46.9424, EUR: 53.6174, GBP: 62.8923, JPY: 29.2840, CNY: 6.4620, RUB: 0.5120, SAR: 12.5110,
+            ONS: 2642.50, GRAM: 6224.70, CEYREK: 9887.48, CUM: 40985.00,
+            GUMUS: 90.38, GPL: 2463.46, PAL: 1922.21, ALU: 2450.00, CELIK: 585.00, BRENT: 3660.10, BAKIR: 445.20,
+            BUGDAY: 314.50, KAHVE: 1145.20, PAMUK: 78.40, KAKAO: 4310.00, SEKER: 22.15,
+            XU100: 14321.19, SP500: 5422.50, NASDAQ: 19110.80, DAX: 18230.15, FTSE: 8195.40, NIKKEI: 38720.00,
+            BTC: 96450, ETH: 3420.50, SOL: 184.20, BNB: 612.00, XRP: 0.92, ADA: 0.65, DOT: 7.20, AVAX: 34.80, DOGE: 0.18
+        };
+
+        function updateLiveMarketData() {
+            // Canlı dalgalanma efekti
+            for (let key in liveRates) {
+                let change = (Math.random() * 0.08 - 0.04) / 100;
+                liveRates[key] += liveRates[key] * change;
+            }
+
+            // Döviz & Altın Grubu Güncellemesi
+            document.getElementById('val-usd-buy').innerText = (liveRates.USD - 0.02).toFixed(4);
+            document.getElementById('val-usd-sell').innerText = (liveRates.USD + 0.02).toFixed(4);
+            document.getElementById('val-eur-buy').innerText = (liveRates.EUR - 0.03).toFixed(4);
+            document.getElementById('val-eur-sell').innerText = (liveRates.EUR + 0.03).toFixed(4);
+            document.getElementById('val-gbp-buy').innerText = (liveRates.GBP - 0.04).toFixed(4);
+            document.getElementById('val-gbp-sell').innerText = (liveRates.GBP + 0.04).toFixed(4);
+            document.getElementById('val-jpy-buy').innerText = (liveRates.JPY - 0.02).toFixed(4);
+            document.getElementById('val-jpy-sell').innerText = (liveRates.JPY + 0.02).toFixed(4);
+            document.getElementById('val-cny-buy').innerText = (liveRates.CNY - 0.01).toFixed(4);
+            document.getElementById('val-cny-sell').innerText = (liveRates.CNY + 0.01).toFixed(4);
+            document.getElementById('val-rub-buy').innerText = (liveRates.RUB - 0.002).toFixed(4);
+            document.getElementById('val-rub-sell').innerText = (liveRates.RUB + 0.002).toFixed(4);
+            document.getElementById('val-sar-buy').innerText = (liveRates.SAR - 0.01).toFixed(4);
+            document.getElementById('val-sar-sell').innerText = (liveRates.SAR + 0.01).toFixed(4);
+            
+            document.getElementById('val-ons-buy').innerText = "$" + (liveRates.ONS - 1.2).toFixed(2);
+            document.getElementById('val-ons-sell').innerText = "$" + (liveRates.ONS + 1.2).toFixed(2);
+            
+            let gBuy = liveRates.GRAM.toFixed(2);
+            let gSell = (liveRates.GRAM + 1.5).toFixed(2);
+            document.querySelectorAll('.sync-gram-buy').forEach(e => e.innerText = gBuy);
+            document.querySelectorAll('.sync-gram-sell').forEach(e => e.innerText = gSell);
+            
+            document.getElementById('val-ceyrek-buy').innerText = (liveRates.CEYREK - 15).toFixed(2);
+            document.getElementById('val-ceyrek-sell').innerText = (liveRates.CEYREK + 25).toFixed(2);
+            document.getElementById('val-cum-buy').innerText = (liveRates.CUM - 80).toFixed(2);
+            document.getElementById('val-cum-sell').innerText = (liveRates.CUM + 140).toFixed(2);
+
+            // Metaller & Enerji Güncellemesi
+            document.getElementById('val-gumus-buy').innerText = (liveRates.GUMUS - 0.05).toFixed(2);
+            document.getElementById('val-gumus-sell').innerText = (liveRates.GUMUS + 0.05).toFixed(2);
+            document.getElementById('val-gpl-buy').innerText = (liveRates.GPL - 2).toFixed(2);
+            document.getElementById('val-gpl-sell').innerText = (liveRates.GPL + 2).toFixed(2);
+            document.getElementById('val-pal-buy').innerText = (liveRates.PAL - 3).toFixed(2);
+            document.getElementById('val-pal-sell').innerText = (liveRates.PAL + 3).toFixed(2);
+            document.getElementById('val-alu-buy').innerText = (liveRates.ALU - 2).toFixed(2);
+            document.getElementById('val-alu-sell').innerText = (liveRates.ALU + 2).toFixed(2);
+            document.getElementById('val-celik-buy').innerText = (liveRates.CELIK - 1).toFixed(2);
+            document.getElementById('val-celik-sell').innerText = (liveRates.CELIK + 1).toFixed(2);
+            document.getElementById('val-brent-buy').innerText = (liveRates.BRENT - 2).toFixed(2);
+            document.getElementById('val-brent-sell').innerText = (liveRates.BRENT + 2).toFixed(2);
+            document.getElementById('val-bakir-buy').innerText = (liveRates.BAKIR - 0.5).toFixed(2);
+            document.getElementById('val-bakir-sell').innerText = (liveRates.BAKIR + 0.5).toFixed(2);
+
+            // Tarım Grubu
+            document.getElementById('val-bugday').innerText = liveRates.BUGDAY.toFixed(2);
+            document.getElementById('val-kahve').innerText = liveRates.KAHVE.toFixed(2);
+            document.getElementById('val-pamuk').innerText = liveRates.PAMUK.toFixed(2);
+            document.getElementById('val-kakao').innerText = liveRates.KAKAO.toFixed(2);
+            document.getElementById('val-seker').innerText = liveRates.SEKER.toFixed(2);
+
+            // Dünya Borsaları
+            document.getElementById('val-xu100').innerText = liveRates.XU100.toFixed(2);
+            document.getElementById('val-sp500').innerText = liveRates.SP500.toFixed(2);
+            document.getElementById('val-nasdaq').innerText = liveRates.NASDAQ.toFixed(2);
+            document.getElementById('val-dax').innerText = liveRates.DAX.toFixed(2);
+            document.getElementById('val-ftse').innerText = liveRates.FTSE.toFixed(2);
+            document.getElementById('val-nikkei').innerText = liveRates.NIKKEI.toFixed(2);
+
+            // Kripto Grubu
+            let u = liveRates.USD;
+            document.getElementById('val-btc-usd').innerText = "$" + liveRates.BTC.toLocaleString('en-US',{maximumFractionDigits:2});
+            document.getElementById('val-btc-try').innerText = (liveRates.BTC * u).toLocaleString('tr-TR',{maximumFractionDigits:0}) + " TL";
+            document.getElementById('val-eth-usd').innerText = "$" + liveRates.ETH.toLocaleString('en-US',{maximumFractionDigits:2});
+            document.getElementById('val-eth-try').innerText = (liveRates.ETH * u).toLocaleString('tr-TR',{maximumFractionDigits:0}) + " TL";
+            document.getElementById('val-sol-usd').innerText = "$" + liveRates.SOL.toFixed(2);
+            document.getElementById('val-sol-try').innerText = (liveRates.SOL * u).toLocaleString('tr-TR',{maximumFractionDigits:2}) + " TL";
+            document.getElementById('val-bnb-usd').innerText = "$" + liveRates.BNB.toFixed(2);
+            document.getElementById('val-bnb-try').innerText = (liveRates.BNB * u).toLocaleString('tr-TR',{maximumFractionDigits:0}) + " TL";
+            document.getElementById('val-xrp-usd').innerText = "$" + liveRates.XRP.toFixed(4);
+            document.getElementById('val-xrp-try').innerText = (liveRates.XRP * u).toFixed(2) + " TL";
+            document.getElementById('val-ada-usd').innerText = "$" + liveRates.ADA.toFixed(4);
+            document.getElementById('val-ada-try').innerText = (liveRates.ADA * u).toFixed(2) + " TL";
+            document.getElementById('val-dot-usd').innerText = "$" + liveRates.DOT.toFixed(2);
+            document.getElementById('val-dot-try').innerText = (liveRates.DOT * u).toFixed(2) + " TL";
+            document.getElementById('val-avax-usd').innerText = "$" + liveRates.AVAX.toFixed(2);
+            document.getElementById('val-avax-try').innerText = (liveRates.AVAX * u).toLocaleString('tr-TR',{maximumFractionDigits:2}) + " TL";
+            document.getElementById('val-doge-usd').innerText = "$" + liveRates.DOGE.toFixed(4);
+            document.getElementById('val-doge-try').innerText = (liveRates.DOGE * u).toFixed(2) + " TL";
+
+            calculateFinance();
+        }
+
+        function switchFinanceTab(tabId, element) {
+            document.querySelectorAll('.finance-tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            if(tabId === 'tab-calculator') calculateFinance();
+            if(tabId === 'tab-interest') calculateInterest();
+        }
+
+        function calculateFinance() {
+            const amount = parseFloat(document.getElementById('calc-amount').value) || 0;
+            const fromSelect = document.getElementById('calc-from').value;
+            const toSelect = document.getElementById('calc-to').value;
+            let fromRate = fromSelect === "1" ? 1 : liveRates[fromSelect];
+            let toRate = toSelect === "1" ? 1 : liveRates[toSelect];
+            if(!fromRate) fromRate = 1; if(!toRate) toRate = 1;
+            const result = (amount * fromRate) / toRate;
+            const labelTo = document.getElementById('calc-to').options[document.getElementById('calc-to').selectedIndex].text.split(' ')[0];
+            document.getElementById('calc-result-value').innerText = result.toFixed(2) + " " + labelTo;
+        }
+
+        function calculateInterest() {
+            const principal = parseFloat(document.getElementById('interest-principal').value) || 0;
+            const rate = parseFloat(document.getElementById('interest-rate').value) || 0;
+            const days = parseFloat(document.getElementById('interest-days').value) || 0;
+            const grossInterest = (principal * rate * days) / 36500;
+            const netInterest = grossInterest * 0.95;
+            document.getElementById('interest-net-gain').innerText = netInterest.toFixed(2) + " TL";
+            document.getElementById('interest-total-amount').innerText = (principal + netInterest).toFixed(2) + " TL";
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const badge = document.getElementById('updateBadge');
+            if (badge) {
+                badge.innerHTML = `🟢 Canlı Piyasalar: ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            }
+        }
+
+        window.onload = function() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            updateLiveMarketData(); 
+            setInterval(updateLiveMarketData, 3000); // 3 saniyede bir tüm piyasalar otomatik akar
+            calculateInterest();
+        };
+    </script>
+</body>
+</html>
