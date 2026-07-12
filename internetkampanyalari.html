@@ -1,1 +1,287 @@
 
+<!DOCTYPE html> 
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vodafone Özel Kampanya Fırsatları</title>
+    <!-- Google Fonts ve FontAwesome Fırsat İkonları İçin -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --vodafone-red: #e60000;
+            --vodafone-dark: #231f20;
+            --bg-light: #f4f4f9;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--vodafone-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header Tasarımı */
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, var(--vodafone-red), #b30000);
+            color: var(--white);
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(230, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Kart Grid Yapısı */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Kampanya Kartları */
+        .card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eef0f2;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(230, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: var(--vodafone-dark);
+            color: var(--white);
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .card.fiber .card-header {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        }
+
+        .card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+
+        .code-box {
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: var(--vodafone-red);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            margin: 15px 0;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .code-box:hover {
+            background: #fff5f5;
+            border-color: var(--vodafone-red);
+        }
+
+        .code-box::after {
+            content: 'Kodu Kopyala';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 400;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .code-box:hover::after {
+            opacity: 1;
+        }
+
+        /* Butonlar */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--vodafone-red);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(230, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #b30000;
+        }
+
+        .card.fiber .btn {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            box-shadow: 0 4px 6px rgba(0, 114, 255, 0.2);
+        }
+        .card.fiber .btn:hover {
+            filter: brightness(0.9);
+        }
+
+        /* Bildirim Balonu */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.3s, fadeOut 0.3s 2.2s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1><i class="fa-solid fa-gift"></i> Vodafone Avantaj Günleri!</h1>
+        <p>Merhaba arkadaşlar! Vodafone'un uygun fiyatlı faturalı hat ve fiber internet kampanyalarından, size özel hazırladığım indirim kodları ve linklerle hemen faydalanabilirsiniz. Kaçırmayın, değerlendirin!</p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid">
+        
+        <!-- Kart 1 -->
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-star"></i> Tercih Kampanyası</div>
+            <div class="card-body">
+                <p>Size Özel Avantajlı Tarife</p>
+                <div class="code-box" onclick="copyCode('TERCIH47CVR3I6T')">TERCIH47CVR3I6T</div>
+                <a href="https://www.vodafone.com.tr/numara-tasima-yeni-hat/tarifeler/MNP/postpaid/ALL?referer=amb-f0f7349c-f40e-4649-8053-aad230d2419b&couponCode=TERCIH47CVR3I6T&cid=perf-ambaff" target="_blank" class="btn">Başvuru Yap</a>
+            </div>
+        </div>
+
+        <!-- Kart 2 -->
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-crown"></i> Vodafone RED</div>
+            <div class="card-body">
+                <p>Dolu Dolu RED Dünyası Fırsatı</p>
+                <div class="code-box" onclick="copyCode('RED3LKRZZE7')">RED3LKRZZE7</div>
+                <a href="https://www.vodafone.com.tr/numara-tasima-yeni-hat/tarifeler/MNP/postpaid/RED?referer=amb-f0f7349c-f40e-4649-8053-aad230d2419b&couponCode=RED3LKRZZE7&cid=perf-ambaff" target="_blank" class="btn">Başvuru Yap</a>
+            </div>
+        </div>
+
+        <!-- Kart 3 -->
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-fire"></i> Yalın Fırsat</div>
+            <div class="card-body">
+                <p>En Uygun Fiyatlı Yalın Paketler</p>
+                <div class="code-box" onclick="copyCode('FIRSAT6IZQGZC5')">FIRSAT6IZQGZC5</div>
+                <a href="https://www.vodafone.com.tr/numara-tasima-yeni-hat/tarifeler/MNP/postpaid/YALIN?referer=amb-f0f7349c-f40e-4649-8053-aad230d2419b&couponCode=FIRSAT6IZQGZC5&cid=perf-ambaff" target="_blank" class="btn">Başvuru Yap</a>
+            </div>
+        </div>
+
+        <!-- Kart 4 -->
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-bolt"></i> FreeZone Kampanyası</div>
+            <div class="card-body">
+                <p>Gençlere Özel Ekstra Hediyeli</p>
+                <div class="code-box" onclick="copyCode('GENC2A5E7V2V')">GENC2A5E7V2V</div>
+                <a href="https://www.vodafone.com.tr/numara-tasima-yeni-hat/tarifeler/MNP/postpaid/FREEZONE?referer=amb-f0f7349c-f40e-4649-8053-aad230d2419b&couponCode=GENC2A5E7V2V&cid=perf-ambaff" target="_blank" class="btn">Başvuru Yap</a>
+            </div>
+        </div>
+
+        <!-- Kart 5 -->
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-heart"></i> İlk Fırsat Paketleri</div>
+            <div class="card-body">
+                <p>Vodafone'a İlk Gelenlere Özel</p>
+                <div class="code-box" onclick="copyCode('ILK5XHX0IPB')">ILK5XHX0IPB</div>
+                <a href="https://www.vodafone.com.tr/numara-tasima-yeni-hat/tarifeler/MNP/postpaid/POME?referer=amb-f0f7349c-f40e-4649-8053-aad230d2419b&couponCode=ILK5XHX0IPB&cid=perf-ambaff" target="_blank" class="btn">Başvuru Yap</a>
+            </div>
+        </div>
+
+        <!-- Kart 6 (Fiber İnternet) -->
+        <div class="card fiber">
+            <div class="card-header"><i class="fa-solid fa-house-signal"></i> Fiber İnternet</div>
+            <div class="card-body">
+                <p>Evde Işık Hızında Fiber İnternet</p>
+                <div class="code-box" style="color: #0072ff;" onclick="copyCode('FIBER41LT4MA2')">FIBER41LT4MA2</div>
+                <a href="https://www.vodafone.com.tr/evde-internet/home?referer=amb-f0f7349c-f40e-4649-8053-aad230d2419b&couponCode=FIBER41LT4MA2&cid=perf-ambaff" target="_blank" class="btn">Başvuru Yap</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Kopyalandı Bildirimi -->
+<div id="toast" class="toast">Kod panoya kopyalandı!</div>
+
+<script>
+    function copyCode(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
+        });
+    }
+</script>
+
+</body>
+</html>
