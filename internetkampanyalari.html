@@ -3,36 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finansman Hesaplama Aracı</title>
+    <title>Gelişmiş Finansman Hesaplayıcı</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-4 md:p-10">
+<body class="bg-slate-50 p-4">
 
-<div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Tasarruf Finansman Hesaplayıcı</h1>
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
+    <h1 class="text-2xl font-bold text-slate-800 mb-6">Finansman Karşılaştırma Aracı</h1>
     
-    <div class="space-y-4">
-        <div>
-            <label class="block text-sm font-medium">Finansman Tutarı (TL)</label>
-            <input type="number" id="amount" class="w-full p-2 border rounded mt-1" placeholder="Örn: 1.000.000">
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Girdi Paneli -->
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700">Tutar (TL)</label>
+                <input type="number" id="amount" class="w-full p-3 border border-slate-300 rounded-lg" value="1500000">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700">Vade (Ay)</label>
+                <input type="number" id="months" class="w-full p-3 border border-slate-300 rounded-lg" value="120">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700">Faiz / Oran (%)</label>
+                <input type="number" id="rate" step="0.01" class="w-full p-3 border border-slate-300 rounded-lg" value="2.5" placeholder="Banka için aylık faiz, Şirket için organizasyon ücreti">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="calculate('bank')" class="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold">Banka Kredisi</button>
+                <button onclick="calculate('company')" class="flex-1 bg-emerald-600 text-white py-3 rounded-lg font-bold">Finansman Şirketi</button>
+            </div>
         </div>
-        <div>
-            <label class="block text-sm font-medium">Organizasyon Ücreti (%)</label>
-            <input type="number" id="fee" class="w-full p-2 border rounded mt-1" placeholder="Örn: 5">
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Vade (Ay)</label>
-            <input type="number" id="months" class="w-full p-2 border rounded mt-1" placeholder="Örn: 120">
-        </div>
-        <button onclick="calculate()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">HESAPLA</button>
-    </div>
 
-    <div id="result" class="mt-8 p-4 bg-gray-50 rounded-lg hidden">
-        <p>Toplam Organizasyon Ücreti: <span id="resFee" class="font-bold"></span> TL</p>
-        <p>Aylık Taksit: <span id="resInstallment" class="font-bold"></span> TL</p>
-        <p class="text-xs text-gray-500 mt-2">*Not: Bu hesaplama standart bir geri ödeme planını yansıtır.</p>
+
+        
+        <!-- Sonuç Paneli -->
+        <div id="result" class="bg-slate-800 text-white p-6 rounded-xl flex flex-col justify-center">
+            <h3 class="text-lg font-semibold mb-4 border-b border-slate-600 pb-2">Hesaplama Özeti</h3>
+            <p>Aylık Taksit: <span id="monthly" class="text-2xl font-bold text-yellow-400">0</span> TL</p>
+            <p class="mt-2">Toplam Geri Ödeme: <span id="total" class="font-bold">0</span> TL</p>
+        </div>
     </div>
 </div>
+
+<script>
+    function calculate(type) {
+        const P = parseFloat(document.getElementById('amount').value);
+        const n = parseInt(document.getElementById('months').value);
+        const r = parseFloat(document.getElementById('rate').value) / 100;
+
+        let monthlyPayment, totalPayment;
+
+        if (type === 'bank') {
+            // Anüite formülü: P * (r(1+r)^n) / ((1+r)^n - 1)
+            monthlyPayment = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            totalPayment = monthlyPayment * n;
+        } else {
+            // Finansman şirketi: Ana para + (Ana para * Organizasyon %) / Vade
+            const fee = P * r;
+            monthlyPayment = (P + fee) / n;
+            totalPayment = P + fee;
+        }
+
+        document.getElementById('monthly').innerText = monthlyPayment.toLocaleString('tr-TR', {maximumFractionDigits: 0});
+        document.getElementById('total').innerText = totalPayment.toLocaleString('tr-TR', {maximumFractionDigits: 0});
+    }
+</script>
+</body>
+</html>
+
 
 <script>
     function calculate() {
