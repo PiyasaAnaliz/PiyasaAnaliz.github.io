@@ -1,1 +1,503 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ON & Enpara Dünyasına Davetlisiniz!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style type="text/css">
+        :root {
+            --on-green: #3cd62d; /* ON Canlı Yeşil Tonu */
+            --on-dark: #1e2229;  /* Modern Koyu Arka Plan */
+            --bg-light: #f4f6f9;
+            --white: #ffffff;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Ubuntu', 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: #333333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Kampanyaları yan yana getiren ve masaüstünde eşit eşitleyen yeni ana taşıyıcı */
+        .campaign-wrapper {
+            display: flex;
+            flex-direction: row;
+            gap: 25px;
+            max-width: 1100px;
+            margin: 20px auto;
+            align-items: stretch; /* İçeriklerin yüksekliklerini eşitler */
+            justify-content: center;
+        }
+
+        /* 1. KART: ON KAPSAYICI AYARLARI */
+        .container {
+            flex: 1; /* Eşit genişlik ayarı */
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.07);
+            display: flex;
+            flex-direction: column; /* İçeriği dikeyde esnetmek için */
+        }
+
+        /* 2. KART: ENPARA KAPSAYICI AYARLARI */
+        .campaign-container {
+            flex: 1; /* Eşit genişlik ayarı */
+            background: var(--white);
+            border-radius: 24px; /* ON kartı ile uyumlu olması için 24px yapıldı */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.07);
+            padding: 35px 30px; /* İçerik boşlukları eşitlendi */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column; /* İçeriği dikeyde esnetmek için */
+        }
+
+        /* ON Kartının Banner Alanı */
+        .banner {
+            background-color: var(--on-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 35px 30px;
+            position: relative;
+            border-bottom: 5px solid var(--on-green);
+        }
+
+        .banner .logo-text {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--on-green);
+            line-height: 1;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .banner h1 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        /* ON Kartının İçerik Alanı */
+        .content {
+            padding: 35px 30px;
+            text-align: center;
+            flex-grow: 1; /* Kartların alt kısımlarını eşitlemeye yardımcı olur */
+        }
+
+        .welcome-text {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+
+        /* Davet Kodu Kutusu */
+        .code-container {
+            background: #f1f5f9;
+            border: 2px dashed var(--on-green);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 35px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .code-container:hover {
+            background: #f0fdf4;
+            transform: scale(1.02);
+        }
+
+        .code-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .code-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--on-dark);
+            letter-spacing: 2px;
+        }
+
+        .copy-hint {
+            font-size: 0.8rem;
+            color: var(--on-green);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Adımlar Alanı */
+        .steps {
+            text-align: left;
+            margin-bottom: 35px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            background: var(--on-dark);
+            color: var(--on-green);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .step-text {
+            font-size: 0.95rem;
+            color: #334155;
+            padding-top: 2px;
+        }
+
+        /* Enpara Kartı Başlık Alanları */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .main-title {
+            color: #7209b7;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            line-height: 1.3;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: #4a5568;
+            font-weight: 500;
+            line-height: 1.6;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Enpara Liste Yapısı */
+        .benefit-list {
+            margin-bottom: 35px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: left;
+            flex-grow: 1; /* Listenin uzayarak buton hizalarını eşitlemesini sağlar */
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .benefit-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .icon {
+            font-size: 18px;
+            margin-right: 12px;
+            margin-top: 2px;
+        }
+
+        .benefit-text strong {
+            color: #111111;
+            display: inline;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .benefit-text span {
+            color: #334155;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Buton Grupları ve İndirme Linkleri */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .cta-button {
+            display: block;
+            text-align: center;
+            background-color: #7209b7;
+            color: #ffffff;
+            padding: 14px 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .cta-button:hover {
+            background-color: #5b0794;
+        }
+
+        .cta-button.secondary {
+            background-color: #ffb703;
+            color: #111111;
+        }
+
+        .cta-button.secondary:hover {
+            background-color: #fca311;
+        }
+
+        .download-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--on-dark);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .app-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .app-btn {
+            background: var(--on-dark);
+            color: var(--white);
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 140px;
+            text-align: left;
+        }
+
+        .app-btn:hover {
+            background: #2d333f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-text span {
+            display: block;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .btn-text strong {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Video Bölümü */
+        .video-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #555555;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .video-box {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-box iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Bildirim Balonu */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--on-dark);
+            color: var(--white);
+            padding: 12px 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            font-size: 0.95rem;
+            border: 1px solid var(--on-green);
+        }
+
+        /* MOBİL CİHAZLAR İÇİN UYUMLULUK KODU (RESPONSIVE) */
+        @media (max-width: 868px) {
+            .campaign-wrapper {
+                flex-direction: column; /* Yan yana olan yapıyı alt alta getirir */
+                align-items: center;
+                padding: 0 10px;
+            }
+            .container, .campaign-container {
+                width: 100%;
+                max-width: 550px; /* Mobilde çok yayılmaması için sınırlandı */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- YAN YANA VE EŞİT EBATTA TUTAN SARMALAYICI -->
+    <div class="campaign-wrapper">
+
+        <!-- 1. KART: ON DIJITAL KAMPANYASI -->
+        <div class="container">
+            <div class="banner">
+                <div class="logo-text">ON</div>
+                <h1>Avantajlar Dünyasına Davetlisiniz!</h1>
+                <p>Sıra beklemeden, tamamen dijital ve masrafsız bankacılıkla tanışın.</p>
+            </div>
+            <div class="content">
+                <p class="welcome-text">Merhaba, seni ON’un masrafsız ve yüksek kazançlı dünyasından faydalanmaya davet ediyorum! Hemen aşağıdaki sana özel kodla başvurunu yap, kazanmaya başla.</p>
+                
+                <div class="code-container" onclick="copyCode('09DD3D0E')">
+                    <div class="code-label">Sana Özel Davet Kodu</div>
+                    <div class="code-value">09DD3D0E</div>
+                    <div class="copy-hint">Kopyalamak İçin Tıkla</div>
+                </div>
+
+                <div class="steps">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Aşağıdaki güncel linklerden <strong>ON Dijital</strong> uygulamasını indirin.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text"><strong>"Müşteri Olmak İstiyorum"</strong> adımındaki formu doldurun.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Formdaki davet kodu alanına kopyaladığınız <strong>09DD3D0E</strong> kodunu girin.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Görüntülü görüşme ile kolayca ON'lu olun ve anında davet edip kazanmaya başlayın!</div>
+                    </div>
+                </div>
+
+                <div class="download-title">Hemen ON Dijital'i İndirin:</div>
+                <div class="app-buttons">
+                    <a href="https://apps.apple.com/tr/app/on-dijital/id1584313693" target="_blank" class="app-btn">
+                        <div class="btn-text"><span>App Store'dan</span><strong>İndirin</strong></div>
+                    </a>
+                    <a href="https://play.google.com/store/search?q=on+mobil&amp;c=apps" target="_blank" class="app-btn">
+                        <div class="btn-text"><span>Google Play</span><strong>'den Alın</strong></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. KART: ENPARA KAMPANYASI -->
+        <div class="campaign-container">
+            <div class="brand-header">
+                <h1 class="main-title">Size Özel Enpara Kampanya Linkleri İle Avantajlar Dünyasına Katılabilirsiniz</h1>
+                <p class="description">Enpara'nın ayrıcalıklı dünyasına katılın; ömür boyu hiçbir gizli ücret, aidat veya transfer masrafı ödemeden işlemlerinizi kolayca halledin.</p>
+            </div>
+            
+            <div class="benefit-list">
+                <div class="benefit-item">
+                    <div class="icon">🏪</div>
+                    <div class="benefit-text"><strong>Ömür Boyu Ücretsiz Yazar Kasa:</strong> <span>Şirketiniz için POS ve yazar kasa aidat ücretlerini tamamen sıfırlayın.</span></div>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">💳</div>
+                    <div class="benefit-text"><strong>Aidatsız Kredi Kartı:</strong> <span>Yıllık kart kullanım ücreti ödemeden güvenle harcayın.</span></div>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">💸</div>
+                    <div class="benefit-text"><strong>Ücretsiz EFT, FAST ve Havale:</strong> <span>7/24 yapacağınız tüm para transferleri her zaman tamamen ücretsiz.</span></div>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">📊</div>
+                    <div class="benefit-text"><strong>Borsa ve Fatura Ödemeleri:</strong> <span>Yatırımlarınızı masrafsız yönetin, faturalarınızı komisyonsuz ödeyin.</span></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="https://www.enpara.com/sirketim/basvuru/firma-bilgileriniz?ref=S_TVS_S_253971101&amp;utm_source=tvs&amp;utm_medium=sirketim" target="_blank" class="cta-button">Şirketim Yazar Kasa Başvurusu</a>
+                <a href="https://www.enpara.com/bireysel-basvuru/kimlik-bilgileriniz?ref=B_TVS_253971101&amp;utm_source=tvs&amp;utm_medium=bireysel" target="_blank" class="cta-button secondary">Bireysel Kredi Kartı Başvurusu</a>
+            </div>
+
+            <div class="video-title">Kampanya Videosu</div>
+            <div class="video-box">
+                <iframe src="https://www.youtube.com/embed/74LMH5Q9cb8" title="Enpara Tanıtım" allowfullscreen></iframe>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOAST BİLDİRİMİ VE SCRIPT -->
+    <div id="toast" class="toast">Davet kodu panoya kopyalandı!</div>
+
+    <script>
+        function copyCode(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
+
+        
+        <div class="text-center">
+            <a href="index.html" class="btn-back">← Ana Sayfa</a>
+        </div>
+        
+        <div class="footer">© 2026 Banka Kampanyaları</div>
+    </div>
+</body>
+</html>
