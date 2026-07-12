@@ -381,63 +381,6 @@
 
 
 
-        
-        <!-- Sonuç Paneli -->
-        <div id="result" class="bg-slate-800 text-white p-6 rounded-xl flex flex-col justify-center">
-            <h3 class="text-lg font-semibold mb-4 border-b border-slate-600 pb-2">Hesaplama Özeti</h3>
-            <p>Aylık Taksit: <span id="monthly" class="text-2xl font-bold text-yellow-400">0</span> TL</p>
-            <p class="mt-2">Toplam Geri Ödeme: <span id="total" class="font-bold">0</span> TL</p>
-        </div>
-    </div>
-</div>
-
-<script>
-    function calculate(type) {
-        const P = parseFloat(document.getElementById('amount').value);
-        const n = parseInt(document.getElementById('months').value);
-        const r = parseFloat(document.getElementById('rate').value) / 100;
-
-        let monthlyPayment, totalPayment;
-
-        if (type === 'bank') {
-            // Anüite formülü: P * (r(1+r)^n) / ((1+r)^n - 1)
-            monthlyPayment = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-            totalPayment = monthlyPayment * n;
-        } else {
-            // Finansman şirketi: Ana para + (Ana para * Organizasyon %) / Vade
-            const fee = P * r;
-            monthlyPayment = (P + fee) / n;
-            totalPayment = P + fee;
-        }
-
-        document.getElementById('monthly').innerText = monthlyPayment.toLocaleString('tr-TR', {maximumFractionDigits: 0});
-        document.getElementById('total').innerText = totalPayment.toLocaleString('tr-TR', {maximumFractionDigits: 0});
-    }
-</script>
-</body>
-</html>
-
-
-<script>
-    function calculate() {
-        const amount = parseFloat(document.getElementById('amount').value);
-        const feePercent = parseFloat(document.getElementById('fee').value);
-        const months = parseInt(document.getElementById('months').value);
-
-        if(!amount || !feePercent || !months) { alert("Lütfen tüm alanları doldurun."); return; }
-
-        const totalFee = (amount * feePercent) / 100;
-        const monthlyInstallment = (amount + totalFee) / months;
-
-        document.getElementById('resFee').innerText = totalFee.toLocaleString('tr-TR');
-        document.getElementById('resInstallment').innerText = monthlyInstallment.toLocaleString('tr-TR', {maximumFractionDigits: 2});
-        document.getElementById('result').classList.remove('hidden');
-    }
-</script>
-</body>
-</html>
-
-
 
 
 
