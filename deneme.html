@@ -3,334 +3,374 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerçek Piyasa Verileri</title>
+    <title>Kredi & Finansman Hesaplayıcı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0c; color: #e2e8f0; padding: 16px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 24px; }
-        .header h1 { font-size: 28px; }
-        .header p { color: #94a3b8; font-size: 14px; }
-        .section { background: #121214; border-radius: 10px; padding: 16px 18px; margin-bottom: 20px; border: 1px solid #222227; }
-        .section h2 { font-size: 18px; margin-bottom: 12px; color: #60a5fa; }
-        .section .status { font-size: 12px; color: #64748b; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: left; padding: 8px 10px; background: #1e1e24; color: #94a3b8; }
-        td { padding: 8px 10px; border-bottom: 1px solid #1a1a22; }
-        tr:hover { background: #181820; }
-        .up { color: #10b981; }
-        .down { color: #ef4444; }
-        .error { color: #ef4444; font-size: 13px; padding: 8px; }
-        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #64748b; }
-        .footer a { color: #60a5fa; text-decoration: none; }
+        .fade-in { animation: fadeIn 0.6s ease forwards; }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .tablo-scroll { max-height: 380px; overflow-y: auto; overflow-x: auto; }
+        .tablo-scroll table { width: 100%; border-collapse: collapse; }
+        .tablo-scroll th { position: sticky; top: 0; background: #f1f5f9; z-index: 2; }
+        .info-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 0.6rem 1rem; border-radius: 0.4rem; }
+        .info-box.warning { background: #fefce8; border-left-color: #eab308; }
+        .info-box.tip { background: #ecfdf5; border-left-color: #10b981; }
+        .input-disabled { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📊 Gerçek Piyasa Verileri</h1>
-            <p>API'lerden anlık çekilen gerçek veriler · Simülasyon değil</p>
+<body class="bg-slate-50 p-4 md:p-6 font-sans antialiased">
+
+    <div class="max-w-5xl mx-auto">
+
+        <div class="text-center mb-5">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">
+                💰 Kredi & Finansman Hesaplayıcı
+            </h1>
+            <p class="text-slate-500 text-sm">
+                Banka (faizli) ve Tasarruf Finansman Şirketi karşılaştırmalı hesaplama aracı
+            </p>
+            <p class="text-xs text-slate-400 mt-0.5">
+                ⚡ Varsayılan oranlar <span class="font-semibold">10 Temmuz 2026</span> itibarıyla güncel piyasa verilerine göre ayarlanmıştır.
+            </p>
         </div>
 
-        <!-- 1. DÖVİZ KURLARI (Frankfurter - anahtarsız) -->
-        <div class="section" id="forex-section">
-            <h2>💱 Döviz Kurları (TRY)</h2>
-            <div class="status" id="forex-status">🔄 Yükleniyor...</div>
-            <table>
-                <thead><tr><th>Para Birimi</th><th>Alış (TRY)</th><th>Satış (TRY)</th></tr></thead>
-                <tbody id="forex-body"></tbody>
-            </table>
+        <div class="bg-white rounded-xl shadow-md p-5 md:p-6">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
+
+                <!-- Sol sütun -->
+                <div class="space-y-2.5">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">Kredi Türü</label>
+                        <select id="krediTuru" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400">
+                            <option value="konut">🏠 Konut Kredisi</option>
+                            <option value="arac">🚗 Araç Kredisi</option>
+                            <option value="ihtiyac">🛒 İhtiyaç Kredisi</option>
+                        </select>
+                        <p id="krediNotu" class="text-xs text-slate-500 mt-0.5"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">Finansman Türü</label>
+                        <select id="finansmanTuru" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400">
+                            <option value="banka">🏦 Banka (Faizli)</option>
+                            <option value="sirket">📦 Tasarruf Finansman Şirketi</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">Çekilmek İstenen Tutar (₺)</label>
+                        <input type="number" id="tutar" value="1500000" step="1000" min="1" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">Vade (Ay)</label>
+                        <input type="number" id="vade" value="120" step="1" min="1" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">Ek Masraf (dosya, sigorta vb.) (₺)</label>
+                        <input type="number" id="ekMasraf" value="0" step="100" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                    </div>
+                </div>
+
+                <!-- Sağ sütun -->
+                <div class="space-y-2.5">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">
+                            Aylık Faiz Oranı (%) <span class="font-normal text-slate-400">(Banka için)</span>
+                        </label>
+                        <input type="number" id="faizOran" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <p id="faizNotu" class="text-xs text-slate-400 mt-0.5"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">
+                            Organizasyon / Kar Payı (%) <span class="font-normal text-slate-400">(Şirket için)</span>
+                        </label>
+                        <input type="number" id="karPayi" step="0.1" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <p id="karNotu" class="text-xs text-slate-400 mt-0.5"></p>
+                    </div>
+
+                    <div id="ilkEvContainer" class="flex items-center space-x-2 pt-1">
+                        <input type="checkbox" id="ilkEv" class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-400" />
+                        <label for="ilkEv" class="text-sm font-medium text-slate-700">🏡 İlk ev sahibi indirimi (%)</label>
+                        <input type="number" id="indirimOran" value="20" min="0" max="100" class="w-16 border border-slate-300 rounded-lg p-1 text-center" />
+                        <span class="text-xs text-slate-400">(sadece konut + banka)</span>
+                    </div>
+
+                    <button id="hesaplaBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition shadow-md hover:shadow-lg text-base">
+                        🔄 HESAPLA
+                    </button>
+                </div>
+            </div>
+
+            <!-- SONUÇLAR -->
+            <div id="sonucAlani" class="mt-6 hidden fade-in">
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                    <div class="bg-blue-50 p-3 rounded-xl text-center">
+                        <p class="text-xs text-blue-600 font-semibold uppercase">Aylık Taksit</p>
+                        <p id="aylikTaksit" class="text-xl font-bold text-blue-700">₺0</p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded-xl text-center">
+                        <p class="text-xs text-green-600 font-semibold uppercase">Toplam Geri Ödeme</p>
+                        <p id="toplamGeri" class="text-xl font-bold text-green-700">₺0</p>
+                    </div>
+                    <div class="bg-red-50 p-3 rounded-xl text-center">
+                        <p class="text-xs text-red-600 font-semibold uppercase">Toplam Faiz / Maliyet</p>
+                        <p id="toplamFaiz" class="text-xl font-bold text-red-700">₺0</p>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-xl text-center">
+                        <p class="text-xs text-purple-600 font-semibold uppercase">Efektif Yıllık Oran</p>
+                        <p id="efektifOran" class="text-xl font-bold text-purple-700">%0</p>
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-lg overflow-hidden">
+                    <div class="bg-slate-100 px-4 py-2 font-semibold text-slate-700 flex justify-between items-center">
+                        <span>📋 Amortisman Tablosu (Aylık)</span>
+                        <span class="text-sm font-normal text-slate-500" id="tabloBilgi"></span>
+                    </div>
+                    <div class="tablo-scroll">
+                        <table class="text-sm">
+                            <thead>
+                                <tr class="bg-slate-200 text-slate-700">
+                                    <th class="p-2 text-left">Ay</th>
+                                    <th class="p-2 text-right">Taksit</th>
+                                    <th class="p-2 text-right">Anapara</th>
+                                    <th class="p-2 text-right">Faiz / Kar</th>
+                                    <th class="p-2 text-right">Kalan Borç</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabloGovde"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sadece 3 uyarı kutusu (üsttekiler kaldırıldı) -->
+                <div class="mt-5 space-y-2 text-sm">
+                    <div class="info-box">
+                        <span class="font-bold">📌 Banka kredilerinde</span> aylık faiz oranı üzerinden eşit taksitli (anüite) hesaplama yapılır. Konut kredilerinde ilk ev indirimi varsa faiz oranı düşer.
+                    </div>
+                    <div class="info-box warning">
+                        <span class="font-bold">📌 Tasarruf Finansman Şirketlerinde</span> organizasyon ücreti toplam maliyete eklenir ve vadeye eşit olarak dağıtılır. Bu sistem faizsizdir, ancak kar payı işler.
+                    </div>
+                    <div class="info-box tip">
+                        <span class="font-bold">💡 Uyarı:</span> Varsayılan oranlar <span class="font-semibold">10 Temmuz 2026</span> itibarıyla güncel piyasa verilerine göre ayarlanmıştır. Bankalar ve şirketler farklı oranlar, masraflar uygulayabilir. <span class="font-semibold">Bankadan bankaya ve kredi notunuza göre değişiklik gösterebilir.</span> Kesin sonuçlar için ilgili kurumla görüşünüz.
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- 2. ALTIN & METALLER (Metals-API - anahtar gerekli) -->
-        <div class="section" id="metals-section">
-            <h2>🥇 Altın & Değerli Metaller</h2>
-            <div class="status" id="metals-status">🔄 Yükleniyor...</div>
-            <table>
-                <thead><tr><th>Metal</th><th>Fiyat (USD)</th><th>Fiyat (TRY)</th></tr></thead>
-                <tbody id="metals-body"></tbody>
-            </table>
-            <p style="font-size:11px;color:#64748b;margin-top:6px;">* Metals-API ücretsiz katman: aylık 100 istek.</p>
+        <!-- ALT BİLGİ – Tek satır -->
+        <div class="mt-5 text-center text-sm text-slate-500 border-t border-slate-200 pt-3 flex justify-center items-center gap-2 flex-wrap">
+            <span>Mutinous Technology © 2006 Yapım.</span>
+            <span class="text-slate-300">|</span>
+            <a href="https://www.youtube.com/@MutinousTube" target="_blank" class="text-blue-600 hover:underline">📺 YouTube Kanalımız</a>
         </div>
 
-        <!-- 3. KRİPTO (CoinGecko - anahtarsız) -->
-        <div class="section" id="crypto-section">
-            <h2>₿ Kripto Paralar</h2>
-            <div class="status" id="crypto-status">🔄 Yükleniyor...</div>
-            <table>
-                <thead><tr><th>Kripto</th><th>Fiyat (USD)</th><th>Fiyat (TRY)</th><th>24s Değişim</th></tr></thead>
-                <tbody id="crypto-body"></tbody>
-            </table>
-        </div>
-
-        <!-- 4. BORSA ENDEKSLERİ (Yahoo Finance üzerinden) -->
-        <div class="section" id="borsa-section">
-            <h2>📈 Borsa Endeksleri</h2>
-            <div class="status" id="borsa-status">🔄 Yükleniyor...</div>
-            <table>
-                <thead><tr><th>Endeks</th><th>Son Fiyat</th><th>Değişim</th></tr></thead>
-                <tbody id="borsa-body"></tbody>
-            </table>
-        </div>
-
-        <!-- 5. EMTİA (Petrol - Oil Price API) -->
-        <div class="section" id="emtia-section">
-            <h2>🛢️ Emtia (Petrol)</h2>
-            <div class="status" id="emtia-status">🔄 Yükleniyor...</div>
-            <table>
-                <thead><tr><th>Ürün</th><th>Fiyat (USD)</th></tr></thead>
-                <tbody id="emtia-body"></tbody>
-            </table>
-        </div>
-
-        <div class="footer">
-            © 2026 PiyasaAnaliz · Veriler gerçek API'lerden çekilmektedir ·
-            <a href="https://piyasaanaliz.github.io" target="_blank">piyasaanaliz.github.io</a>
-        </div>
     </div>
 
     <script>
-        // ============================================================
-        // 1. DÖVİZ KURLARI - Frankfurter API (anahtarsız)
-        // ============================================================
-        async function fetchForex() {
-            const status = document.getElementById('forex-status');
-            const body = document.getElementById('forex-body');
-            try {
-                const res = await fetch('https://api.frankfurter.app/latest?from=USD');
-                if (!res.ok) throw new Error('API yanıt vermedi');
-                const data = await res.json();
-                const usdTry = data.rates.TRY;
-                if (!usdTry) throw new Error('TRY kuru alınamadı');
+        (function() {
+            const tutarInput = document.getElementById('tutar');
+            const vadeInput = document.getElementById('vade');
+            const faizInput = document.getElementById('faizOran');
+            const karPayiInput = document.getElementById('karPayi');
+            const ekMasrafInput = document.getElementById('ekMasraf');
+            const krediTuru = document.getElementById('krediTuru');
+            const finansmanTuru = document.getElementById('finansmanTuru');
+            const ilkEvCheck = document.getElementById('ilkEv');
+            const indirimOranInput = document.getElementById('indirimOran');
+            const ilkEvContainer = document.getElementById('ilkEvContainer');
+            const krediNotu = document.getElementById('krediNotu');
+            const faizNotu = document.getElementById('faizNotu');
+            const karNotu = document.getElementById('karNotu');
+            const hesaplaBtn = document.getElementById('hesaplaBtn');
 
-                const currencies = [
-                    { code: 'USD', name: 'ABD Doları' },
-                    { code: 'EUR', name: 'Euro' },
-                    { code: 'GBP', name: 'İngiliz Sterlini' },
-                    { code: 'JPY', name: 'Japon Yeni (100)' },
-                    { code: 'CHF', name: 'İsviçre Frangı' }
-                ];
+            const sonucAlani = document.getElementById('sonucAlani');
+            const aylikTaksit = document.getElementById('aylikTaksit');
+            const toplamGeri = document.getElementById('toplamGeri');
+            const toplamFaiz = document.getElementById('toplamFaiz');
+            const efektifOran = document.getElementById('efektifOran');
+            const tabloGovde = document.getElementById('tabloGovde');
+            const tabloBilgi = document.getElementById('tabloBilgi');
 
-                body.innerHTML = '';
-                for (const c of currencies) {
-                    const rate = c.code === 'USD' ? 1 : data.rates[c.code];
-                    const buy = c.code === 'USD' ? usdTry : usdTry / rate;
-                    const sell = buy * 1.002;
+            const faizOranlari = {
+                konut: 3.70,
+                arac: 2.90,
+                ihtiyac: 4.20
+            };
+
+            const krediNotlari = {
+                konut: '🏡 Konut kredilerinde faizler genellikle daha düşüktür, ilk ev indirimi avantajından yararlanabilirsiniz.',
+                arac: '🚗 Araç kredilerinde vade genellikle 60 ay ile sınırlıdır, faiz oranları konuta göre yüksek olabilir.',
+                ihtiyac: '🛒 İhtiyaç kredilerinde faiz oranları en yüksek seviyededir, vade genellikle 36 ayı geçmez.'
+            };
+
+            function updateInputs() {
+                const krediTip = krediTuru.value;
+                const finansman = finansmanTuru.value;
+
+                krediNotu.textContent = krediNotlari[krediTip] || '';
+
+                if (finansman === 'banka') {
+                    faizInput.disabled = false;
+                    faizInput.classList.remove('input-disabled');
+                    karPayiInput.disabled = true;
+                    karPayiInput.classList.add('input-disabled');
+                    faizInput.value = faizOranlari[krediTip] || 3.70;
+                    faizNotu.textContent = `📊 Güncel ${krediTip === 'konut' ? 'konut' : krediTip === 'arac' ? 'araç' : 'ihtiyaç'} kredisi ortalaması: %${faizOranlari[krediTip] || 3.70} (10.07.2026)`;
+                    karNotu.textContent = '';
+                    if (krediTip === 'konut') {
+                        ilkEvContainer.style.display = 'flex';
+                    } else {
+                        ilkEvContainer.style.display = 'none';
+                        ilkEvCheck.checked = false;
+                    }
+                } else {
+                    faizInput.disabled = true;
+                    faizInput.classList.add('input-disabled');
+                    karPayiInput.disabled = false;
+                    karPayiInput.classList.remove('input-disabled');
+                    karPayiInput.value = 5.0;
+                    faizNotu.textContent = '';
+                    karNotu.textContent = '📊 Sektörde yaygın tahmini oran: %5 (şirkete göre değişir)';
+                    ilkEvContainer.style.display = 'none';
+                    ilkEvCheck.checked = false;
+                }
+            }
+
+            krediTuru.addEventListener('change', updateInputs);
+            finansmanTuru.addEventListener('change', updateInputs);
+            updateInputs();
+
+            function hesapla() {
+                let tutar = parseFloat(tutarInput.value);
+                let vade = parseInt(vadeInput.value);
+                let faiz = parseFloat(faizInput.value) / 100;
+                let karPayi = parseFloat(karPayiInput.value) / 100;
+                let ekMasraf = parseFloat(ekMasrafInput.value) || 0;
+                const finansman = finansmanTuru.value;
+                const krediTip = krediTuru.value;
+                const ilkEv = ilkEvCheck.checked;
+                let indirimOran = parseFloat(indirimOranInput.value) || 0;
+                if (indirimOran < 0) indirimOran = 0;
+                if (indirimOran > 100) indirimOran = 100;
+
+                if (isNaN(tutar) || tutar <= 0) { alert('Geçerli bir tutar giriniz.'); return; }
+                if (isNaN(vade) || vade < 1) { alert('Vade en az 1 ay olmalı.'); return; }
+                if (finansman === 'banka' && (isNaN(faiz) || faiz < 0)) { alert('Geçerli faiz oranı giriniz.'); return; }
+                if (finansman === 'sirket' && (isNaN(karPayi) || karPayi < 0)) { alert('Geçerli organizasyon oranı giriniz.'); return; }
+                if (isNaN(ekMasraf) || ekMasraf < 0) { alert('Ek masraf negatif olamaz.'); return; }
+
+                let indirim = 0;
+                if (finansman === 'banka' && krediTip === 'konut' && ilkEv) {
+                    indirim = indirimOran / 100;
+                }
+
+                let efektifYillik = 0;
+                let aylik = 0;
+                let toplamOdeme = 0;
+                let toplamMaliyet = 0;
+                let tabloVerileri = [];
+
+                if (finansman === 'banka') {
+                    const r = faiz * (1 - indirim);
+                    if (r === 0) {
+                        aylik = (tutar + ekMasraf) / vade;
+                    } else {
+                        aylik = (tutar + ekMasraf) * r * Math.pow(1 + r, vade) / (Math.pow(1 + r, vade) - 1);
+                    }
+                    toplamOdeme = aylik * vade;
+                    toplamMaliyet = toplamOdeme - tutar;
+                    if (r > 0 && vade > 0) {
+                        efektifYillik = (Math.pow(1 + r, 12) - 1) * 100;
+                    } else {
+                        efektifYillik = 0;
+                    }
+
+                    let kalan = tutar + ekMasraf;
+                    for (let i = 1; i <= vade; i++) {
+                        const faizKismi = kalan * r;
+                        const anaKismi = aylik - faizKismi;
+                        if (anaKismi > kalan) {
+                            const son = kalan + faizKismi;
+                            tabloVerileri.push({ ay: i, taksit: son, ana: kalan, faiz: faizKismi, kalan: 0 });
+                            kalan = 0;
+                            break;
+                        }
+                        kalan = kalan - anaKismi;
+                        if (kalan < 0.01) kalan = 0;
+                        tabloVerileri.push({ ay: i, taksit: aylik, ana: anaKismi, faiz: faizKismi, kalan: kalan });
+                        if (kalan <= 0) break;
+                    }
+
+                } else {
+                    const toplamTutar = (tutar + ekMasraf) * (1 + karPayi);
+                    aylik = toplamTutar / vade;
+                    toplamOdeme = toplamTutar;
+                    toplamMaliyet = toplamOdeme - tutar;
+                    if (vade > 0 && tutar > 0) {
+                        efektifYillik = ((toplamOdeme / (tutar + ekMasraf)) - 1) / (vade / 12) * 100;
+                    } else {
+                        efektifYillik = 0;
+                    }
+
+                    const anaPayi = (tutar + ekMasraf) / vade;
+                    const karPayiAy = ((tutar + ekMasraf) * karPayi) / vade;
+                    let kalan = tutar + ekMasraf;
+                    for (let i = 1; i <= vade; i++) {
+                        if (i === vade) {
+                            tabloVerileri.push({ ay: i, taksit: aylik, ana: kalan, faiz: karPayiAy, kalan: 0 });
+                        } else {
+                            const ana = anaPayi;
+                            const kar = karPayiAy;
+                            kalan = kalan - ana;
+                            if (kalan < 0.01) kalan = 0;
+                            tabloVerileri.push({ ay: i, taksit: aylik, ana: ana, faiz: kar, kalan: kalan });
+                        }
+                    }
+                }
+
+                aylikTaksit.innerText = '₺' + aylik.toFixed(2);
+                toplamGeri.innerText = '₺' + toplamOdeme.toFixed(2);
+                toplamFaiz.innerText = '₺' + toplamMaliyet.toFixed(2);
+                efektifOran.innerText = '%' + efektifYillik.toFixed(2);
+
+                tabloGovde.innerHTML = '';
+                const satirSayisi = tabloVerileri.length;
+                tabloVerileri.forEach(item => {
                     const tr = document.createElement('tr');
+                    tr.className = 'border-b border-slate-100 hover:bg-slate-50';
                     tr.innerHTML = `
-                        <td><strong>${c.code}</strong> ${c.name}</td>
-                        <td>${buy.toFixed(4)}</td>
-                        <td>${sell.toFixed(4)}</td>
+                        <td class="p-2 text-left">${item.ay}</td>
+                        <td class="p-2 text-right font-mono">${item.taksit.toFixed(2)}</td>
+                        <td class="p-2 text-right font-mono">${item.ana.toFixed(2)}</td>
+                        <td class="p-2 text-right font-mono">${item.faiz.toFixed(2)}</td>
+                        <td class="p-2 text-right font-mono">${item.kalan.toFixed(2)}</td>
                     `;
-                    body.appendChild(tr);
-                }
-                status.textContent = '✅ Güncellendi';
-                status.style.color = '#10b981';
-            } catch (e) {
-                status.textContent = '❌ Hata: ' + e.message;
-                status.style.color = '#ef4444';
-                body.innerHTML = '<tr><td colspan="3" class="error">Veri alınamadı</td></tr>';
+                    tabloGovde.appendChild(tr);
+                });
+                tabloBilgi.innerText = `(toplam ${satirSayisi} ay)`;
+
+                sonucAlani.classList.remove('hidden');
+                sonucAlani.classList.add('fade-in');
             }
-        }
 
-        // ============================================================
-        // 2. ALTIN & METALLER - Metals-API (anahtar gerekli)
-        // ============================================================
-        // 🔑 KENDİ API ANAHTARINIZI BURAYA YAZIN
-        const METALS_API_KEY = 'YOUR_METALS_API_KEY'; // https://metals-api.com ücretsiz kayıt
-
-        async function fetchMetals() {
-            const status = document.getElementById('metals-status');
-            const body = document.getElementById('metals-body');
-            if (METALS_API_KEY === 'YOUR_METALS_API_KEY') {
-                status.textContent = '⚠️ Metals-API anahtarı gerekli (metals-api.com)';
-                status.style.color = '#fbbf24';
-                body.innerHTML = '<tr><td colspan="3" class="error">API anahtarını ekleyin</td></tr>';
-                return;
-            }
-            try {
-                const res = await fetch(
-                    `https://api.metals-api.com/v1/latest?access_key=${METALS_API_KEY}&base=USD&symbols=XAU,XAG,XPT,XPD`
-                );
-                if (!res.ok) throw new Error('API yanıt vermedi');
-                const data = await res.json();
-                if (!data.rates) throw new Error('Veri alınamadı');
-
-                const metals = [
-                    { id: 'XAU', name: 'Altın (Ons)' },
-                    { id: 'XAG', name: 'Gümüş (Ons)' },
-                    { id: 'XPT', name: 'Platin (Ons)' },
-                    { id: 'XPD', name: 'Paladyum (Ons)' }
-                ];
-
-                // TRY kuru için Frankfurter'dan alalım
-                const fxRes = await fetch('https://api.frankfurter.app/latest?from=USD');
-                const fxData = await fxRes.json();
-                const usdTry = fxData.rates.TRY || 46.94;
-
-                body.innerHTML = '';
-                for (const m of metals) {
-                    const priceUsd = data.rates[m.id];
-                    if (!priceUsd) continue;
-                    const priceTry = priceUsd * usdTry;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${m.name}</strong></td>
-                        <td>${priceUsd.toFixed(2)} $</td>
-                        <td>${priceTry.toFixed(2)} ₺</td>
-                    `;
-                    body.appendChild(tr);
-                }
-                status.textContent = '✅ Güncellendi';
-                status.style.color = '#10b981';
-            } catch (e) {
-                status.textContent = '❌ Hata: ' + e.message;
-                status.style.color = '#ef4444';
-                body.innerHTML = '<tr><td colspan="3" class="error">Veri alınamadı</td></tr>';
-            }
-        }
-
-        // ============================================================
-        // 3. KRİPTO - CoinGecko API (anahtarsız)
-        // ============================================================
-        async function fetchCrypto() {
-            const status = document.getElementById('crypto-status');
-            const body = document.getElementById('crypto-body');
-            try {
-                const res = await fetch(
-                    'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,ripple,cardano,polkadot,avalanche-2,dogecoin&vs_currencies=usd,try&include_24hr_change=true'
-                );
-                if (!res.ok) throw new Error('API yanıt vermedi');
-                const data = await res.json();
-
-                const map = {
-                    bitcoin: 'BTC',
-                    ethereum: 'ETH',
-                    solana: 'SOL',
-                    binancecoin: 'BNB',
-                    ripple: 'XRP',
-                    cardano: 'ADA',
-                    polkadot: 'DOT',
-                    'avalanche-2': 'AVAX',
-                    dogecoin: 'DOGE'
-                };
-
-                body.innerHTML = '';
-                for (const [id, symbol] of Object.entries(map)) {
-                    const item = data[id];
-                    if (!item) continue;
-                    const change = item.usd_24h_change;
-                    const changeClass = change >= 0 ? 'up' : 'down';
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${symbol}</strong></td>
-                        <td>$${item.usd.toFixed(2)}</td>
-                        <td>${item.try.toFixed(2)} ₺</td>
-                        <td class="${changeClass}">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</td>
-                    `;
-                    body.appendChild(tr);
-                }
-                status.textContent = '✅ Güncellendi';
-                status.style.color = '#10b981';
-            } catch (e) {
-                status.textContent = '❌ Hata: ' + e.message;
-                status.style.color = '#ef4444';
-                body.innerHTML = '<tr><td colspan="4" class="error">Veri alınamadı</td></tr>';
-            }
-        }
-
-        // ============================================================
-        // 4. BORSA - Yahoo Finance üzerinden (ücretsiz proxy)
-        // ============================================================
-        async function fetchBorsa() {
-            const status = document.getElementById('borsa-status');
-            const body = document.getElementById('borsa-body');
-            try {
-                // Yahoo Finance'dan BIST100 verisi çeken ücretsiz bir proxy
-                const res = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/XU100.IS');
-                if (!res.ok) throw new Error('API yanıt vermedi');
-                const data = await res.json();
-                const result = data.chart.result[0];
-                if (!result) throw new Error('Veri yok');
-                const meta = result.meta;
-                const price = meta.regularMarketPrice || meta.previousClose || 0;
-                const prevClose = meta.previousClose || price;
-                const change = ((price - prevClose) / prevClose * 100);
-                const changeClass = change >= 0 ? 'up' : 'down';
-
-                body.innerHTML = `
-                    <tr><td><strong>BIST 100</strong></td><td>${price.toFixed(2)}</td><td class="${changeClass}">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</td></tr>
-                    <tr><td><strong>S&P 500</strong></td><td colspan="2" style="color:#64748b;">Yahoo üzerinden alınıyor...</td></tr>
-                `;
-                status.textContent = '✅ Güncellendi';
-                status.style.color = '#10b981';
-            } catch (e) {
-                status.textContent = '❌ Hata: ' + e.message;
-                status.style.color = '#ef4444';
-                body.innerHTML = '<tr><td colspan="3" class="error">Veri alınamadı</td></tr>';
-            }
-        }
-
-        // ============================================================
-        // 5. EMTİA (Petrol) - Oil Price API (anahtar gerekli)
-        // ============================================================
-        const OIL_API_KEY = 'YOUR_OIL_API_KEY'; // https://oilpriceapi.com ücretsiz kayıt
-
-        async function fetchEmtia() {
-            const status = document.getElementById('emtia-status');
-            const body = document.getElementById('emtia-body');
-            if (OIL_API_KEY === 'YOUR_OIL_API_KEY') {
-                status.textContent = '⚠️ Oil Price API anahtarı gerekli (oilpriceapi.com)';
-                status.style.color = '#fbbf24';
-                body.innerHTML = '<tr><td colspan="2" class="error">API anahtarını ekleyin</td></tr>';
-                return;
-            }
-            try {
-                const res = await fetch(`https://api.oilpriceapi.com/v1/price/latest?api_key=${OIL_API_KEY}`);
-                if (!res.ok) throw new Error('API yanıt vermedi');
-                const data = await res.json();
-                if (!data.data) throw new Error('Veri yok');
-                const brent = data.data.find(p => p.code === 'BRENT_CRUDE_USD');
-                const wti = data.data.find(p => p.code === 'WTI_CRUDE_USD');
-
-                body.innerHTML = '';
-                if (brent) {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td><strong>Brent Petrol</strong></td><td>$${brent.price.toFixed(2)}</td>`;
-                    body.appendChild(tr);
-                }
-                if (wti) {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td><strong>WTI Petrol</strong></td><td>$${wti.price.toFixed(2)}</td>`;
-                    body.appendChild(tr);
-                }
-                if (!brent && !wti) throw new Error('Petrol verisi bulunamadı');
-                status.textContent = '✅ Güncellendi';
-                status.style.color = '#10b981';
-            } catch (e) {
-                status.textContent = '❌ Hata: ' + e.message;
-                status.style.color = '#ef4444';
-                body.innerHTML = '<tr><td colspan="2" class="error">Veri alınamadı</td></tr>';
-            }
-        }
-
-        // ============================================================
-        // TÜM VERİLERİ ÇEK
-        // ============================================================
-        async function fetchAll() {
-            await Promise.all([
-                fetchForex(),
-                fetchMetals(),
-                fetchCrypto(),
-                fetchBorsa(),
-                fetchEmtia()
-            ]);
-        }
-
-        // Sayfa yüklendiğinde çalıştır
-        fetchAll();
-        // Her 60 saniyede bir yenile
-        setInterval(fetchAll, 60000);
+            hesaplaBtn.addEventListener('click', hesapla);
+            document.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') hesapla();
+                });
+            });
+            window.addEventListener('DOMContentLoaded', hesapla);
+        })();
     </script>
+
 </body>
 </html>
