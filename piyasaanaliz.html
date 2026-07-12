@@ -1,2 +1,326 @@
-
 <iframe width="560" height="315" src="https://www.youtube.com/embed/NE_bc-axYxg?si=Ei4tHlxJ9RKp1Ehb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiyasaAnaliz Finans & Emtia Merkezi</title>
+    <style>
+        /* ============================================================ */
+        /* ANA STİLLER */
+        /* ============================================================ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #0a0a0c; 
+            color: #e2e8f0; 
+            padding: 15px; 
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* ============================================================ */
+        /* NAVİGASYON BUTONLARI */
+        /* ============================================================ */
+        .nav-buttons { 
+            display: flex; 
+            justify-content: center; 
+            gap: 12px; 
+            margin: 15px 0 25px; 
+            flex-wrap: wrap; 
+        }
+        .nav-btn { 
+            padding: 10px 24px; 
+            border-radius: 30px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 14px; 
+            transition: all 0.3s; 
+            border: none; 
+            cursor: pointer; 
+            display: inline-block; 
+        }
+        .nav-btn-primary { 
+            background: #ff4500; 
+            color: #fff; 
+            box-shadow: 0 4px 15px rgba(255,69,0,0.3); 
+        }
+        .nav-btn-primary:hover { 
+            background: #ff6a00; 
+            transform: scale(1.05); 
+        }
+        .nav-btn-secondary { 
+            background: #1e293b; 
+            color: #60a5fa; 
+            border: 1px solid #60a5fa;
+        }
+        .nav-btn-secondary:hover { 
+            background: #334155; 
+            transform: scale(1.05); 
+        }
+        .nav-btn-gold { 
+            background: #78350f; 
+            color: #fbbf24; 
+            border: 1px solid #f59e0b;
+        }
+        .nav-btn-gold:hover { 
+            background: #92400e; 
+            transform: scale(1.05); 
+        }
+        .nav-btn-green { 
+            background: #064e3b; 
+            color: #34d399; 
+            border: 1px solid #10b981;
+        }
+        .nav-btn-green:hover { 
+            background: #065f46; 
+            transform: scale(1.05); 
+        }
+        .nav-btn-vodafone {
+            background: #e60000;
+            color: #ffffff;
+            border: 1px solid #b30000;
+            box-shadow: 0 4px 12px rgba(230,0,0,0.2);
+        }
+        .nav-btn-vodafone:hover {
+            background: #ff1a1a;
+            transform: scale(1.05);
+        }
+        .nav-btn-faturali {
+            background: #4a0404;
+            color: #fca5a5;
+            border: 1px solid #ef4444;
+        }
+        .nav-btn-faturali:hover {
+            background: #7f1d1d;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .nav-btn-fiber {
+            background: #0f172a;
+            color: #38bdf8;
+            border: 1px solid #0284c7;
+            box-shadow: 0 4px 12px rgba(2,132,199,0.2);
+        }
+        .nav-btn-fiber:hover {
+            background: #1e293b;
+            color: #7dd3fc;
+            transform: scale(1.05);
+        }
+        
+        /* ============================================================ */
+        /* KONTEYNER VE HEADER */
+        /* ============================================================ */
+        .mutinous-finance-container {
+            background: #121214;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 1200px;
+            margin: 30px auto;
+            border: 1px solid #222227;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .finance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #1e1e24;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header-title-zone h2 { margin: 0; font-size: 24px; color: #fff; letter-spacing: 0.5px; }
+        .brand-sub { margin: 4px 0 0 0; font-size: 13px; color: #60a5fa; font-weight: 500; letter-spacing: 0.3px; }
+        .update-badge { 
+            background: #064e3b; 
+            color: #34d399;
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            border: 2px solid #10b981;
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.5); }
+        }
+        
+        /* ============================================================ */
+        /* SEKME BUTONLARI */
+        /* ============================================================ */
+        .finance-tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid #1e1e24; padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn { background: #1e1e24; border: 1px solid #2d2d39; color: #94a3b8; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; }
+        .tab-btn:hover { background: #2a2a35; color: #fff; }
+        .tab-btn.active { background: #ff4500; color: #fff; border-color: #ff4500; }
+        .calc-btn { border-color: #3b82f6; color: #60a5fa; }
+        .calc-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+        .interest-btn { border-color: #10b981; color: #34d399; }
+        .interest-btn.active { background: #10b981; border-color: #10b981; color: #fff; }
+        
+        /* ============================================================ */
+        /* TABLOLAR */
+        /* ============================================================ */
+        .finance-tab-content { display: none; }
+        .finance-tab-content.active { display: block; }
+        .finance-table-wrapper { max-height: 480px; overflow-y: auto; border-radius: 8px; border: 1px solid #1e1e24; }
+        .finance-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        .finance-table th { background: #1e1e24; color: #94a3b8; padding: 12px 16px; font-weight: 600; position: sticky; top: 0; z-index: 2; }
+        .finance-table td { padding: 12px 16px; border-bottom: 1px solid #1a1a22; color: #cbd5e1; }
+        .finance-table tbody tr:hover { background: #181820; }
+        .finance-table tr td:first-child { color: #fff; }
+        
+        .txt-up { color: #10b981; font-weight: 600; }
+        .txt-down { color: #ef4444; font-weight: 600; }
+        .txt-neutral { color: #64748b; font-weight: 600; }
+        
+        /* ============================================================ */
+        /* HESAPLAYICILAR */
+        /* ============================================================ */
+        .calculator-box { background: #18181c; border: 1px solid #24242b; padding: 20px; border-radius: 8px; }
+        .calculator-box h4 { margin: 0 0 15px 0; font-size: 16px; color: #fff; }
+        .calc-row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
+        .input-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 6px; }
+        .input-group label { font-size: 12px; color: #94a3b8; font-weight: 500; }
+        .input-group input, .input-group select { background: #121214; border: 1px solid #2d2d39; color: #fff; padding: 10px; border-radius: 6px; font-size: 14px; outline: none; }
+        .input-group input:focus, .input-group select:focus { border-color: #3b82f6; }
+        .calc-result-zone { background: #1e293b; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; gap: 4px; }
+        .result-label { font-size: 12px; color: #94a3b8; }
+        #calc-result-value { font-size: 22px; font-weight: bold; color: #3b82f6; }
+        
+        .interest-results-wrapper { display: flex; gap: 15px; flex-wrap: wrap; }
+        .interest-result-card { flex: 1; min-width: 200px; background: #1e293b; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981; }
+        #interest-net-gain { font-size: 22px; font-weight: bold; }
+        #interest-total-amount { font-size: 22px; font-weight: bold; color: #fff; }
+        
+        /* ============================================================ */
+        /* BANKNOT & FOOTER */
+        /* ============================================================ */
+        .banknote { background: #1e293b; border-left: 4px solid #fbbf24; padding: 10px 15px; border-radius: 6px; margin-top: 10px; font-size: 13px; color: #fbbf24; }
+        .banknote strong { color: #fff; }
+        .banknote a { color: #60a5fa; text-decoration: none; }
+        .banknote a:hover { text-decoration: underline; }
+        .finance-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #1e1e24; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 12px; color: #64748b; }
+        .warning-text { color: #ef4444; font-weight: 700; font-size: 12px; }
+        .footer { text-align: center; margin-top: 20px; color: #64748b; font-size: 14px; }
+        .footer a { color: #ff4500; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        .finance-table-wrapper::-webkit-scrollbar { width: 6px; }
+        .finance-table-wrapper::-webkit-scrollbar-track { background: #121214; }
+        .finance-table-wrapper::-webkit-scrollbar-thumb { background: #2d2d39; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ===== ÜST MENÜ LINKLERI VE RENKLERI ===== -->
+        <div class="nav-buttons">
+            <a href="https://PiyasaAnaliz.github.io" target="_blank" class="nav-btn nav-btn-secondary">🏠 Ana Sayfa</a>
+            <a href="bankakampanyalari.html" target="_blank" class="nav-btn nav-btn-primary">🏦 Banka Kampanyaları</a>
+            <a href="parakazan.html" target="_blank" class="nav-btn nav-btn-gold">💰 Para Kazan</a>
+            <a href="internetkampanyalari.html" target="_blank" class="nav-btn nav-btn-vodafone">📱 Vodafone Bedava İnternet</a>
+            <a href="faturalikampanyalar.html" target="_blank" class="nav-btn nav-btn-faturali">📄 Faturalı Hat Kampanyaları</a>
+            <a href="interntkampanyalari.html" target="_blank" class="nav-btn nav-btn-fiber">🌐 Fiber İnternet Kampanyaları</a>
+            <a href="piyasaanaliz.html" target="_blank" class="nav-btn nav-btn-green">📈 Mutinous Finance</a>
+        </div>
+        
+        <div class="piyasaanaliz-finance-container">
+            <div class="finance-header">
+                <div class="header-title-zone">
+                    <h2>PiyasaAnaliz Finans & Emtia Merkezi</h2>
+                    <p class="brand-sub">Küresel Piyasalar, Canlı Çeviri ve Hesaplama Servisi</p>
+                </div>
+                <div class="update-badge" id="updateBadge">🟢 Canlı Piyasalar: Yükleniyor...</div>
+            </div>
+
+            <!-- ===== SEKME MENÜSÜ ===== -->
+            <div class="finance-tabs">
+                <button class="tab-btn active" onclick="switchFinanceTab('tab-forex', this)">💱 Döviz & Altın</button>
+                <button class="tab-btn" onclick="switchFinanceTab('tab-metals', this)">🥇 Değerli Metaller</button>
+                <button class="tab-btn" onclick="switchFinanceTab('tab-agri', this)">🌾 Tarım & Gıda</button>
+                <button class="tab-btn" onclick="switchFinanceTab('tab-global', this)">📈 Dünya Borsaları</button>
+                <button class="tab-btn" onclick="switchFinanceTab('tab-crypto', this)">₿ Kripto</button>
+                <button class="tab-btn calc-btn" onclick="switchFinanceTab('tab-calculator', this)">🧮 Çevirici</button>
+                <button class="tab-btn interest-btn" onclick="switchFinanceTab('tab-interest', this)">📈 Faiz Hesapla</button>
+            </div>
+
+            <!-- ===== 1. DÖVİZ & ALTIN (TAM LİSTE) ===== -->
+            <div id="tab-forex" class="finance-tab-content active">
+                <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                        <thead><tr><th>Enstrüman</th><th>Alış (TL)</th><th>Satış (TL)</th><th>Değişim</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>USD</strong> - Amerikan Doları</td><td id="val-usd-buy">46.9424</td><td id="val-usd-sell">47.0434</td><td class="txt-up" id="chg-usd">+%0.20</td></tr>
+                            <tr><td><strong>EUR</strong> - Euro</td><td id="val-eur-buy">53.6174</td><td id="val-eur-sell">53.7187</td><td class="txt-down" id="chg-eur">-%0.12</td></tr>
+                            <tr><td><strong>GBP</strong> - İngiliz Sterlini</td><td id="val-gbp-buy">62.8923</td><td id="val-gbp-sell">63.0486</td><td class="txt-down" id="chg-gbp">-%0.04</td></tr>
+                            <tr><td><strong>JPY</strong> - Japon Yeni (100 JPY)</td><td id="val-jpy-buy">29.2840</td><td id="val-jpy-sell">29.4610</td><td class="txt-up" id="chg-jpy">+%0.15</td></tr>
+                            <tr><td><strong>CNY</strong> - Çin Yuanı</td><td id="val-cny-buy">6.4620</td><td id="val-cny-sell">6.5010</td><td class="txt-neutral" id="chg-cny">%0.00</td></tr>
+                            <tr><td><strong>RUB</strong> - Rus Rublesi</td><td id="val-rub-buy">0.5120</td><td id="val-rub-sell">0.5180</td><td class="txt-down" id="chg-rub">-%0.34</td></tr>
+                            <tr><td><strong>SAR</strong> - Suudi Riyali</td><td id="val-sar-buy">12.5110</td><td id="val-sar-sell">12.5480</td><td class="txt-up" id="chg-sar">+%0.05</td></tr>
+                            <tr><td><strong>ONS ALTIN</strong> ($/Ons)</td><td id="val-ons-buy">$2,642.50</td><td id="val-ons-sell">$2,644.10</td><td class="txt-up" id="chg-ons">+%0.42</td></tr>
+                            <tr><td><strong>GRAM ALTIN</strong> (GRA)</td><td class="sync-gram-buy">6224.70</td><td class="sync-gram-sell">6225.55</td><td class="txt-up" id="chg-gram">+%0.12</td></tr>
+                            <tr><td><strong>ÇEYREK ALTIN</strong></td><td id="val-ceyrek-buy">9887.48</td><td id="val-ceyrek-sell">10113.63</td><td class="txt-down" id="chg-ceyrek">-%0.72</td></tr>
+                            <tr><td><strong>CUMHURİYET ALTINI</strong></td><td id="val-cum-buy">40985.00</td><td id="val-cum-sell">41606.00</td><td class="txt-down" id="chg-cum">-%0.50</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== 2. DEĞERLİ METALLER & ENERJİ (TAM LİSTE) ===== -->
+            <div id="tab-metals" class="finance-tab-content">
+                <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                        <thead><tr><th>Metal Cinsi</th><th>Alış (TL)</th><th>Satış (TL)</th><th>Değişim</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>GRAM ALTIN</strong> (GRA)</td><td class="sync-gram-buy">6224.70</td><td class="sync-gram-sell">6225.55</td><td class="txt-up">+%0.12</td></tr>
+                            <tr><td><strong>GÜMÜŞ</strong> (GUMUS)</td><td id="val-gumus-buy">90.38</td><td id="val-gumus-sell">90.48</td><td class="txt-up" id="chg-gumus">+%0.03</td></tr>
+                            <tr><td><strong>GRAM PLATİN</strong> (GPL)</td><td id="val-gpl-buy">2463.46</td><td id="val-gpl-sell">2474.68</td><td class="txt-up" id="chg-gpl">+%1.25</td></tr>
+                            <tr><td><strong>GRAM PALADYUM</strong> (PAL)</td><td id="val-pal-buy">1922.21</td><td id="val-pal-sell">1945.26</td><td class="txt-up" id="chg-pal">+%2.40</td></tr>
+                            <tr><td><strong>ALÜMİNYUM</strong> ($/Ton)</td><td id="val-alu-buy">2450.00</td><td id="val-alu-sell">2465.00</td><td class="txt-down" id="chg-alu">-%0.35</td></tr>
+                            <tr><td><strong>ÇELİK / METAL</strong> ($/Ton)</td><td id="val-celik-buy">585.00</td><td id="val-celik-sell">592.00</td><td class="txt-up" id="chg-celik">+%0.80</td></tr>
+                            <tr><td><strong>BRENT PETROL</strong> ($/Varil)</td><td id="val-brent-buy">3660.10</td><td id="val-brent-sell">3675.50</td><td class="txt-up" id="chg-brent">+%0.03</td></tr>
+                            <tr><td><strong>BAKIR</strong> ($/Ton)</td><td id="val-bakir-buy">445.20</td><td id="val-bakir-sell">448.90</td><td class="txt-up" id="chg-bakir">+%0.45</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== 3. TARIM & GIDA (TAM LİSTE) ===== -->
+            <div id="tab-agri" class="finance-tab-content">
+                <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                        <thead><tr><th>Ürün Adı</th><th>Fiyat (TL/Birim)</th><th>Piyasa</th><th>Değişim</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>BUĞDAY</strong> (Wheat Cbot)</td><td id="val-bugday">314.50</td><td>Chicago Borsası</td><td class="txt-down" id="chg-bugday">-%0.18</td></tr>
+                            <tr><td><strong>KAHVE</strong> (Coffee Arabica)</td><td id="val-kahve">1145.20</td><td>ICE Piyasası</td><td class="txt-up" id="chg-kahve">+%1.12</td></tr>
+                            <tr><td><strong>PAMUK</strong> (Cotton US)</td><td id="val-pamuk">78.40</td><td>NY Borsası</td><td class="txt-neutral" id="chg-pamuk">%0.00</td></tr>
+                            <tr><td><strong>KAKAO</strong> (Cocoa)</td><td id="val-kakao">4310.00</td><td>ICE Piyasası</td><td class="txt-up" id="chg-kakao">+%2.34</td></tr>
+                            <tr><td><strong>ŞEKER</strong> (Sugar No:11)</td><td id="val-seker">22.15</td><td>Küresel Emtia</td><td class="txt-down" id="chg-seker">-%0.45</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== 4. DÜNYA BORSALARI (TAM LİSTE) ===== -->
+            <div id="tab-global" class="finance-tab-content">
+                <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                        <thead><tr><th>Endeks Adı</th><th>Ülke / Bölge</th><th>Son Değer</th><th>Değişim</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>XU100</strong> - Borsa İstanbul</td><td>Türkiye</td><td id="val-xu100">14321.19</td><td class="txt-up" id="chg-xu100">+%1.53</td></tr>
+                            <tr><td><strong>S&P 500</strong></td><td>ABD</td><td id="val-sp500">5422.50</td><td class="txt-up" id="chg-sp500">+%0.42</td></tr>
+                            <tr><td><strong>NASDAQ 100</strong></td><td>ABD Teknoloji</td><td id="val-nasdaq">19110.80</td><td class="txt-up" id="chg-nasdaq">+%0.68</td></tr>
+                            <tr><td><strong>DAX 40</strong></td><td>Almanya</td><td id="val-dax">18230.15</td><td class="txt-down" id="chg-dax">-%0.15</td></tr>
+                            <tr><td><strong>FTSE 100</strong></td><td>İngiltere</td><td id="val-ftse">8195.40</td><td class="txt-neutral" id="chg-ftse">%0.00</td></tr>
+                            <tr><td><strong>NIKKEI 225</strong></td><td>Japonya</td><td id="val-nikkei">38720.00</td><td class="txt-up" id="chg-nikkei">+%0.85</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== 5. KRİPTO (TAM LİSTE) ===== -->
+            <div id="tab-crypto" class="finance-tab-content">
+                <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                        <thead><tr><th>Kripto Pa
