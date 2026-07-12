@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DO<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8" />
@@ -18,6 +18,7 @@
         .info-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 0.75rem 1rem; border-radius: 0.5rem; }
         .info-box.warning { background: #fefce8; border-left-color: #eab308; }
         .info-box.tip { background: #ecfdf5; border-left-color: #10b981; }
+        .input-disabled { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
     </style>
 </head>
 <body class="bg-slate-50 p-4 md:p-8 font-sans antialiased">
@@ -30,6 +31,9 @@
             </h1>
             <p class="text-slate-500 text-sm md:text-base mt-1">
                 Banka (faizli) ve Tasarruf Finansman Şirketi karşılaştırmalı hesaplama aracı
+            </p>
+            <p class="text-xs text-slate-400 mt-1">
+                ⚡ Varsayılan oranlar <span class="font-semibold">10 Temmuz 2026</span> itibarıyla güncel piyasa verilerine göre ayarlanmıştır.
             </p>
         </div>
 
@@ -78,17 +82,19 @@
                         <label class="block text-sm font-semibold text-slate-700">
                             Aylık Faiz Oranı (%) <span class="font-normal text-slate-400">(Banka için)</span>
                         </label>
-                        <input type="number" id="faizOran" value="2.5" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <input type="number" id="faizOran" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <p id="faizNotu" class="text-xs text-slate-400 mt-1"></p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">
                             Organizasyon / Kar Payı (%) <span class="font-normal text-slate-400">(Şirket için)</span>
                         </label>
-                        <input type="number" id="karPayi" value="5.0" step="0.1" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <input type="number" id="karPayi" step="0.1" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
+                        <p id="karNotu" class="text-xs text-slate-400 mt-1"></p>
                     </div>
 
-                    <div class="flex items-center space-x-3 pt-2">
+                    <div id="ilkEvContainer" class="flex items-center space-x-3 pt-2">
                         <input type="checkbox" id="ilkEv" class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-400" />
                         <label for="ilkEv" class="text-sm font-medium text-slate-700">🏡 İlk ev sahibi indirimi (%)</label>
                         <input type="number" id="indirimOran" value="20" min="0" max="100" class="w-20 border border-slate-300 rounded-lg p-1 text-center" />
@@ -151,7 +157,7 @@
                         <span class="font-bold">📌 Tasarruf Finansman Şirketlerinde</span> organizasyon ücreti toplam maliyete eklenir ve vadeye eşit olarak dağıtılır. Bu sistem faizsizdir, ancak kar payı işler.
                     </div>
                     <div class="info-box tip">
-                        <span class="font-bold">💡 İpucu:</span> Ek masrafları (dosya, sigorta, ekspertiz) girerek gerçekçi maliyeti görebilirsiniz. Tüm hesaplamalar bilgilendirme amaçlıdır, kesin sonuçlar için bankanızla görüşün.
+                        <span class="font-bold">💡 Uyarı:</span> Varsayılan oranlar <span class="font-semibold">10 Temmuz 2026</span> itibarıyla güncel piyasa verilerine göre ayarlanmıştır. Bankalar ve şirketler farklı oranlar, masraflar (sigorta, dosya masrafı vb.) uygulayabilir. <span class="font-semibold">Bankadan bankaya ve kredi notunuza göre değişiklik gösterebilir.</span> Kesin sonuçlar için ilgili kurumla görüşünüz.
                     </div>
                 </div>
             </div>
@@ -165,6 +171,7 @@
 
     <script>
         (function() {
+            // DOM referansları
             const tutarInput = document.getElementById('tutar');
             const vadeInput = document.getElementById('vade');
             const faizInput = document.getElementById('faizOran');
@@ -174,7 +181,10 @@
             const finansmanTuru = document.getElementById('finansmanTuru');
             const ilkEvCheck = document.getElementById('ilkEv');
             const indirimOranInput = document.getElementById('indirimOran');
+            const ilkEvContainer = document.getElementById('ilkEvContainer');
             const krediNotu = document.getElementById('krediNotu');
+            const faizNotu = document.getElementById('faizNotu');
+            const karNotu = document.getElementById('karNotu');
             const hesaplaBtn = document.getElementById('hesaplaBtn');
 
             const sonucAlani = document.getElementById('sonucAlani');
@@ -185,18 +195,68 @@
             const tabloGovde = document.getElementById('tabloGovde');
             const tabloBilgi = document.getElementById('tabloBilgi');
 
-            function updateKrediNotu() {
-                const tip = krediTuru.value;
-                const notlar = {
-                    konut: '🏡 Konut kredilerinde faizler genellikle daha düşüktür, ilk ev indirimi avantajından yararlanabilirsiniz.',
-                    arac: '🚗 Araç kredilerinde vade genellikle 60 ay ile sınırlıdır, faiz oranları konuta göre yüksek olabilir.',
-                    ihtiyac: '🛒 İhtiyaç kredilerinde faiz oranları en yüksek seviyededir, vade genellikle 36 ayı geçmez.'
-                };
-                krediNotu.textContent = notlar[tip] || '';
-            }
-            krediTuru.addEventListener('change', updateKrediNotu);
-            updateKrediNotu();
+            // Kredi türüne göre faiz oranları (10.07.2026 piyasa ortalamaları)
+            const faizOranlari = {
+                konut: 3.70,
+                arac: 2.90,
+                ihtiyac: 4.20
+            };
 
+            // Kredi türüne göre açıklama notları
+            const krediNotlari = {
+                konut: '🏡 Konut kredilerinde faizler genellikle daha düşüktür, ilk ev indirimi avantajından yararlanabilirsiniz.',
+                arac: '🚗 Araç kredilerinde vade genellikle 60 ay ile sınırlıdır, faiz oranları konuta göre yüksek olabilir.',
+                ihtiyac: '🛒 İhtiyaç kredilerinde faiz oranları en yüksek seviyededir, vade genellikle 36 ayı geçmez.'
+            };
+
+            // Input'ları güncelle
+            function updateInputs() {
+                const krediTip = krediTuru.value;
+                const finansman = finansmanTuru.value;
+
+                // Kredi notu
+                krediNotu.textContent = krediNotlari[krediTip] || '';
+
+                // Banka ise faiz input'u aktif, kar input'u pasif
+                if (finansman === 'banka') {
+                    faizInput.disabled = false;
+                    faizInput.classList.remove('input-disabled');
+                    karPayiInput.disabled = true;
+                    karPayiInput.classList.add('input-disabled');
+                    // Faiz oranını kredi türüne göre ayarla
+                    faizInput.value = faizOranlari[krediTip] || 3.70;
+                    faizNotu.textContent = `📊 Güncel ${krediTip === 'konut' ? 'konut' : krediTip === 'arac' ? 'araç' : 'ihtiyaç'} kredisi ortalaması: %${faizOranlari[krediTip] || 3.70} (10.07.2026)`;
+                    karNotu.textContent = '';
+                    // İlk ev container'ını göster/gizle
+                    if (krediTip === 'konut') {
+                        ilkEvContainer.style.display = 'flex';
+                    } else {
+                        ilkEvContainer.style.display = 'none';
+                        ilkEvCheck.checked = false;
+                    }
+                } else { // Şirket
+                    faizInput.disabled = true;
+                    faizInput.classList.add('input-disabled');
+                    karPayiInput.disabled = false;
+                    karPayiInput.classList.remove('input-disabled');
+                    // Kar payını varsayılan 5.0 yap (kullanıcı değiştirebilir)
+                    karPayiInput.value = 5.0;
+                    faizNotu.textContent = '';
+                    karNotu.textContent = '📊 Sektörde yaygın tahmini oran: %5 (şirkete göre değişir)';
+                    // Şirket seçiliyken ilk ev indirimi geçersiz
+                    ilkEvContainer.style.display = 'none';
+                    ilkEvCheck.checked = false;
+                }
+            }
+
+            // Değişiklik olaylarını dinle
+            krediTuru.addEventListener('change', updateInputs);
+            finansmanTuru.addEventListener('change', updateInputs);
+
+            // Sayfa ilk yüklendiğinde güncelle
+            updateInputs();
+
+            // Hesapla fonksiyonu (öncekiyle aynı)
             function hesapla() {
                 let tutar = parseFloat(tutarInput.value);
                 let vade = parseInt(vadeInput.value);
