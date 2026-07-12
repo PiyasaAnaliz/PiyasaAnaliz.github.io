@@ -83,7 +83,6 @@
                             Aylık Faiz Oranı (%) <span class="font-normal text-slate-400">(Banka için)</span>
                         </label>
                         <input type="number" id="faizOran" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
-                        <p id="faizNotu" class="text-xs text-slate-400 mt-0.5"></p>
                     </div>
 
                     <div>
@@ -91,7 +90,6 @@
                             Organizasyon / Kar Payı (%) <span class="font-normal text-slate-400">(Şirket için)</span>
                         </label>
                         <input type="number" id="karPayi" step="0.1" min="0" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400" />
-                        <p id="karNotu" class="text-xs text-slate-400 mt-0.5"></p>
                     </div>
 
                     <div id="ilkEvContainer" class="flex items-center space-x-2 pt-1">
@@ -150,7 +148,7 @@
                     </div>
                 </div>
 
-                <!-- Sadece 3 uyarı kutusu -->
+                <!-- 3 uyarı kutusu -->
                 <div class="mt-5 space-y-2 text-sm">
                     <div class="info-box">
                         <span class="font-bold">📌 Banka kredilerinde</span> aylık faiz oranı üzerinden eşit taksitli (anüite) hesaplama yapılır. Konut kredilerinde ilk ev indirimi varsa faiz oranı düşer.
@@ -188,8 +186,6 @@
             const indirimOranInput = document.getElementById('indirimOran');
             const ilkEvContainer = document.getElementById('ilkEvContainer');
             const krediNotu = document.getElementById('krediNotu');
-            const faizNotu = document.getElementById('faizNotu');
-            const karNotu = document.getElementById('karNotu');
             const hesaplaBtn = document.getElementById('hesaplaBtn');
 
             const sonucAlani = document.getElementById('sonucAlani');
@@ -224,8 +220,6 @@
                     karPayiInput.disabled = true;
                     karPayiInput.classList.add('input-disabled');
                     faizInput.value = faizOranlari[krediTip] || 2.50;
-                    faizNotu.textContent = `📊 Güncel ${krediTip === 'konut' ? 'konut' : krediTip === 'arac' ? 'araç' : 'ihtiyaç'} kredisi ortalaması: %${faizOranlari[krediTip] || 2.50} (10.07.2026)`;
-                    karNotu.textContent = '';
                     if (krediTip === 'konut') {
                         ilkEvContainer.style.display = 'flex';
                     } else {
@@ -238,8 +232,6 @@
                     karPayiInput.disabled = false;
                     karPayiInput.classList.remove('input-disabled');
                     karPayiInput.value = 5.0;
-                    faizNotu.textContent = '';
-                    karNotu.textContent = '📊 Sektörde yaygın tahmini oran: %5 (şirkete göre değişir)';
                     ilkEvContainer.style.display = 'none';
                     ilkEvCheck.checked = false;
                 }
