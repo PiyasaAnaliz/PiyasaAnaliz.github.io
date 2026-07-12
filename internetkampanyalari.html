@@ -6,64 +6,36 @@
     <title>Profesyonel Kredi & Finansman Hesaplayıcı</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Geçişler ve ince detaylar */
-        .result-card {
-            transition: all 0.3s ease;
-        }
-        .fade-in {
-            animation: fadeIn 0.6s ease forwards;
-        }
+        .result-card { transition: all 0.3s ease; }
+        .fade-in { animation: fadeIn 0.6s ease forwards; }
         @keyframes fadeIn {
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        .tablo-scroll {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .tablo-scroll table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .tablo-scroll th {
-            position: sticky;
-            top: 0;
-            background: #f1f5f9;
-            z-index: 2;
-        }
-        .info-box {
-            background: #f0f9ff;
-            border-left: 4px solid #0ea5e9;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-        }
-        .info-box.warning {
-            background: #fefce8;
-            border-left-color: #eab308;
-        }
+        .tablo-scroll { max-height: 300px; overflow-y: auto; }
+        .tablo-scroll table { width: 100%; border-collapse: collapse; }
+        .tablo-scroll th { position: sticky; top: 0; background: #f1f5f9; z-index: 2; }
+        .info-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 0.75rem 1rem; border-radius: 0.5rem; }
+        .info-box.warning { background: #fefce8; border-left-color: #eab308; }
     </style>
 </head>
 <body class="bg-slate-50 p-4 md:p-8 font-sans antialiased">
 
     <div class="max-w-5xl mx-auto">
 
-        <!-- BAŞLIK -->
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">
                 💰 Kredi & Finansman Hesaplayıcı
             </h1>
             <p class="text-slate-500 text-sm md:text-base mt-1">
-                Banka (faizli) ve Tasarruf Şirketi (Eminevim tarzı) karşılaştırmalı hesaplama aracı
+                Banka (faizli) ve Tasarruf Finansman Şirketi karşılaştırmalı hesaplama aracı
             </p>
         </div>
 
-        <!-- ANA KART -->
         <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
 
-            <!-- FORM -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <!-- Sol kolon -->
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">Kredi Türü</label>
@@ -78,7 +50,7 @@
                         <label class="block text-sm font-semibold text-slate-700">Finansman Türü</label>
                         <select id="finansmanTuru" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition">
                             <option value="banka">🏦 Banka (Faizli)</option>
-                            <option value="sirket">📦 Tasarruf Şirketi (Eminevim tarzı)</option>
+                            <option value="sirket">📦 Tasarruf Finansman Şirketi</option>
                         </select>
                     </div>
 
@@ -93,7 +65,6 @@
                     </div>
                 </div>
 
-                <!-- Sağ kolon -->
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700">
@@ -120,10 +91,8 @@
                 </div>
             </div>
 
-            <!-- SONUÇLAR ALANI (başlangıçta gizli) -->
             <div id="sonucAlani" class="mt-8 hidden fade-in">
 
-                <!-- Özet kartları -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="bg-blue-50 p-4 rounded-xl text-center">
                         <p class="text-xs text-blue-600 font-semibold uppercase">Aylık Taksit</p>
@@ -143,7 +112,6 @@
                     </div>
                 </div>
 
-                <!-- Detay tablosu -->
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
                     <div class="bg-slate-100 px-4 py-2 font-semibold text-slate-700 flex justify-between items-center">
                         <span>📋 Amortisman Tablosu (Aylık)</span>
@@ -165,13 +133,12 @@
                     </div>
                 </div>
 
-                <!-- Bilgi notları -->
                 <div class="mt-6 space-y-3 text-sm">
                     <div class="info-box">
                         <span class="font-bold">📌 Banka kredilerinde</span> aylık faiz oranı üzerinden eşit taksitli (anüite) hesaplama yapılır. Konut kredilerinde ilk ev indirimi varsa faiz oranı düşer.
                     </div>
                     <div class="info-box warning">
-                        <span class="font-bold">📌 Tasarruf şirketlerinde</span> organizasyon ücreti toplam maliyete eklenir ve vadeye eşit olarak dağıtılır. Bu sistem faizsizdir, ancak kar payı işler.
+                        <span class="font-bold">📌 Tasarruf Finansman Şirketlerinde</span> organizasyon ücreti toplam maliyete eklenir ve vadeye eşit olarak dağıtılır. Bu sistem faizsizdir, ancak kar payı işler.
                     </div>
                     <div class="info-box">
                         <span class="font-bold">⚠️ Uyarı:</span> Bu hesaplama bilgilendirme amaçlıdır. Bankalar ve şirketler farklı oranlar, masraflar (sigorta, dosya masrafı vb.) uygulayabilir. Kesin sonuçlar için ilgili kurumla görüşünüz.
@@ -179,9 +146,8 @@
                 </div>
             </div>
 
-        </div><!-- /Ana kart -->
+        </div>
 
-        <!-- Alt bilgi -->
         <p class="text-center text-xs text-slate-400 mt-6">
             Profesyonel Kredi Hesaplayıcı · Mobil / Masaüstü Uyumlu · © 2025
         </p>
@@ -206,41 +172,33 @@
             const tabloGovde = document.getElementById('tabloGovde');
             const tabloBilgi = document.getElementById('tabloBilgi');
 
-            // Hesaplama
             function hesapla() {
-                // 1. Girdiler
                 let tutar = parseFloat(tutarInput.value);
                 let vade = parseInt(vadeInput.value);
-                let faiz = parseFloat(faizInput.value) / 100;           // aylık faiz (banka)
-                let karPayi = parseFloat(karPayiInput.value) / 100;     // organizasyon oranı (şirket)
+                let faiz = parseFloat(faizInput.value) / 100;
+                let karPayi = parseFloat(karPayiInput.value) / 100;
                 const finansman = finansmanTuru.value;
                 const krediTip = krediTuru.value;
                 const ilkEv = ilkEvCheck.checked;
 
-                // Geçerlilik kontrolü
                 if (isNaN(tutar) || tutar <= 0) { alert('Geçerli bir tutar giriniz.'); return; }
                 if (isNaN(vade) || vade < 1) { alert('Vade en az 1 ay olmalı.'); return; }
                 if (finansman === 'banka' && (isNaN(faiz) || faiz < 0)) { alert('Geçerli faiz oranı giriniz.'); return; }
                 if (finansman === 'sirket' && (isNaN(karPayi) || karPayi < 0)) { alert('Geçerli organizasyon oranı giriniz.'); return; }
 
-                // İlk ev indirimi (sadece konut ve banka için)
                 let indirim = 0;
                 if (finansman === 'banka' && krediTip === 'konut' && ilkEv) {
-                    indirim = 0.20; // %20 indirim (örnek)
+                    indirim = 0.20;
                 }
 
-                // Efektif oran (sadece banka için)
                 let efektifYillik = 0;
-
-                // Sonuç değişkenleri
                 let aylik = 0;
                 let toplamOdeme = 0;
                 let toplamMaliyet = 0;
                 let tabloVerileri = [];
 
                 if (finansman === 'banka') {
-                    // Banka: Anüite formülü
-                    const r = faiz * (1 - indirim); // indirim uygulanmış faiz
+                    const r = faiz * (1 - indirim);
                     if (r === 0) {
                         aylik = tutar / vade;
                     } else {
@@ -248,89 +206,55 @@
                     }
                     toplamOdeme = aylik * vade;
                     toplamMaliyet = toplamOdeme - tutar;
-
-                    // Efektif yıllık (basit yaklaşım)
                     if (vade > 0 && tutar > 0) {
                         efektifYillik = ((toplamOdeme / tutar) - 1) / (vade / 12) * 100;
                     }
 
-                    // Tablo oluştur
                     let kalan = tutar;
                     for (let i = 1; i <= vade; i++) {
                         const faizKismi = kalan * r;
                         const anaKismi = aylik - faizKismi;
                         if (anaKismi > kalan) {
-                            // Son ay düzeltmesi
                             const son = kalan + faizKismi;
-                            tabloVerileri.push({
-                                ay: i,
-                                taksit: son,
-                                ana: kalan,
-                                faiz: faizKismi,
-                                kalan: 0
-                            });
+                            tabloVerileri.push({ ay: i, taksit: son, ana: kalan, faiz: faizKismi, kalan: 0 });
                             kalan = 0;
                             break;
                         }
                         kalan = kalan - anaKismi;
-                        tabloVerileri.push({
-                            ay: i,
-                            taksit: aylik,
-                            ana: anaKismi,
-                            faiz: faizKismi,
-                            kalan: kalan
-                        });
+                        tabloVerileri.push({ ay: i, taksit: aylik, ana: anaKismi, faiz: faizKismi, kalan: kalan });
                         if (kalan < 0.01) break;
                     }
 
                 } else {
-                    // Tasarruf Şirketi: (tutar + tutar*karPayi) / vade
+                    // Tasarruf Finansman Şirketi
                     const toplamTutar = tutar * (1 + karPayi);
                     aylik = toplamTutar / vade;
                     toplamOdeme = toplamTutar;
                     toplamMaliyet = toplamOdeme - tutar;
-
-                    // Efektif (basit yıllık)
                     if (vade > 0 && tutar > 0) {
                         efektifYillik = ((toplamOdeme / tutar) - 1) / (vade / 12) * 100;
                     }
 
-                    // Tablo (şirket: her ay eşit taksit, anapara + kar payı eşit dağılır)
                     const anaPayi = tutar / vade;
                     const karPayiAy = (tutar * karPayi) / vade;
                     let kalan = tutar;
                     for (let i = 1; i <= vade; i++) {
                         if (i === vade) {
-                            // son ay
-                            tabloVerileri.push({
-                                ay: i,
-                                taksit: aylik,
-                                ana: kalan,
-                                faiz: karPayiAy,
-                                kalan: 0
-                            });
+                            tabloVerileri.push({ ay: i, taksit: aylik, ana: kalan, faiz: karPayiAy, kalan: 0 });
                         } else {
-                            tabloVerileri.push({
-                                ay: i,
-                                taksit: aylik,
-                                ana: anaPayi,
-                                faiz: karPayiAy,
-                                kalan: kalan - anaPayi
-                            });
+                            tabloVerileri.push({ ay: i, taksit: aylik, ana: anaPayi, faiz: karPayiAy, kalan: kalan - anaPayi });
                             kalan = kalan - anaPayi;
                         }
                     }
                 }
 
-                // Ekrana yaz
                 aylikTaksit.innerText = '₺' + aylik.toFixed(2);
                 toplamGeri.innerText = '₺' + toplamOdeme.toFixed(2);
                 toplamFaiz.innerText = '₺' + toplamMaliyet.toFixed(2);
                 efektifOran.innerText = '%' + efektifYillik.toFixed(2);
 
-                // Tabloyu doldur
                 tabloGovde.innerHTML = '';
-                let satirSayisi = Math.min(tabloVerileri.length, 120); // 120 ay gösterelim, çok uzun olmasın
+                let satirSayisi = Math.min(tabloVerileri.length, 120);
                 const gosterilecek = tabloVerileri.slice(0, satirSayisi);
                 gosterilecek.forEach(item => {
                     const tr = document.createElement('tr');
@@ -350,26 +274,17 @@
                     tabloBilgi.innerText = `(toplam ${tabloVerileri.length} ay)`;
                 }
 
-                // Sonuç alanını göster
                 sonucAlani.classList.remove('hidden');
                 sonucAlani.classList.add('fade-in');
             }
 
-            // Hesapla butonuna tıkla
             hesaplaBtn.addEventListener('click', hesapla);
-
-            // Enter tuşu ile hesaplama
             document.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') hesapla();
                 });
             });
-
-            // Sayfa yüklendiğinde otomatik hesaplama (ilk değerlerle)
-            window.addEventListener('DOMContentLoaded', () => {
-                hesapla();
-            });
-
+            window.addEventListener('DOMContentLoaded', hesapla);
         })();
     </script>
 
