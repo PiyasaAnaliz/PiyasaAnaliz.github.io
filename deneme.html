@@ -1,75 +1,33 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MutinousTube Finans & Emtia Merkezi</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0c; color: #e2e8f0; padding: 15px; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .main { background: #121214; padding: 25px; border-radius: 12px; border: 1px solid #222227; }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        th, td { padding: 12px 16px; border-bottom: 1px solid #333; text-align: left; }
-        .up { color: #10b981; font-weight: bold; }
-        .down { color: #ef4444; font-weight: bold; }
-        button { padding: 12px 24px; background: #ff4500; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 10px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="main">
-            <h2>MutinousTube Finans & Emtia Merkezi</h2>
-            <button onclick="updateAll()">🔄 Fiyatları Güncelle</button>
+import requests
+import time
 
-            <h3>Döviz & Altın</h3>
-            <table id="forexTable"></table>
+# Buraya kendi API anahtarınızı yapıştırın
+API_KEY = "YOUR_API_KEY"
 
-            <h3>Kripto</h3>
-            <table id="cryptoTable"></table>
-        </div>
-    </div>
+def get_gold_prices():
+    url = "https://api.collectapi.com/economy/goldPrice"
+    headers = {
+        'content-type': 'application/json',
+        'authorization': f'apikey {API_KEY}'
+    }
+    
+    try:
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        
+        if data['success']:
+            print("-" * 30)
+            for item in data['result']:
+                # Gram Altın, Çeyrek Altın vb. verileri yazdırıyoruz
+                print(f"{item['name']}: {item['buying']} TL - {item['selling']} TL")
+        else:
+            print("Veri çekilemedi.")
+            
+    except Exception as e:
+        print(f"Bir hata oluştu: {e}")
 
-    <script>
-        const data = {
-            usd: 47.35,
-            eur: 54.10,
-            gram: 6245,
-            ons: 2652,
-            btc: 65280,
-            eth: 3465,
-            sol: 185.4,
-            xrp: 0.93
-        };
-
-        function updateAll() {
-            // Rastgele dalgalanma
-            data.usd += (Math.random() - 0.5) * 0.4;
-            data.eur += (Math.random() - 0.5) * 0.3;
-            data.gram += (Math.random() - 0.5) * 28;
-            data.btc += (Math.random() - 0.5) * 680;
-            data.eth += (Math.random() - 0.5) * 75;
-
-            // Döviz Tablosu
-            document.getElementById('forexTable').innerHTML = `
-                <tr><th>USD</th><td>${data.usd.toFixed(4)} TL</td><td class="up">+%0.22</td></tr>
-                <tr><th>EUR</th><td>${data.eur.toFixed(4)} TL</td><td class="down">-0.15%</td></tr>
-                <tr><th>Gram Altın</th><td>${data.gram.toFixed(0)} TL</td><td class="up">+%0.38</td></tr>
-                <tr><th>Ons Altın</th><td>\[ {data.ons}</td><td class="up">+%0.55</td></tr>
-            `;
-
-            // Kripto Tablosu
-            document.getElementById('cryptoTable').innerHTML = `
-                <tr><th>Bitcoin (BTC)</th><td> \]{data.btc.toLocaleString()}</td><td class="up">+%1.65</td></tr>
-                <tr><th>Ethereum (ETH)</th><td>\[ {data.eth}</td><td class="down">-0.45%</td></tr>
-                <tr><th>Solana (SOL)</th><td> \]{data.sol}</td><td class="up">+%2.1</td></tr>
-                <tr><th>XRP</th><td>$${data.xrp}</td><td class="down">-0.8%</td></tr>
-            `;
-        }
-
-        // Otomatik güncelleme
-        setInterval(updateAll, 3500);
-        window.onload = updateAll;
-    </script>
-</body>
-</html>
+# Döngü ile anlık çalıştırma
+while True:
+    get_gold_prices()
+    # 10 saniyede bir güncelle
+    time.sleep(10)
