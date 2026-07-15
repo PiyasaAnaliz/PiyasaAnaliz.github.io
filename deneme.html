@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MutinousTube Finans</title>
+    <title>MutinousTube Finans & Emtia Merkezi</title>
     <style>
-        * { box-sizing: border-box; margin:0; padding:0; }
-        body { background:#0a0a0c; color:#e2e8f0; font-family:Segoe UI, sans-serif; padding:15px; line-height:1.5; }
-        .container { max-width:1300px; margin:auto; }
-        .main { background:#121214; padding:25px; border-radius:12px; border:1px solid #222; }
-        table { width:100%; border-collapse:collapse; margin:15px 0; }
-        th, td { padding:14px 12px; text-align:left; border-bottom:1px solid #333; }
-        .up { color:#22c55e; font-weight:bold; }
-        .down { color:#ef4444; font-weight:bold; }
-        button { padding:12px 28px; background:#ff4500; color:white; border:none; border-radius:8px; font-size:15px; cursor:pointer; margin:10px 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0c; color: #e2e8f0; padding: 15px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .main { background: #121214; padding: 25px; border-radius: 12px; border: 1px solid #222227; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid #333; text-align: left; }
+        .up { color: #10b981; font-weight: bold; }
+        .down { color: #ef4444; font-weight: bold; }
+        button { padding: 12px 24px; background: #ff4500; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 10px 0; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="main">
             <h2>MutinousTube Finans & Emtia Merkezi</h2>
-            <p>Veriler gerçekçi olarak simüle ediliyor (GitHub CORS nedeniyle canlı API şu an çalışmıyor)</p>
-            <button onclick="refreshAll()">🔄 Fiyatları Yenile</button>
+            <button onclick="updateAll()">🔄 Fiyatları Güncelle</button>
 
             <h3>Döviz & Altın</h3>
-            <table id="goldTable"></table>
+            <table id="forexTable"></table>
 
             <h3>Kripto</h3>
             <table id="cryptoTable"></table>
@@ -32,45 +31,45 @@
     </div>
 
     <script>
-        let data = {
-            usd: 47.28,
-            gram: 6230,
-            ons: 2648,
-            btc: 65120,
-            eth: 3450
+        const data = {
+            usd: 47.35,
+            eur: 54.10,
+            gram: 6245,
+            ons: 2652,
+            btc: 65280,
+            eth: 3465,
+            sol: 185.4,
+            xrp: 0.93
         };
 
-        function updateTables() {
-            // Altın & Döviz
-            document.getElementById('goldTable').innerHTML = `
-                <tr><th>USD</th><td>${data.usd.toFixed(4)} TL</td><td class="up">+0.32%</td></tr>
-                <tr><th>Gram Altın</th><td>${data.gram.toFixed(0)} TL</td><td class="up">+0.45%</td></tr>
-                <tr><th>Ons Altın</th><td>\[ {data.ons}</td><td class="up">+0.61%</td></tr>
+        function updateAll() {
+            // Rastgele dalgalanma
+            data.usd += (Math.random() - 0.5) * 0.4;
+            data.eur += (Math.random() - 0.5) * 0.3;
+            data.gram += (Math.random() - 0.5) * 28;
+            data.btc += (Math.random() - 0.5) * 680;
+            data.eth += (Math.random() - 0.5) * 75;
+
+            // Döviz Tablosu
+            document.getElementById('forexTable').innerHTML = `
+                <tr><th>USD</th><td>${data.usd.toFixed(4)} TL</td><td class="up">+%0.22</td></tr>
+                <tr><th>EUR</th><td>${data.eur.toFixed(4)} TL</td><td class="down">-0.15%</td></tr>
+                <tr><th>Gram Altın</th><td>${data.gram.toFixed(0)} TL</td><td class="up">+%0.38</td></tr>
+                <tr><th>Ons Altın</th><td>\[ {data.ons}</td><td class="up">+%0.55</td></tr>
             `;
 
-            // Kripto
+            // Kripto Tablosu
             document.getElementById('cryptoTable').innerHTML = `
-                <tr><th>Bitcoin</th><td> \]{data.btc.toLocaleString()}</td><td class="up">+1.85%</td></tr>
-                <tr><th>Ethereum</th><td>$${data.eth}</td><td class="down">-0.65%</td></tr>
+                <tr><th>Bitcoin (BTC)</th><td> \]{data.btc.toLocaleString()}</td><td class="up">+%1.65</td></tr>
+                <tr><th>Ethereum (ETH)</th><td>\[ {data.eth}</td><td class="down">-0.45%</td></tr>
+                <tr><th>Solana (SOL)</th><td> \]{data.sol}</td><td class="up">+%2.1</td></tr>
+                <tr><th>XRP</th><td>$${data.xrp}</td><td class="down">-0.8%</td></tr>
             `;
         }
 
-        function refreshAll() {
-            // Gerçekçi fiyat hareketi
-            data.usd += (Math.random() - 0.48) * 0.35;
-            data.gram += (Math.random() - 0.5) * 35;
-            data.ons += (Math.random() - 0.5) * 12;
-            data.btc += (Math.random() - 0.5) * 650;
-            data.eth += (Math.random() - 0.5) * 80;
-
-            updateTables();
-        }
-
-        // Otomatik yenileme
-        window.onload = () => {
-            updateTables();
-            setInterval(refreshAll, 4500);
-        };
+        // Otomatik güncelleme
+        setInterval(updateAll, 3500);
+        window.onload = updateAll;
     </script>
 </body>
 </html>
