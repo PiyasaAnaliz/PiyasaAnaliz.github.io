@@ -206,127 +206,7 @@
 </body>
 </html>
 
-"""TCMB (    def                 "10y": timedelta(days=3650),
-            }
-
-            if period.lower() in period_map:
-                start_date = end_date - period_map[period.lower()]
-                df = df[df.index >= start_date]
-            # "max" or unknown period returns all data
-
-        return df
-
-    def __repr__(self) -> str:
-        """String representation."""
-        rate = self.policy_rate
-        if rate is not None:
-            return f"TCMB(policy_rate={rate}%)"
-        return "TCMB()"
-
-
-def policy_rate() -> float | None:
-    """Get current TCMB policy rate (1-week repo).
-
-    This is a shortcut function for quick access to the
-    main policy interest rate.
-
-    Returns:
-        Policy rate as percentage (e.g., 38.0 for 38%).
-
-    Example:
-        >>> import borsapy as bp
-        >>> bp.policy_rate()
-        38.0
-    """
-
-
-
 """
-borsapy - Turkish Financial Markets Data Library
-
-A yfinance-like API for BIST stocks, forex, crypto, funds, and economic data.
-
-Examples:
-    >>> import borsapy as bp
-
-    # Get stock data
-    >>> stock = bp.Ticker("THYAO")
-    >>> stock.info  # Real-time quote
-    >>> stock.history(period="1mo")  # OHLCV data
-    >>> stock.balance_sheet  # Financial statements
-
-    # Get forex/commodity data
-    >>> usd = bp.FX("USD")
-    >>> usd.current  # Current rate
-    >>> usd.history(period="1mo")  # Historical data
-    >>> usd.bank_rates  # Bank exchange rates
-    >>> usd.bank_rate("akbank")  # Single bank rate
-    >>> bp.banks()  # List supported banks
-    >>> gold = bp.FX("gram-altin")
-
-    # List all BIST companies
-    >>> bp.companies()
-    >>> bp.search_companies("banka")
-
-    # Get crypto data
-    >>> btc = bp.Crypto("BTCTRY")
-    >>> btc.current  # Current price
-    >>> btc.history(period="1mo")  # Historical OHLCV
-    >>> bp.crypto_pairs()  # List available pairs
-
-    # Get fund data
-    >>> fund = bp.Fund("AAK")
-    >>> fund.info  # Fund details
-    >>> fund.history(period="1mo")  # Price history
-
-    # Get inflation data
-    >>> inf = bp.Inflation()
-    >>> inf.latest()  # Latest TÜFE data
-    >>> inf.calculate(100000, "2020-01", "2024-01")  # Inflation calculation
-
-    # Economic calendar
-    >>> cal = bp.EconomicCalendar()
-    >>> cal.events(period="1w")  # This week's events
-    >>> cal.today()  # Today's events
-    >>> bp.economic_calendar(country="TR", importance="high")
-
-    # Government bonds
-    >>> bp.bonds()  # All bond yields
-    >>> bond = bp.Bond("10Y")
-    >>> bond.yield_rate  # Current 10Y yield
-    >>> bp.risk_free_rate()  # For DCF calculations
-
-    # Stock screener
-    >>> bp.screen_stocks(template="high_dividend")
-    >>> bp.screen_stocks(market_cap_min=1000, pe_max=15)
-    >>> screener = bp.Screener()
-    >>> screener.add_filter("dividend_yield", min=3).run()
-
-    # Real-time streaming (low-latency)
-    >>> stream = bp.TradingViewStream()
-    >>> stream.connect()
-    >>> stream.subscribe("THYAO")
-    >>> quote = stream.get_quote("THYAO")  # Instant (~1ms)
-    >>> quote['last']  # Last price
-    >>> stream.disconnect()
-
-    # Context manager
-    >>> with bp.TradingViewStream() as stream:
-    ...     stream.subscribe("THYAO")
-    ...     quote = stream.wait_for_quote("THYAO")
-    ...     print(quote['last'])
-
-    # Symbol search
-    >>> bp.search("banka")  # Search all markets
-    >>> bp.search_bist("enerji")  # BIST only
-    >>> bp.search_crypto("BTC")  # Crypto only
-    >>> bp.search("THYAO", full_info=True)  # Detailed results
-
-    # Heikin Ashi charts
-    >>> df = stock.history(period="1y")
-    >>> ha_df = bp.calculate_heikin_ashi(df)  # Returns HA_Open, HA_High, HA_Low, HA_Close
-    >>> ha_df = stock.heikin_ashi(period="1y")  # Convenience method
-
     # Chart streaming (OHLCV candles via WebSocket)
     >>> stream = bp.TradingViewStream()
     >>> stream.connect()
@@ -420,162 +300,279 @@ from borsapy.search import (
     viop_contracts,
 )
 
-# TradingView streaming for real-time updates
-from borsapy.stream import TradingViewStream, create_stream
-from borsapy.tax import withholding_tax_rate, withholding_tax_table
-from borsapy.tcmb import TCMB, policy_rate
-from borsapy.technical import (
-    TechnicalAnalyzer,
-    add_indicators,
-    calculate_adx,
-    calculate_atr,
-    calculate_bollinger_bands,
-    calculate_dema,
-    calculate_ema,
-    calculate_hhv,
-    calculate_llv,
-    calculate_macd,
-    calculate_mom,
-    calculate_obv,
-    calculate_roc,
-    calculate_rsi,
-    calculate_sma,
-    calculate_stochastic,
-    calculate_supertrend,
-    calculate_tema,
-    calculate_tilson_t3,
-    calculate_vwap,
-    calculate_wma,
-)
-from borsapy.ticker import Ticker
-from borsapy.twitter import search_tweets
-from borsapy.viop import VIOP
 
-__version__ = "0.10.2"
-__author__ = "Said Surucu"
 
-__all__ = [
-    # Main classes
-    "Ticker",
-    "Tickers",
-    "FX",
-    "Crypto",
-    "Fund",
-    "Portfolio",
-    "Index",
-    "Inflation",
-    "VIOP",
-    "Bond",
-    "Eurobond",
-    "TCMB",
-    "EVDS",
-    "EVDSSeries",
-    "EconomicCalendar",
-    "Screener",
-    "TradingViewStream",
-    "ReplaySession",
-    # Market functions
-    "companies",
-    "search_companies",
-    "search",
-    "search_bist",
-    "search_crypto",
-    "search_forex",
-    "search_index",
-    "search_viop",
-    "viop_contracts",
-    "banks",
-    "metal_institutions",
-    "crypto_pairs",
-    "search_funds",
-    "screen_funds",
-    "compare_funds",
-    "management_fees",
-    "download",
-    "index",
-    "indices",
-    "all_indices",
-    # Bond functions
-    "bonds",
-    "risk_free_rate",
-    # Eurobond functions
-    "eurobonds",
-    # TCMB functions
-    "policy_rate",
-    # EVDS (TCMB Elektronik Veri Dağıtım Sistemi)
-    "evds_categories",
-    "evds_search",
-    "evds_series",
-    "evds_download",
-    "set_evds_key",
-    "clear_evds_key",
-    "get_evds_key",
-    # Calendar functions
-    "economic_calendar",
-    # Screener functions
-    "screen_stocks",
-    "screener_criteria",
-    "sectors",
-    "stock_indices",
-    # Technical Scanner
-    "TechnicalScanner",
-    "ScanResult",
-    "scan",
-    # Technical analysis
-    "TechnicalAnalyzer",
-    "add_indicators",
-    "calculate_sma",
-    "calculate_ema",
-    "calculate_rsi",
-    "calculate_macd",
-    "calculate_bollinger_bands",
-    "calculate_atr",
-    "calculate_stochastic",
-    "calculate_obv",
-    "calculate_vwap",
-    "calculate_adx",
-    "calculate_supertrend",
-    "calculate_tilson_t3",
-    # MetaStock indicators
-    "calculate_hhv",
-    "calculate_llv",
-    "calculate_mom",
-    "calculate_roc",
-    "calculate_wma",
-    "calculate_dema",
-    "calculate_tema",
-    # Charts
-    "calculate_heikin_ashi",
-    # Replay
-    "ReplaySession",
-    "create_replay",
-    # Exceptions
-    "BorsapyError",
-    "TickerNotFoundError",
-    "DataNotAvailableError",
-    "APIError",
-    "AuthenticationError",
-    "RateLimitError",
-    "InvalidPeriodError",
-    "InvalidIntervalError",
-    # TradingView authentication (premium)
-    "set_tradingview_auth",
-    "get_tradingview_auth",
-    "clear_tradingview_auth",
-    # TradingView streaming (real-time)
-    "TradingViewStream",
-    "create_stream",
-    # Backtest engine
-    "Backtest",
-    "BacktestResult",
-    "Trade",
-    "backtest",
-    # Tax
-    "withholding_tax_rate",
-    "withholding_tax_table",
-    # Twitter/X (optional, requires borsapy[twitter])
-    "set_twitter_auth",
-    "get_twitter_auth",
-    "clear_twitter_auth",
-    "search_tweets",
-]
+        <!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piyasa Analiz AI Bot</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { 
+            background: #0b0e1a; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            height: 90vh;
+            background: #141a2b;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            border: 1px solid #2a3450;
+        }
+        h1 {
+            color: #00d4ff;
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #2a3450;
+            padding-bottom: 15px;
+        }
+        #apiKeySection {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        #apiKeyInput {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #2a3450;
+            background: #0b0e1a;
+            color: #fff;
+            outline: none;
+        }
+        #apiKeyInput::placeholder { color: #5a6a8a; }
+        #saveKeyBtn {
+            padding: 10px 20px;
+            background: #00d4ff;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #0b0e1a;
+            cursor: pointer;
+        }
+        #chatBox {
+            flex: 1;
+            overflow-y: auto;
+            background: #0b0e1a;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid #1f2838;
+        }
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+        .user-msg {
+            align-self: flex-end;
+            background: #00d4ff;
+            color: #0b0e1a;
+            border-bottom-right-radius: 5px;
+        }
+        .bot-msg {
+            align-self: flex-start;
+            background: #1f2838;
+            color: #e0e8f0;
+            border-bottom-left-radius: 5px;
+        }
+        .typing {
+            align-self: flex-start;
+            color: #5a6a8a;
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+        #inputArea {
+            display: flex;
+            gap: 10px;
+        }
+        #userInput {
+            flex: 1;
+            padding: 14px;
+            border-radius: 30px;
+            border: 1px solid #2a3450;
+            background: #0b0e1a;
+            color: #fff;
+            outline: none;
+        }
+        #sendBtn {
+            padding: 14px 25px;
+            background: #00d4ff;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            color: #0b0e1a;
+            cursor: pointer;
+        }
+        #sendBtn:disabled, #saveKeyBtn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .footer-note {
+            color: #5a6a8a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🤖 Piyasa Analiz AI</h1>
+    
+    <!-- API Anahtar Girişi -->
+    <div id="apiKeySection">
+        <input type="password" id="apiKeyInput" placeholder="OpenAI API Anahtarınızı girin (sk-...)" />
+        <button id="saveKeyBtn">Kaydet</button>
+    </div>
+
+    <!-- Sohbet Ekranı -->
+    <div id="chatBox"></div>
+
+    <!-- Mesaj Gönderme Alanı -->
+    <div id="inputArea">
+        <input type="text" id="userInput" placeholder="Mesajınızı yazın..." disabled />
+        <button id="sendBtn" disabled>Gönder</button>
+    </div>
+    <div class="footer-note">Not: API anahtarınız tarayıcıda saklanır, güvendedir.</div>
+</div>
+
+<script>
+    // DOM Elemanları
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const saveKeyBtn = document.getElementById('saveKeyBtn');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatBox = document.getElementById('chatBox');
+
+    let apiKey = localStorage.getItem('openai_key') || '';
+
+    // Sayfa yüklenince kayıtlı anahtar varsa doldur
+    if (apiKey) {
+        apiKeyInput.value = apiKey;
+        enableChat(true);
+    }
+
+    // API Anahtarını Kaydet
+    saveKeyBtn.addEventListener('click', () => {
+        const key = apiKeyInput.value.trim();
+        if (key.startsWith('sk-') || key.length > 20) { // Basit doğrulama
+            localStorage.setItem('openai_key', key);
+            apiKey = key;
+            enableChat(true);
+            alert('API Anahtarı başarıyla kaydedildi!');
+        } else {
+            alert('Lütfen geçerli bir OpenAI API anahtarı girin (sk- ile başlar).');
+        }
+    });
+
+    function enableChat(status) {
+        userInput.disabled = !status;
+        sendBtn.disabled = !status;
+        if (status) userInput.focus();
+    }
+
+    // Mesaj Gönderme
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+        if (!apiKey) {
+            alert('Lütfen önce API anahtarınızı kaydedin.');
+            return;
+        }
+
+        // Kullanıcı mesajını ekrana ekle
+        appendMessage(text, 'user');
+        userInput.value = '';
+        setLoadingState(true);
+
+        try {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        { role: 'system', content: 'Sen finans ve piyasa analizi konusunda uzman bir asistansın. Türkçe cevap ver.' },
+                        { role: 'user', content: text }
+                    ],
+                    temperature: 0.7
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error.message || 'API Hatası');
+            }
+
+            const botReply = data.choices[0].message.content;
+            appendMessage(botReply, 'bot');
+
+        } catch (error) {
+            appendMessage(`❌ Hata: ${error.message}`, 'bot');
+        } finally {
+            setLoadingState(false);
+        }
+    }
+
+    function appendMessage(text, sender) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', sender === 'user' ? 'user-msg' : 'bot-msg');
+        msgDiv.textContent = text;
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function setLoadingState(loading) {
+        sendBtn.disabled = loading;
+        userInput.disabled = loading;
+        if (loading) {
+            const typing = document.createElement('div');
+            typing.classList.add('typing');
+            typing.id = 'typingIndicator';
+            typing.textContent = '🤖 Yazıyor...';
+            chatBox.appendChild(typing);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        } else {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+            sendBtn.disabled = false;
+            userInput.disabled = false;
+            userInput.focus();
+        }
+    }
+
+    // İlk yüklemede chat'e hoş geldin mesajı ekle
+    if (!chatBox.hasChildNodes()) {
+        appendMessage('Merhaba! Piyasa analizleri için bana soru sorabilirsin. Önce yukarıdan API anahtarını kaydetmeyi unutma.', 'bot');
+    }
+</script>
+</body>
+</html>
+#     "
