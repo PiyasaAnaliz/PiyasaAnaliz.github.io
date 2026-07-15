@@ -1,27 +1,35 @@
 import requests
-from bs4 import BeautifulSoup
 import time
+import os
 
-def get_live_gold():
-    url = "https://www.doviz.com/altin"
+# Türkiye piyasası verisi sağlayan ücretsiz uç nokta
+URL = "https://api.doviz.com/api/v1/currencies/gram-altin/latest"
+
+def fetch_gold_price():
     try:
-        # Siteyi ziyaret et
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Verilerin bulunduğu kartları bul
-        items = soup.find_all("div", class_="market-data")
-        
-        print(f"\n--- Anlık Altın Fiyatları ({time.strftime('%H:%M:%S')}) ---")
-        for item in items:
-            name = item.find("span", class_="name").text.strip()
-            price = item.find("span", class_="value").text.strip()
-            print(f"{name}: {price} TL")
+        response = requests.get(URL, timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            # Veri yapısını alıyoruz
+            buying = data['buying']
+            selling = data['selling']
+            update_date = data['updateDate']
             
+            # Ekranı temizle (daha temiz bir simülasyon görüntüsü için)
+            os.system('cls' if os.name == 'nt' else 'clear')
+            
+            print("=== GERÇEK ZAMANLI ALTIN TAKİP ===")
+            print(f"Gram Altın (Alış): {buying} TL")
+            print(f"Gram Altın (Satış): {selling} TL")
+            print(f"Son Güncelleme: {update_date}")
+            print("==================================")
+        else:
+            print("Veri kaynağına ulaşılamadı.")
     except Exception as e:
-        print("Bağlantı hatası oluştu, tekrar deneniyor...")
+        print(f"Bağlantı hatası: {e}")
 
-# Sonsuz döngü
+# Döngü
+print("Sistem başlatılıyor...")
 while True:
-    get_live_gold()
-    time.sleep(10) # 10 saniyede bir güncelle
+    fetch_gold_price()
+    time.sleep(5) # 5 saniyede bir güncelle
