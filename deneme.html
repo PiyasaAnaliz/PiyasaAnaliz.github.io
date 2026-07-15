@@ -1,38 +1,27 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Canlı Gram Altın Takip</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f4f4f4; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        .price { font-size: 2em; font-weight: bold; color: #d4af37; }
-    </style>
+    <title>Canlı Altın</title>
 </head>
 <body>
+    <div id="gold-price">Fiyat yükleniyor...</div>
 
-<div class="card">
-    <h1>Gram Altın</h1>
-    <div id="fiyat" class="price">Yükleniyor...</div>
-    <p>Veriler anlık piyasadan çekilmektedir.</p>
-</div>
+    <script>
+        // Yahoo Finance üzerinden XAU/TRY (Gram Altın) verisi
+        const url = 'https://query1.finance.yahoo.com/v8/finance/chart/XAUTRY=X';
 
-<script>
-    // Ücretsiz ve CORS sorunu yaratmayan doğrudan veri kaynağı (RSS/Widget mantığı)
-    async function fetchGold() {
-        try {
-            // Döviz.com'un halka açık widget veri kaynağını kullanıyoruz
-            const response = await fetch('https://api.doviz.com/api/v1/currencies/gram-altin/latest');
-            const data = await response.json();
-            document.getElementById('fiyat').innerText = data.selling + " TL";
-        } catch (error) {
-            document.getElementById('fiyat').innerText = "Veri alınamadı.";
+        async function getPrice() {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const price = data.chart.result[0].meta.regularMarketPrice;
+                document.getElementById('gold-price').innerText = "Gram Altın: " + price.toFixed(2) + " TL";
+            } catch (e) {
+                document.getElementById('gold-price').innerText = "Veri anlık çekilemiyor.";
+            }
         }
-    }
-    
-    fetchGold();
-    setInterval(fetchGold, 10000); // Her 10 saniyede bir güncelle
-</script>
-
+        getPrice();
+        setInterval(getPrice, 5000); // 5 saniyede bir güncelle
+    </script>
 </body>
 </html>
