@@ -3,32 +3,3 @@
     <script src="https://widget.doviz.com/assets/embed.js"></script>
     <div class="doviz-embed" data-currency="gram-altin" data-type="detail"></div>
 </div>
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Canlı Altın</title>
-</head>
-<body>
-    <div id="gold-price">Fiyat yükleniyor...</div>
-
-    <script>
-        // Yahoo Finance üzerinden XAU/TRY (Gram Altın) verisi
-        const url = 'https://query1.finance.yahoo.com/v8/finance/chart/XAUTRY=X';
-
-        async function getPrice() {
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const price = data.chart.result[0].meta.regularMarketPrice;
-                document.getElementById('gold-price').innerText = "Gram Altın: " + price.toFixed(2) + " TL";
-            } catch (e) {
-                document.getElementById('gold-price').innerText = "Veri anlık çekilemiyor.";
-            }
-        }
-        getPrice();
-        setInterval(getPrice, 5000); // 5 saniyede bir güncelle
-    </script>
-</body>
-</html>
