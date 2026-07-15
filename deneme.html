@@ -1,33 +1,27 @@
 import requests
+from bs4 import BeautifulSoup
 import time
 
-# Buraya kendi API anahtarınızı yapıştırın
-API_KEY = "YOUR_API_KEY"
-
-def get_gold_prices():
-    url = "https://api.collectapi.com/economy/goldPrice"
-    headers = {
-        'content-type': 'application/json',
-        'authorization': f'apikey {API_KEY}'
-    }
-    
+def get_live_gold():
+    url = "https://www.doviz.com/altin"
     try:
-        response = requests.get(url, headers=headers)
-        data = response.json()
+        # Siteyi ziyaret et
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
         
-        if data['success']:
-            print("-" * 30)
-            for item in data['result']:
-                # Gram Altın, Çeyrek Altın vb. verileri yazdırıyoruz
-                print(f"{item['name']}: {item['buying']} TL - {item['selling']} TL")
-        else:
-            print("Veri çekilemedi.")
+        # Verilerin bulunduğu kartları bul
+        items = soup.find_all("div", class_="market-data")
+        
+        print(f"\n--- Anlık Altın Fiyatları ({time.strftime('%H:%M:%S')}) ---")
+        for item in items:
+            name = item.find("span", class_="name").text.strip()
+            price = item.find("span", class_="value").text.strip()
+            print(f"{name}: {price} TL")
             
     except Exception as e:
-        print(f"Bir hata oluştu: {e}")
+        print("Bağlantı hatası oluştu, tekrar deneniyor...")
 
-# Döngü ile anlık çalıştırma
+# Sonsuz döngü
 while True:
-    get_gold_prices()
-    # 10 saniyede bir güncelle
-    time.sleep(10)
+    get_live_gold()
+    time.sleep(10) # 10 saniyede bir güncelle
