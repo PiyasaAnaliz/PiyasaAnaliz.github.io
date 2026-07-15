@@ -3,88 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MutinousTube Finans - Canlı Veri</title>
+    <title>MutinousTube Finans</title>
     <style>
         * { box-sizing: border-box; margin:0; padding:0; }
-        body { background:#0a0a0c; color:#e2e8f0; font-family:Segoe UI, sans-serif; padding:20px; }
+        body { background:#0a0a0c; color:#e2e8f0; font-family:Segoe UI, sans-serif; padding:15px; line-height:1.5; }
         .container { max-width:1300px; margin:auto; }
-        .card { background:#121214; padding:25px; border-radius:12px; border:1px solid #222; margin-bottom:20px; }
-        button { padding:12px 20px; margin:5px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
-        .real-btn { background:#10b981; color:white; }
-        table { width:100%; border-collapse:collapse; }
-        th, td { padding:14px; text-align:left; border-bottom:1px solid #333; }
-        .up { color:#10b981; } .down { color:#ef4444; }
+        .main { background:#121214; padding:25px; border-radius:12px; border:1px solid #222; }
+        table { width:100%; border-collapse:collapse; margin:15px 0; }
+        th, td { padding:14px 12px; text-align:left; border-bottom:1px solid #333; }
+        .up { color:#22c55e; font-weight:bold; }
+        .down { color:#ef4444; font-weight:bold; }
+        button { padding:12px 28px; background:#ff4500; color:white; border:none; border-radius:8px; font-size:15px; cursor:pointer; margin:10px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
+        <div class="main">
             <h2>MutinousTube Finans & Emtia Merkezi</h2>
-            <button id="realBtn" class="real-btn" onclick="loadLiveData()">🔄 Canlı Verileri Yükle</button>
-            <p id="status" style="margin-top:10px; font-size:14px;">Simülasyon modu aktif</p>
-        </div>
+            <p>Veriler gerçekçi olarak simüle ediliyor (GitHub CORS nedeniyle canlı API şu an çalışmıyor)</p>
+            <button onclick="refreshAll()">🔄 Fiyatları Yenile</button>
 
-        <div class="card">
             <h3>Döviz & Altın</h3>
-            <table id="forexTable"></table>
-        </div>
+            <table id="goldTable"></table>
 
-        <div class="card">
-            <h3>Kripto Paralar</h3>
+            <h3>Kripto</h3>
             <table id="cryptoTable"></table>
         </div>
     </div>
 
     <script>
-        let rates = { USD: 47.10, GRAM: 6190, BTC: 64780, ETH: 3430 };
-
-        async function loadLiveData() {
-            const status = document.getElementById('realBtn');
-            status.textContent = "Yükleniyor...";
-            
-            try {
-                // 1. Döviz (Ücretsiz ve güvenilir)
-                const forex = await fetch('https://api.exchangerate-api.com/v4/latest/USD').then(r => r.json());
-                rates.USD = forex.rates.TRY || rates.USD;
-
-                // 2. Kripto (CoinGecko - en stabil)
-                const crypto = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,try').then(r => r.json());
-                rates.BTC = crypto.bitcoin?.usd || rates.BTC;
-                rates.ETH = crypto.ethereum?.usd || rates.ETH;
-
-                document.getElementById('status').innerHTML = '✅ <strong>Canlı veri aktif</strong> (CoinGecko + ExchangeRate)';
-                status.textContent = "🔴 Canlı Mod Açık - Yenile";
-            } catch (e) {
-                document.getElementById('status').innerHTML = '⚠️ Canlı veri alınamadı, simülasyon devam ediyor';
-            }
-            updateTables();
-        }
+        let data = {
+            usd: 47.28,
+            gram: 6230,
+            ons: 2648,
+            btc: 65120,
+            eth: 3450
+        };
 
         function updateTables() {
-            // Döviz
-            document.getElementById('forexTable').innerHTML = `
-                <tr><th>USD / TRY</th><td>${rates.USD.toFixed(4)} TL</td></tr>
-                <tr><th>Gram Altın (yaklaşık)</th><td>${rates.GRAM.toFixed(0)} TL</td></tr>
+            // Altın & Döviz
+            document.getElementById('goldTable').innerHTML = `
+                <tr><th>USD</th><td>${data.usd.toFixed(4)} TL</td><td class="up">+0.32%</td></tr>
+                <tr><th>Gram Altın</th><td>${data.gram.toFixed(0)} TL</td><td class="up">+0.45%</td></tr>
+                <tr><th>Ons Altın</th><td>\[ {data.ons}</td><td class="up">+0.61%</td></tr>
             `;
 
             // Kripto
             document.getElementById('cryptoTable').innerHTML = `
-                <tr><th>Bitcoin (BTC)</th><td>\[ {rates.BTC.toLocaleString()} ≈ ${(rates.BTC * rates.USD).toLocaleString('tr-TR')} TL</td></tr>
-                <tr><th>Ethereum (ETH)</th><td> \]{rates.ETH.toLocaleString()} ≈ ${(rates.ETH * rates.USD).toLocaleString('tr-TR')} TL</td></tr>
+                <tr><th>Bitcoin</th><td> \]{data.btc.toLocaleString()}</td><td class="up">+1.85%</td></tr>
+                <tr><th>Ethereum</th><td>$${data.eth}</td><td class="down">-0.65%</td></tr>
             `;
         }
 
-        // Otomatik simülasyon (canlı mod kapalıyken)
-        setInterval(() => {
-            if (document.getElementById('status').textContent.includes('simülasyon')) {
-                rates.USD += (Math.random() - 0.5) * 0.1;
-                rates.GRAM += (Math.random() - 0.5) * 12;
-                updateTables();
-            }
-        }, 4000);
+        function refreshAll() {
+            // Gerçekçi fiyat hareketi
+            data.usd += (Math.random() - 0.48) * 0.35;
+            data.gram += (Math.random() - 0.5) * 35;
+            data.ons += (Math.random() - 0.5) * 12;
+            data.btc += (Math.random() - 0.5) * 650;
+            data.eth += (Math.random() - 0.5) * 80;
 
+            updateTables();
+        }
+
+        // Otomatik yenileme
         window.onload = () => {
             updateTables();
+            setInterval(refreshAll, 4500);
         };
     </script>
 </body>
