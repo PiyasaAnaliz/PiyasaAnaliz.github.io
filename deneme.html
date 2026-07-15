@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Canlı Piyasa</title>
+    <title>Canlı Piyasada</title>
 </head>
 <body style="margin:0; padding:0;">
 
@@ -162,6 +162,46 @@
     }
     getNews();
 </script>
+
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Canlı Piyasa Paneli</title>
+</head>
+<body style="margin:0; padding:0;">
+
+<!-- TÜM VERİLERİ İÇEREN PROFESYONEL PANEL -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js">
+  {
+  "colorTheme": "light",
+  "width": "100%",
+  "height": "800",
+  "showChart": true,
+  "locale": "tr",
+  "tabs": [
+    {
+      "title": "Tüm Altın ve Döviz",
+      "symbols": [
+        { "s": "TVC:GOLD", "d": "Gram Altın" },
+        { "s": "FX:XAUUSD", "d": "Ons Altın" },
+        { "s": "FX_IDC:USDTRY", "d": "Dolar / TL" },
+        { "s": "FX_IDC:EURTRY", "d": "Euro / TL" },
+        { "s": "FX_IDC:XAGTRY", "d": "Gümüş" },
+        { "s": "BIST:XU100", "d": "BIST 100" },
+        { "s": "BITSTAMP:BTCUSD", "d": "Bitcoin" }
+      ]
+    }
+  ]
+}
+  </script>
+</div>
 
 </body>
 </html>
