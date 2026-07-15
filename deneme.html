@@ -5,122 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MutinousTube Finans & Emtia Merkezi</title>
     <style>
-        /* Mevcut stil kodunuzun tamamı buraya kopyalandı (değişiklik yapmadım) */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0c; color: #e2e8f0; padding: 15px; }
         .container { max-width: 1400px; margin: 0 auto; }
-        /* ... Diğer tüm stilleriniz (önceki mesajınızdan) ... */
-        .real-mode { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 13px; }
+        
+        .nav-buttons { display: flex; justify-content: center; gap: 12px; margin: 15px 0 25px; flex-wrap: wrap; }
+        .nav-btn { padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 14px; transition: all 0.3s; border: none; cursor: pointer; }
+        .nav-btn-primary { background: #ff4500; color: #fff; }
+        .mutinous-finance-container { background: #121214; border-radius: 12px; padding: 24px; max-width: 1200px; margin: 30px auto; border: 1px solid #222227; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .finance-tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid #1e1e24; padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn { background: #1e1e24; border: 1px solid #2d2d39; color: #94a3b8; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
+        .tab-btn.active { background: #ff4500; color: #fff; }
+        
+        .finance-table-wrapper { max-height: 480px; overflow-y: auto; border: 1px solid #1e1e24; border-radius: 8px; }
+        .finance-table { width: 100%; border-collapse: collapse; }
+        .finance-table th { background: #1e1e24; padding: 12px 16px; }
+        .finance-table td { padding: 12px 16px; border-bottom: 1px solid #1a1a22; }
+        .txt-up { color: #10b981; }
+        .txt-down { color: #ef4444; }
+        
+        .calculator-box { background: #18181c; padding: 20px; border-radius: 8px; margin-top: 15px; }
+        .real-mode { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Navigasyon (aynı) -->
         <div class="nav-buttons">
-            <!-- ... mevcut nav butonlarınız ... -->
+            <a href="https://mutinoustube.github.io" target="_blank" class="nav-btn nav-btn-primary">Ana Sayfa</a>
         </div>
 
         <div class="mutinous-finance-container">
             <div class="finance-header">
-                <div class="header-title-zone">
-                    <h2>MutinousTube Finans & Emtia Merkezi</h2>
-                    <p class="brand-sub">Küresel Piyasalar • Gerçek Zamanlı Veri</p>
-                </div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <button onclick="toggleRealMode()" id="realBtn" class="real-mode">🔄 Gerçek Veri Modu: Kapalı</button>
-                    <div class="update-badge" id="updateBadge">🟢 Canlı Piyasalar</div>
+                <h2>MutinousTube Finans & Emtia Merkezi</h2>
+                <button onclick="toggleRealMode()" id="realBtn" class="real-mode">🔄 Gerçek Veri Modu: Kapalı</button>
+            </div>
+
+            <div class="finance-tabs">
+                <button class="tab-btn active" onclick="switchTab(0)">Döviz & Altın</button>
+                <button class="tab-btn" onclick="switchTab(1)">Kripto</button>
+            </div>
+
+            <div id="tab0" class="finance-tab-content active">
+                <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                        <thead><tr><th>Enstrüman</th><th>Alış</th><th>Satış</th><th>Değişim</th></tr></thead>
+                        <tbody id="forex-body"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Sekmeler aynı kaldı -->
-            <!-- ... Tab butonları ve içerikler (önceki kodunuzdaki gibi) ... -->
-
-            <!-- Sadece script bölümünü değiştirdik -->
+            <div id="tab1" class="finance-tab-content">
+                <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                        <thead><tr><th>Kripto</th><th>Fiyat (USD)</th><th>Fiyat (TRY)</th></tr></thead>
+                        <tbody id="crypto-body"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         let isRealMode = false;
-        let liveRates = { /* başlangıç simülasyon değerleri */ };
+        let rates = { USD: 47.05, GRAM: 6185, BTC: 64750, ETH: 3425 };
 
-        // ===================== GERÇEK VERİ ÇEKME =====================
         async function fetchRealData() {
             try {
-                // 1. Döviz Kurları
-                const forexRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                const forexData = await forexRes.json();
+                // Döviz
+                const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await res.json();
+                rates.USD = data.rates.TRY || 47.05;
+
+                // Kripto
+                const cryptoRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,try');
+                const crypto = await cryptoRes.json();
+                rates.BTC = crypto.bitcoin?.usd || 64750;
+                rates.ETH = crypto.ethereum?.usd || 3425;
                 
-                const tryRate = forexData.rates.TRY || 47.0;
-                
-                liveRates.USD = tryRate;
-                liveRates.EUR = tryRate * (forexData.rates.EUR || 0.92);
-                liveRates.GBP = tryRate * (forexData.rates.GBP || 0.78);
-
-                // 2. Kripto (CoinGecko)
-                const cryptoRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,ripple,cardano&vs_currencies=usd,try');
-                const cryptoData = await cryptoRes.json();
-
-                liveRates.BTC = cryptoData.bitcoin?.usd || 64750;
-                liveRates.ETH = cryptoData.ethereum?.usd || 3420;
-
-                // 3. Altın (yaklaşık)
-                const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=gold&vs_currencies=usd,try');
-                const goldData = await goldRes.json();
-                liveRates.ONS = goldData.gold?.usd || 2645;
-                liveRates.GRAM = (liveRates.ONS * tryRate) / 31.1035; // Ons to Gram
-
-                console.log("✅ Gerçek veriler yüklendi");
-                return true;
-            } catch (e) {
-                console.log("⚠️ Gerçek veri alınamadı, simülasyon devam ediyor");
-                return false;
+                rates.GRAM = 6185; // Geçici (gerçek altın API'si eklenebilir)
+            } catch(e) {
+                console.log("API hatası, simülasyon devam ediyor");
             }
         }
 
-        function updateLiveMarketData() {
-            if (isRealMode) {
-                // Gerçek modda sadece küçük dalgalanma ekle
-                Object.keys(liveRates).forEach(key => {
-                    liveRates[key] *= (1 + (Math.random() * 0.002 - 0.001));
-                });
-            } else {
-                // Simülasyon (mevcut kodunuz)
-                Object.keys(liveRates).forEach(key => {
-                    liveRates[key] += liveRates[key] * (Math.random() * 0.0008 - 0.0004);
-                });
-            }
+        function updateTables() {
+            // Döviz Tablosu
+            const forexHTML = `
+                <tr><td><strong>USD</strong></td><td>\( {rates.USD.toFixed(4)}</td><td> \){(rates.USD + 0.02).toFixed(4)}</td><td class="txt-up">+%0.15</td></tr>
+                <tr><td><strong>GRAM ALTIN</strong></td><td>\( {rates.GRAM.toFixed(2)}</td><td> \){(rates.GRAM + 1.5).toFixed(2)}</td><td class="txt-up">+%0.25</td></tr>
+            `;
+            document.getElementById('forex-body').innerHTML = forexHTML;
 
-            // Tablo güncellemeleri (mevcut kodunuzdaki gibi)
-            // ... (Önceki updateLiveMarketData fonksiyonunuzdaki DOM güncellemelerini buraya taşıdım)
-            document.getElementById('val-usd-buy').innerText = liveRates.USD.toFixed(4);
-            // ... Diğer tüm elementleri güncelle (gram, btc, xu100 vs.)
-            
-            calculateFinance();
+            // Kripto Tablosu
+            const cryptoHTML = `
+                <tr><td><strong>BTC</strong></td><td>\[ {rates.BTC.toLocaleString()}</td><td>${(rates.BTC * rates.USD).toLocaleString('tr-TR')} TL</td></tr>
+                <tr><td><strong>ETH</strong></td><td> \]{rates.ETH.toLocaleString()}</td><td>${(rates.ETH * rates.USD).toLocaleString('tr-TR')} TL</td></tr>
+            `;
+            document.getElementById('crypto-body').innerHTML = cryptoHTML;
         }
 
-        async function toggleRealMode() {
+        function toggleRealMode() {
             isRealMode = !isRealMode;
             const btn = document.getElementById('realBtn');
             btn.textContent = isRealMode ? "🔴 Gerçek Veri Modu: Açık" : "🔄 Gerçek Veri Modu: Kapalı";
-            btn.style.background = isRealMode ? "#ef4444" : "#10b981";
-            
-            if (isRealMode) await fetchRealData();
-            updateLiveMarketData();
+            if (isRealMode) fetchRealData();
+            updateTables();
         }
 
-        // Sayfa yüklendiğinde
-        window.onload = async function() {
-            // Başlangıç değerleri
-            liveRates = { USD: 47.02, EUR: 53.85, GBP: 63.15, GRAM: 6180, ONS: 2645, BTC: 64750, /* ... */ };
-            
-            updateClock();
-            setInterval(updateClock, 1000);
-            
-            await fetchRealData();           // İlk başta gerçek veri dene
-            updateLiveMarketData();
-            setInterval(updateLiveMarketData, 5000); // 5 saniyede bir
-            
-            calculateInterest();
+        function switchTab(n) {
+            document.querySelectorAll('.finance-tab-content').forEach((el, i) => {
+                el.classList.toggle('active', i === n);
+            });
+            document.querySelectorAll('.tab-btn').forEach((el, i) => {
+                el.classList.toggle('active', i === n);
+            });
+        }
+
+        window.onload = () => {
+            updateTables();
+            setInterval(() => {
+                if (!isRealMode) {
+                    rates.USD += (Math.random() - 0.5) * 0.05;
+                    rates.GRAM += (Math.random() - 0.5) * 5;
+                }
+                updateTables();
+            }, 4000);
         };
     </script>
 </body>
