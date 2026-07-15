@@ -3,83 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MutinousTube Finans</title>
+    <title>MutinousTube Finans - Canlı Veri</title>
     <style>
         * { box-sizing: border-box; margin:0; padding:0; }
-        body { background:#0a0a0c; color:#e2e8f0; font-family:Segoe UI, sans-serif; padding:15px; }
-        .container { max-width:1200px; margin:auto; }
-        .mutinous-finance-container { background:#121214; padding:25px; border-radius:12px; border:1px solid #222; }
-        button { padding:10px 20px; margin:5px; border:none; border-radius:8px; cursor:pointer; }
+        body { background:#0a0a0c; color:#e2e8f0; font-family:Segoe UI, sans-serif; padding:20px; }
+        .container { max-width:1300px; margin:auto; }
+        .card { background:#121214; padding:25px; border-radius:12px; border:1px solid #222; margin-bottom:20px; }
+        button { padding:12px 20px; margin:5px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
         .real-btn { background:#10b981; color:white; }
-        table { width:100%; border-collapse:collapse; margin-top:15px; }
-        th, td { padding:12px; text-align:left; border-bottom:1px solid #333; }
-        .active { background:#ff4500; color:white; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:14px; text-align:left; border-bottom:1px solid #333; }
+        .up { color:#10b981; } .down { color:#ef4444; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="mutinous-finance-container">
+        <div class="card">
             <h2>MutinousTube Finans & Emtia Merkezi</h2>
-            <button id="realBtn" class="real-btn" onclick="toggleMode()">🔄 Gerçek Veri Modu: Kapalı</button>
+            <button id="realBtn" class="real-btn" onclick="loadLiveData()">🔄 Canlı Verileri Yükle</button>
+            <p id="status" style="margin-top:10px; font-size:14px;">Simülasyon modu aktif</p>
+        </div>
 
-            <div style="margin-top:20px;">
-                <button onclick="switchTab(0)" class="active" id="tab0">Döviz & Altın</button>
-                <button onclick="switchTab(1)" id="tab1">Kripto</button>
-            </div>
+        <div class="card">
+            <h3>Döviz & Altın</h3>
+            <table id="forexTable"></table>
+        </div>
 
-            <div id="content0">
-                <table id="forexTable"></table>
-            </div>
-            <div id="content1" style="display:none;">
-                <table id="cryptoTable"></table>
-            </div>
+        <div class="card">
+            <h3>Kripto Paralar</h3>
+            <table id="cryptoTable"></table>
         </div>
     </div>
 
     <script>
-        let realMode = false;
         let rates = { USD: 47.10, GRAM: 6190, BTC: 64780, ETH: 3430 };
 
-        async function loadRealData() {
+        async function loadLiveData() {
+            const status = document.getElementById('realBtn');
+            status.textContent = "Yükleniyor...";
+            
             try {
-                const fx = await fetch('https://api.exchangerate-api.com/v4/latest/USD').then(r=>r.json());
-                rates.USD = fx.rates.TRY || 47.10;
+                // 1. Döviz (Ücretsiz ve güvenilir)
+                const forex = await fetch('https://api.exchangerate-api.com/v4/latest/USD').then(r => r.json());
+                rates.USD = forex.rates.TRY || rates.USD;
 
-                const crypto = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,try').then(r=>r.json());
-                rates.BTC = crypto.bitcoin?.usd || 64780;
-                rates.ETH = crypto.ethereum?.usd || 3430;
-            } catch(e) {}
+                // 2. Kripto (CoinGecko - en stabil)
+                const crypto = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,try').then(r => r.json());
+                rates.BTC = crypto.bitcoin?.usd || rates.BTC;
+                rates.ETH = crypto.ethereum?.usd || rates.ETH;
+
+                document.getElementById('status').innerHTML = '✅ <strong>Canlı veri aktif</strong> (CoinGecko + ExchangeRate)';
+                status.textContent = "🔴 Canlı Mod Açık - Yenile";
+            } catch (e) {
+                document.getElementById('status').innerHTML = '⚠️ Canlı veri alınamadı, simülasyon devam ediyor';
+            }
+            updateTables();
         }
 
-        function updateDisplay() {
+        function updateTables() {
+            // Döviz
             document.getElementById('forexTable').innerHTML = `
-                <tr><th>USD</th><td>${rates.USD.toFixed(4)} TL</td></tr>
-                <tr><th>Gram Altın</th><td>${rates.GRAM} TL</td></tr>
+                <tr><th>USD / TRY</th><td>${rates.USD.toFixed(4)} TL</td></tr>
+                <tr><th>Gram Altın (yaklaşık)</th><td>${rates.GRAM.toFixed(0)} TL</td></tr>
             `;
+
+            // Kripto
             document.getElementById('cryptoTable').innerHTML = `
-                <tr><th>BTC</th><td>\[ {rates.BTC.toLocaleString()} ≈ ${(rates.BTC*rates.USD).toLocaleString('tr-TR')} TL</td></tr>
-                <tr><th>ETH</th><td> \]{rates.ETH} ≈ ${(rates.ETH*rates.USD).toLocaleString('tr-TR')} TL</td></tr>
+                <tr><th>Bitcoin (BTC)</th><td>\[ {rates.BTC.toLocaleString()} ≈ ${(rates.BTC * rates.USD).toLocaleString('tr-TR')} TL</td></tr>
+                <tr><th>Ethereum (ETH)</th><td> \]{rates.ETH.toLocaleString()} ≈ ${(rates.ETH * rates.USD).toLocaleString('tr-TR')} TL</td></tr>
             `;
         }
 
-        function toggleMode() {
-            realMode = !realMode;
-            const btn = document.getElementById('realBtn');
-            btn.textContent = realMode ? "🔴 Gerçek Veri: AÇIK" : "🔄 Gerçek Veri Modu: Kapalı";
-            if (realMode) loadRealData();
-            updateDisplay();
-        }
-
-        function switchTab(n) {
-            document.getElementById('content0').style.display = n===0 ? 'block' : 'none';
-            document.getElementById('content1').style.display = n===1 ? 'block' : 'none';
-            document.getElementById('tab0').classList.toggle('active', n===0);
-            document.getElementById('tab1').classList.toggle('active', n===1);
-        }
+        // Otomatik simülasyon (canlı mod kapalıyken)
+        setInterval(() => {
+            if (document.getElementById('status').textContent.includes('simülasyon')) {
+                rates.USD += (Math.random() - 0.5) * 0.1;
+                rates.GRAM += (Math.random() - 0.5) * 12;
+                updateTables();
+            }
+        }, 4000);
 
         window.onload = () => {
-            updateDisplay();
-            setInterval(() => { if(!realMode) updateDisplay(); }, 4000);
+            updateTables();
         };
     </script>
 </body>
