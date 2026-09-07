@@ -13,102 +13,132 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
       background-color: #0a0a0c; 
       color: #c9d1d9; 
-      line-height: 1.6; 
-      padding: 15px; 
+      line-height: 1.5; 
+      padding: 10px; 
     }
     .container { max-width: 1400px; margin: 0 auto; }
 
     /* ============================================================ */
-    /* NAVİGASYON VE LINKLER */
+    /* NAVİGASYON VE LINKLER (3 DÜZENLİ SATIR) */
     /* ============================================================ */
-    .nav-buttons { 
-      display: flex; 
-      justify-content: center; 
-      gap: 12px; 
-      margin: 15px 0 15px; 
-      flex-wrap: wrap; 
+    .nav-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 10px 0 20px;
+      align-items: center;
     }
+
+    /* 1. ve 2. Satır: GitHub Yönlendirmeleri (4'erli Izgara) */
+    .nav-row { 
+      display: grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 10px;
+      width: 100%;
+      max-width: 1100px;
+    }
+
     .nav-btn { 
-      padding: 10px 24px; 
-      border-radius: 30px; 
+      padding: 10px 16px; 
+      border-radius: 20px; 
       text-decoration: none; 
-      font-weight: bold; 
-      font-size: 14px; 
-      transition: all 0.3s; 
+      font-weight: 700; 
+      font-size: 13px; 
+      transition: all 0.25s ease-in-out; 
       border: none; 
       cursor: pointer; 
-      display: inline-block; 
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .nav-btn-primary { background: #ff4500; color: #fff; box-shadow: 0 4px 15px rgba(255,69,0,0.3); }
-    .nav-btn-primary:hover { background: #ff6a00; transform: scale(1.05); }
+    
+    .nav-btn-primary { background: #ff4500; color: #fff; box-shadow: 0 4px 12px rgba(255,69,0,0.25); }
+    .nav-btn-primary:hover { background: #ff6a00; transform: translateY(-2px); }
     .nav-btn-secondary { background: #1e293b; color: #60a5fa; border: 1px solid #60a5fa; }
-    .nav-btn-secondary:hover { background: #334155; transform: scale(1.05); }
+    .nav-btn-secondary:hover { background: #334155; transform: translateY(-2px); }
     .nav-btn-gold { background: #78350f; color: #fbbf24; border: 1px solid #f59e0b; }
-    .nav-btn-gold:hover { background: #92400e; transform: scale(1.05); }
+    .nav-btn-gold:hover { background: #92400e; transform: translateY(-2px); }
     .nav-btn-green { background: #064e3b; color: #34d399; border: 1px solid #10b981; }
-    .nav-btn-green:hover { background: #065f46; transform: scale(1.05); }
-    .nav-btn-vodafone { background: #e60000; color: #ffffff; border: 1px solid #b30000; box-shadow: 0 4px 12px rgba(230,0,0,0.2); }
-    .nav-btn-vodafone:hover { background: #ff1a1a; transform: scale(1.05); }
+    .nav-btn-green:hover { background: #065f46; transform: translateY(-2px); }
+    .nav-btn-vodafone { background: #e60000; color: #ffffff; border: 1px solid #b30000; box-shadow: 0 4px 10px rgba(230,0,0,0.2); }
+    .nav-btn-vodafone:hover { background: #ff1a1a; transform: translateY(-2px); }
     .nav-btn-faturali { background: #4a0404; color: #fca5a5; border: 1px solid #ef4444; }
-    .nav-btn-faturali:hover { background: #7f1d1d; color: #fff; transform: scale(1.05); }
-    .nav-btn-fiber { background: #0f172a; color: #38bdf8; border: 1px solid #0284c7; box-shadow: 0 4px 12px rgba(2,132,199,0.2); }
-    .nav-btn-fiber:hover { background: #1e293b; color: #7dd3fc; transform: scale(1.05); }
+    .nav-btn-faturali:hover { background: #7f1d1d; color: #fff; transform: translateY(-2px); }
+    .nav-btn-fiber { background: #0f172a; color: #38bdf8; border: 1px solid #0284c7; box-shadow: 0 4px 10px rgba(2,132,199,0.2); }
+    .nav-btn-fiber:hover { background: #1e293b; color: #7dd3fc; transform: translateY(-2px); }
 
-    .badge-container {
+    /* 3. Satır: Sosyal Medya Badge'leri (Tek Satır) */
+    .badge-row {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
+      align-items: center;
+      flex-wrap: nowrap;
       gap: 8px;
-      margin-bottom: 25px;
+      width: 100%;
+      max-width: 1100px;
+      overflow-x: auto;
+      padding-bottom: 4px;
     }
-    .badge-container a { display: inline-block; text-decoration: none; }
-    .badge-container img { vertical-align: middle; }
+    .badge-row a { display: inline-flex; text-decoration: none; shrink: 0; }
+    .badge-row img { height: 26px; vertical-align: middle; }
 
     /* ============================================================ */
-    /* FINANS KONTEYNER VE HEADER */
+    /* FİNANS KONTEYNER VE HEADER */
     /* ============================================================ */
     .piyasaanaliz-finance-container {
       background: #121214;
       color: #e2e8f0;
       border-radius: 12px;
-      padding: 24px;
+      padding: 18px;
       max-width: 1200px;
-      margin: 0 auto 30px;
+      margin: 0 auto 20px;
       border: 1px solid #222227;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
     }
     .finance-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid #1e1e24;
-      padding-bottom: 16px;
-      margin-bottom: 20px;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
-    .header-title-zone h2 { margin: 0; font-size: 24px; color: #fff; letter-spacing: 0.5px; }
-    .brand-sub { margin: 4px 0 0 0; font-size: 13px; color: #60a5fa; font-weight: 500; letter-spacing: 0.3px; }
+    .header-title-zone h2 { margin: 0; font-size: 20px; color: #fff; letter-spacing: 0.5px; }
+    .brand-sub { margin: 2px 0 0 0; font-size: 12px; color: #60a5fa; font-weight: 500; }
     .update-badge { 
       background: #064e3b; 
       color: #34d399;
-      padding: 8px 18px; 
+      padding: 6px 14px; 
       border-radius: 20px; 
-      font-size: 13px; 
+      font-size: 12px; 
       font-weight: 700; 
-      border: 2px solid #10b981;
+      border: 1px solid #10b981;
       animation: pulse-green 2s ease-in-out infinite;
     }
     @keyframes pulse-green {
-      0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
-      50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.5); }
+      0%, 100% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.2); }
+      50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.4); }
     }
 
     /* ============================================================ */
     /* SEKME BUTONLARI & TABLOLAR */
     /* ============================================================ */
-    .finance-tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid #1e1e24; padding-bottom: 10px; flex-wrap: wrap; }
-    .tab-btn { background: #1e1e24; border: 1px solid #2d2d39; color: #94a3b8; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; }
+    .finance-tabs { 
+      display: flex; 
+      gap: 6px; 
+      margin-bottom: 15px; 
+      border-bottom: 1px solid #1e1e24; 
+      padding-bottom: 8px; 
+      overflow-x: auto; 
+      white-space: nowrap;
+    }
+    .tab-btn { background: #1e1e24; border: 1px solid #2d2d39; color: #94a3b8; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease; }
     .tab-btn:hover { background: #2a2a35; color: #fff; }
     .tab-btn.active { background: #ff4500; color: #fff; border-color: #ff4500; }
     .calc-btn { border-color: #3b82f6; color: #60a5fa; }
@@ -118,10 +148,10 @@
 
     .finance-tab-content { display: none; }
     .finance-tab-content.active { display: block; }
-    .finance-table-wrapper { max-height: 480px; overflow-y: auto; border-radius: 8px; border: 1px solid #1e1e24; }
-    .finance-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-    .finance-table th { background: #1e1e24; color: #94a3b8; padding: 12px 16px; font-weight: 600; position: sticky; top: 0; z-index: 2; }
-    .finance-table td { padding: 12px 16px; border-bottom: 1px solid #1a1a22; color: #cbd5e1; }
+    .finance-table-wrapper { max-height: 420px; overflow-y: auto; border-radius: 8px; border: 1px solid #1e1e24; }
+    .finance-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    .finance-table th { background: #1e1e24; color: #94a3b8; padding: 10px 12px; font-weight: 600; position: sticky; top: 0; z-index: 2; }
+    .finance-table td { padding: 10px 12px; border-bottom: 1px solid #1a1a22; color: #cbd5e1; }
     .finance-table tbody tr:hover { background: #181820; }
     .finance-table tr td:first-child { color: #fff; }
     
@@ -132,28 +162,27 @@
     /* ============================================================ */
     /* HESAPLAYICILAR */
     /* ============================================================ */
-    .calculator-box { background: #18181c; border: 1px solid #24242b; padding: 20px; border-radius: 8px; }
-    .calculator-box h4 { margin: 0 0 15px 0; font-size: 16px; color: #fff; }
-    .calc-row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
-    .input-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 6px; }
-    .input-group label { font-size: 12px; color: #94a3b8; font-weight: 500; }
-    .input-group input, .input-group select { background: #121214; border: 1px solid #2d2d39; color: #fff; padding: 10px; border-radius: 6px; font-size: 14px; outline: none; }
+    .calculator-box { background: #18181c; border: 1px solid #24242b; padding: 15px; border-radius: 8px; }
+    .calculator-box h4 { margin: 0 0 12px 0; font-size: 15px; color: #fff; }
+    .calc-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+    .input-group { flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 4px; }
+    .input-group label { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .input-group input, .input-group select { background: #121214; border: 1px solid #2d2d39; color: #fff; padding: 8px; border-radius: 6px; font-size: 13px; outline: none; }
     .input-group input:focus, .input-group select:focus { border-color: #3b82f6; }
-    .calc-result-zone { background: #1e293b; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; gap: 4px; }
-    .result-label { font-size: 12px; color: #94a3b8; }
-    #calc-result-value { font-size: 22px; font-weight: bold; color: #3b82f6; }
+    .calc-result-zone { background: #1e293b; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 2px; }
+    .result-label { font-size: 11px; color: #94a3b8; }
+    #calc-result-value { font-size: 18px; font-weight: bold; color: #3b82f6; }
 
-    .interest-results-wrapper { display: flex; gap: 15px; flex-wrap: wrap; }
-    .interest-result-card { flex: 1; min-width: 200px; background: #1e293b; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981; }
-    #interest-net-gain { font-size: 22px; font-weight: bold; }
-    #interest-total-amount { font-size: 22px; font-weight: bold; color: #fff; }
+    .interest-results-wrapper { display: flex; gap: 10px; flex-wrap: wrap; }
+    .interest-result-card { flex: 1; min-width: 180px; background: #1e293b; padding: 12px; border-radius: 6px; border-left: 4px solid #10b981; }
+    #interest-net-gain { font-size: 18px; font-weight: bold; }
+    #interest-total-amount { font-size: 18px; font-weight: bold; color: #fff; }
 
-    .banknote { background: #1e293b; border-left: 4px solid #fbbf24; padding: 10px 15px; border-radius: 6px; margin-top: 10px; font-size: 13px; color: #fbbf24; }
+    .banknote { background: #1e293b; border-left: 4px solid #fbbf24; padding: 8px 12px; border-radius: 6px; margin-top: 10px; font-size: 12px; color: #fbbf24; }
     .banknote strong { color: #fff; }
-    .banknote a { color: #60a5fa; text-decoration: none; }
-    .banknote a:hover { text-decoration: underline; }
-    .finance-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #1e1e24; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 12px; color: #64748b; }
-    .warning-text { color: #ef4444; font-weight: 700; font-size: 12px; }
+    .banknote a { color: #60a5fa; text-decoration: none; margin-left: 3px; }
+    .finance-footer { margin-top: 15px; padding-top: 12px; border-top: 1px solid #1e1e24; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11px; color: #64748b; }
+    .warning-text { color: #ef4444; font-weight: 700; font-size: 11px; }
 
     /* ============================================================ */
     /* ALT TANITIM VE İLETİŞİM ALANI */
@@ -162,89 +191,98 @@
       background-color: #161b22;
       border: 1px solid #30363d;
       border-radius: 8px;
-      padding: 32px;
+      padding: 20px;
       max-width: 1200px;
-      margin: 30px auto;
+      margin: 20px auto;
     }
-    .info-card h1 {
-      color: #f0f6fc;
-      font-size: 2rem;
-      margin-bottom: 12px;
-      border-bottom: 1px solid #21262d;
-      padding-bottom: 12px;
-    }
-    .info-card p { margin-bottom: 16px; font-size: 1rem; }
-    blockquote {
-      background-color: #0d1117;
-      border-left: 4px solid #1f6feb;
-      padding: 12px 16px;
-      margin: 20px 0;
-      border-radius: 0 6px 6px 0;
-      font-style: italic;
-      color: #8b949e;
-    }
-    hr { border: none; height: 1px; background-color: #21262d; margin: 28px 0; }
-    h3 { color: #f0f6fc; font-size: 1.25rem; margin-bottom: 16px; }
+    .info-card h1 { color: #f0f6fc; font-size: 1.5rem; margin-bottom: 10px; border-bottom: 1px solid #21262d; padding-bottom: 8px; }
+    .info-card p { margin-bottom: 12px; font-size: 0.9rem; }
+    blockquote { background-color: #0d1117; border-left: 3px solid #1f6feb; padding: 10px 12px; margin: 15px 0; border-radius: 0 6px 6px 0; font-style: italic; color: #8b949e; font-size: 0.85rem; }
+    hr { border: none; height: 1px; background-color: #21262d; margin: 20px 0; }
+    h3 { color: #f0f6fc; font-size: 1.1rem; margin-bottom: 12px; }
     ul { list-style-type: none; padding-left: 0; }
-    li { margin-bottom: 10px; padding-left: 20px; position: relative; }
-    li::before { content: "•"; color: #58a6ff; font-size: 1.2rem; position: absolute; left: 0; top: -2px; }
+    li { margin-bottom: 8px; padding-left: 16px; position: relative; font-size: 0.9rem; }
+    li::before { content: "•"; color: #58a6ff; font-size: 1rem; position: absolute; left: 0; top: -1px; }
     a { color: #58a6ff; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .disclaimer {
-      background-color: rgba(210, 153, 34, 0.1);
-      border: 1px solid rgba(210, 153, 34, 0.4);
-      color: #d29922;
-      padding: 16px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      margin-top: 24px;
-    }
-    .footer { text-align: center; margin-top: 20px; color: #64748b; font-size: 14px; }
+    .disclaimer { background-color: rgba(210, 153, 34, 0.1); border: 1px solid rgba(210, 153, 34, 0.4); color: #d29922; padding: 12px; border-radius: 6px; font-size: 0.8rem; margin-top: 18px; }
+    .footer { text-align: center; margin-top: 15px; color: #64748b; font-size: 12px; }
     .footer a { color: #ff4500; text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
-    .finance-table-wrapper::-webkit-scrollbar { width: 6px; }
+    
+    .finance-table-wrapper::-webkit-scrollbar { width: 4px; }
     .finance-table-wrapper::-webkit-scrollbar-track { background: #121214; }
-    .finance-table-wrapper::-webkit-scrollbar-thumb { background: #2d2d39; border-radius: 3px; }
+    .finance-table-wrapper::-webkit-scrollbar-thumb { background: #2d2d39; border-radius: 2px; }
+
+    /* ============================================================ */
+    /* MOBİL UYGULAMA GÖRÜNÜMÜ UYARLAMALARI (RESPONSIVE) */
+    /* ============================================================ */
+    @media (max-width: 768px) {
+      body { padding: 6px; }
+      .nav-row {
+        grid-template-columns: repeat(2, 1fr); /* Mobilde 2x2 grid */
+        gap: 6px;
+      }
+      .nav-btn {
+        font-size: 11px;
+        padding: 8px 10px;
+        border-radius: 12px;
+      }
+      .badge-row img { height: 22px; }
+      .piyasaanaliz-finance-container { padding: 12px; }
+      .header-title-zone h2 { font-size: 16px; }
+      .update-badge { font-size: 10px; padding: 4px 10px; }
+      .finance-table { font-size: 12px; }
+      .finance-table th, .finance-table td { padding: 8px 8px; }
+      .info-card { padding: 14px; }
+      .info-card h1 { font-size: 1.2rem; }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- ===== 1. EN ÜSTTE GITHUB & NAVİGASYON LİNKLERİ ===== -->
-    <div class="nav-buttons">
-      <a href="https://PiyasaAnaliz.github.io" target="_blank" class="nav-btn nav-btn-secondary">🏠 Ana Sayfa (GitHub)</a>
-      <a href="piyasaanaliz.html" target="_blank" class="nav-btn nav-btn-green">📈 Piyasa Altın Analiz Finance</a>
-      <a href="bankakampanyalari.html" target="_blank" class="nav-btn nav-btn-primary">🏦 Banka Kampanyaları</a>
-      <a href="parakazan.html" target="_blank" class="nav-btn nav-btn-gold">💰 Para Kazan</a>
-      <a href="internetkampanyalari.html" target="_blank" class="nav-btn nav-btn-vodafone">📱 Vodafone Bedava İnternet</a>
-      <a href="faturalikampanyalar.html" target="_blank" class="nav-btn nav-btn-faturali">📄 Faturalı Hat Kampanyaları</a>
-      <a href="internetkampanyalari.html" target="_blank" class="nav-btn nav-btn-fiber">🌐 Fiber İnternet Kampanyaları</a>
-      <a href="konutaracfaizhesaplama.html" target="_blank" class="nav-btn nav-btn-fiber">🌐 Konut Araç Faiz Hesaplama</a>
+    <!-- ===== 1. MASAÜSTÜ: 3 DÜZENLİ SATIR / MOBİL: UYGULAMA DÜZENİ ===== -->
+    <div class="nav-section">
+      <!-- Satır 1: GitHub Yönlendirmeleri İlk Yarısı (4 Buton) -->
+      <div class="nav-row">
+        <a href="https://PiyasaAnaliz.github.io" target="_blank" class="nav-btn nav-btn-secondary">🏠 Ana Sayfa</a>
+        <a href="piyasaanaliz.html" target="_blank" class="nav-btn nav-btn-green">📈 Altın Analiz</a>
+        <a href="bankakampanyalari.html" target="_blank" class="nav-btn nav-btn-primary">🏦 Banka Kampanya</a>
+        <a href="parakazan.html" target="_blank" class="nav-btn nav-btn-gold">💰 Para Kazan</a>
+      </div>
+
+      <!-- Satır 2: GitHub Yönlendirmeleri İkinci Yarısı (4 Buton) -->
+      <div class="nav-row">
+        <a href="internetkampanyalari.html" target="_blank" class="nav-btn nav-btn-vodafone">📱 Bedava İnternet</a>
+        <a href="faturalikampanyalar.html" target="_blank" class="nav-btn nav-btn-faturali">📄 Faturalı Hatlar</a>
+        <a href="internetkampanyalari.html" target="_blank" class="nav-btn nav-btn-fiber">🌐 Fiber İnternet</a>
+        <a href="konutaracfaizhesaplama.html" target="_blank" class="nav-btn nav-btn-fiber">🌐 Konut Araç Faiz</a>
+      </div>
+
+      <!-- Satır 3: Sosyal Medya ve İletişim Badge'leri (Tek Satır Sıralı) -->
+      <div class="badge-row">
+        <a href="https://youtube.com/@PiyasaAnalizim" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/badge/YouTube-PiyasaAnalizim-red?style=flat&logo=youtube" alt="YouTube PiyasaAnalizim">
+        </a>
+        <a href="https://youtube.com/@MutinousTube" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/badge/YouTube-PiyasaAltınAnalizTube-red?style=flat&logo=youtube" alt="YouTube MutinousTube">
+        </a>
+        <a href="https://whatsapp.com/channel/0029VbCUgXf6WaKnetLyMi34" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/badge/WhatsApp-Kanalım-25D366?style=flat&logo=whatsapp" alt="WhatsApp Kanalım">
+        </a>
+        <a href="https://t.me/PiyasaAnalizci" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/badge/Telegram-Kanalım-26A5E4?style=flat&logo=telegram" alt="Telegram Kanalım">
+        </a>
+        <a href="https://www.x.com/PiyasaAnalizim" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/badge/X-PiyasaAnalizim-black?style=flat&logo=x" alt="X PiyasaAnalizim">
+        </a>
+        <a href="https://www.instagram.com/PiyasaAnalizim" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/badge/Instagram-PiyasaAnalizim-E4405F?style=flat&logo=instagram" alt="Instagram PiyasaAnalizim">
+        </a>
+      </div>
     </div>
 
-    <!-- ===== 2. HEMEN ALTINDA YOUTUBE, WHATSAPP, TELEGRAM VB. SOSYAL MEDYA LİNKLERİ ===== -->
-    <div class="badge-container">
-      <a href="https://youtube.com/@PiyasaAnalizim" target="_blank" rel="noopener noreferrer">
-        <img src="https://img.shields.io/badge/YouTube-PiyasaAnalizim-red?style=flat&logo=youtube" alt="YouTube PiyasaAnalizim">
-      </a>
-      <a href="https://youtube.com/@MutinousTube" target="_blank" rel="noopener noreferrer">
-        <img src="https://img.shields.io/badge/YouTube-PiyasaAltınAnalizTube-red?style=flat&logo=youtube" alt="YouTube MutinousTube">
-      </a>
-      <a href="https://whatsapp.com/channel/0029VbCUgXf6WaKnetLyMi34" target="_blank" rel="noopener noreferrer">
-        <img src="https://img.shields.io/badge/WhatsApp-Kanalım-25D366?style=flat&logo=whatsapp" alt="WhatsApp Kanalım">
-      </a>
-      <a href="https://t.me/PiyasaAnalizci" target="_blank" rel="noopener noreferrer">
-        <img src="https://img.shields.io/badge/Telegram-Kanalım-26A5E4?style=flat&logo=telegram" alt="Telegram Kanalım">
-      </a>
-      <a href="https://www.x.com/PiyasaAnalizim" target="_blank" rel="noopener noreferrer">
-        <img src="https://img.shields.io/badge/X-PiyasaAnalizim-black?style=flat&logo=x" alt="X PiyasaAnalizim">
-      </a>
-      <a href="https://www.instagram.com/PiyasaAnalizim" target="_blank" rel="noopener noreferrer">
-        <img src="https://img.shields.io/badge/Instagram-PiyasaAnalizim-E4405F?style=flat&logo=instagram" alt="Instagram PiyasaAnalizim">
-      </a>
-    </div>
-
-    <!-- ===== 3. FİNANS VE CANLI PİYASA MODÜLÜ ===== -->
+    <!-- ===== 2. FİNANS VE CANLI PİYASA MODÜLÜ ===== -->
     <div class="piyasaanaliz-finance-container">
       <div class="finance-header">
         <div class="header-title-zone">
@@ -271,13 +309,13 @@
           <table class="finance-table">
             <thead><tr><th>Enstrüman</th><th>Alış (TL)</th><th>Satış (TL)</th><th>Değişim</th></tr></thead>
             <tbody>
-              <tr><td><strong>USD</strong> - Amerikan Doları</td><td id="val-usd-buy">46.9424</td><td id="val-usd-sell">47.0434</td><td class="txt-up" id="chg-usd">+%0.20</td></tr>
+              <tr><td><strong>USD</strong> - Dolar</td><td id="val-usd-buy">46.9424</td><td id="val-usd-sell">47.0434</td><td class="txt-up" id="chg-usd">+%0.20</td></tr>
               <tr><td><strong>EUR</strong> - Euro</td><td id="val-eur-buy">53.6174</td><td id="val-eur-sell">53.7187</td><td class="txt-down" id="chg-eur">-%0.12</td></tr>
-              <tr><td><strong>GBP</strong> - İngiliz Sterlini</td><td id="val-gbp-buy">62.8923</td><td id="val-gbp-sell">63.0486</td><td class="txt-down" id="chg-gbp">-%0.04</td></tr>
+              <tr><td><strong>GBP</strong> - Sterlin</td><td id="val-gbp-buy">62.8923</td><td id="val-gbp-sell">63.0486</td><td class="txt-down" id="chg-gbp">-%0.04</td></tr>
               <tr><td><strong>JPY</strong> - Japon Yeni (100 JPY)</td><td id="val-jpy-buy">29.2840</td><td id="val-jpy-sell">29.4610</td><td class="txt-up" id="chg-jpy">+%0.15</td></tr>
               <tr><td><strong>CNY</strong> - Çin Yuanı</td><td id="val-cny-buy">6.4620</td><td id="val-cny-sell">6.5010</td><td class="txt-neutral" id="chg-cny">%0.00</td></tr>
               <tr><td><strong>RUB</strong> - Rus Rublesi</td><td id="val-rub-buy">0.5120</td><td id="val-rub-sell">0.5180</td><td class="txt-down" id="chg-rub">-%0.34</td></tr>
-              <tr><td><strong>SAR</strong> - Suudi Riyali</td><td id="val-sar-buy">12.5110</td><td id="val-sar-sell">12.5480</td><td class="txt-up" id="chg-sar">+%0.05</td></tr>
+              <tr><td><strong>SAR</strong> - Riyal</td><td id="val-sar-buy">12.5110</td><td id="val-sar-sell">12.5480</td><td class="txt-up" id="chg-sar">+%0.05</td></tr>
               <tr><td><strong>ONS ALTIN</strong> ($/Ons)</td><td id="val-ons-buy">$2,642.50</td><td id="val-ons-sell">$2,644.10</td><td class="txt-up" id="chg-ons">+%0.42</td></tr>
               <tr><td><strong>GRAM ALTIN</strong> (GRA)</td><td class="sync-gram-buy">6224.70</td><td class="sync-gram-sell">6225.55</td><td class="txt-up" id="chg-gram">+%0.12</td></tr>
               <tr><td><strong>ÇEYREK ALTIN</strong></td><td id="val-ceyrek-buy">9887.48</td><td id="val-ceyrek-sell">10113.63</td><td class="txt-down" id="chg-ceyrek">-%0.72</td></tr>
@@ -310,7 +348,7 @@
       <div id="tab-agri" class="finance-tab-content">
         <div class="finance-table-wrapper">
           <table class="finance-table">
-            <thead><tr><th>Ürün Adı</th><th>Fiyat (TL/Birim)</th><th>Piyasa</th><th>Değişim</th></tr></thead>
+            <thead><tr><th>Ürün Adı</th><th>Fiyat (TL)</th><th>Piyasa</th><th>Değişim</th></tr></thead>
             <tbody>
               <tr><td><strong>BUĞDAY</strong> (Wheat Cbot)</td><td id="val-bugday">314.50</td><td>Chicago Borsası</td><td class="txt-down" id="chg-bugday">-%0.18</td></tr>
               <tr><td><strong>KAHVE</strong> (Coffee Arabica)</td><td id="val-kahve">1145.20</td><td>ICE Piyasası</td><td class="txt-up" id="chg-kahve">+%1.12</td></tr>
@@ -326,7 +364,7 @@
       <div id="tab-global" class="finance-tab-content">
         <div class="finance-table-wrapper">
           <table class="finance-table">
-            <thead><tr><th>Endeks Adı</th><th>Ülke / Bölge</th><th>Son Değer</th><th>Değişim</th></tr></thead>
+            <thead><tr><th>Endeks Adı</th><th>Ülke</th><th>Son Değer</th><th>Değişim</th></tr></thead>
             <tbody>
               <tr><td><strong>XU100</strong> - Borsa İstanbul</td><td>Türkiye</td><td id="val-xu100">14321.19</td><td class="txt-up" id="chg-xu100">+%1.53</td></tr>
               <tr><td><strong>S&P 500</strong></td><td>ABD</td><td id="val-sp500">5422.50</td><td class="txt-up" id="chg-sp500">+%0.42</td></tr>
@@ -343,12 +381,12 @@
       <div id="tab-crypto" class="finance-tab-content">
         <div class="finance-table-wrapper">
           <table class="finance-table">
-            <thead><tr><th>Kripto Para</th><th>Fiyat (USD)</th><th>Fiyat (TRY)</th><th>Değişim</th></tr></thead>
+            <thead><tr><th>Kripto</th><th>Fiyat (USD)</th><th>Fiyat (TRY)</th><th>Değişim</th></tr></thead>
             <tbody>
-              <tr><td><strong>BTC</strong> - Bitcoin</td><td id="val-btc-usd">$96,450.00</td><td id="val-btc-try">4,537,243.00 TL</td><td class="txt-up" id="chg-btc">+%1.85</td></tr>
-              <tr><td><strong>ETH</strong> - Ethereum</td><td id="val-eth-usd">$3,420.50</td><td id="val-eth-try">160,911.00 TL</td><td class="txt-down" id="chg-eth">-%0.42</td></tr>
+              <tr><td><strong>BTC</strong> - Bitcoin</td><td id="val-btc-usd">$96,450.00</td><td id="val-btc-try">4,537,243 TL</td><td class="txt-up" id="chg-btc">+%1.85</td></tr>
+              <tr><td><strong>ETH</strong> - Ethereum</td><td id="val-eth-usd">$3,420.50</td><td id="val-eth-try">160,911 TL</td><td class="txt-down" id="chg-eth">-%0.42</td></tr>
               <tr><td><strong>SOL</strong> - Solana</td><td id="val-sol-usd">$184.20</td><td id="val-sol-try">8,665.30 TL</td><td class="txt-up" id="chg-sol">+%3.15</td></tr>
-              <tr><td><strong>BNB</strong> - Binance Coin</td><td id="val-bnb-usd">$612.00</td><td id="val-bnb-try">28,790.00 TL</td><td class="txt-up" id="chg-bnb">+%0.22</td></tr>
+              <tr><td><strong>BNB</strong> - Binance Coin</td><td id="val-bnb-usd">$612.00</td><td id="val-bnb-try">28,790 TL</td><td class="txt-up" id="chg-bnb">+%0.22</td></tr>
               <tr><td><strong>XRP</strong> - Ripple</td><td id="val-xrp-usd">$0.92</td><td id="val-xrp-try">43.28 TL</td><td class="txt-down" id="chg-xrp">-%1.10</td></tr>
               <tr><td><strong>ADA</strong> - Cardano</td><td id="val-ada-usd">$0.65</td><td id="val-ada-try">30.58 TL</td><td class="txt-up" id="chg-ada">+%0.45</td></tr>
               <tr><td><strong>DOT</strong> - Polkadot</td><td id="val-dot-usd">$7.20</td><td id="val-dot-try">338.71 TL</td><td class="txt-down" id="chg-dot">-%0.15</td></tr>
@@ -424,35 +462,33 @@
               <div id="interest-total-amount">0.00 TL</div>
             </div>
           </div>
-          <p style="font-size: 11px; color: #64748b; margin-top: 10px;">* Hesaplamada %5 stopaj kesintisi düşülmüştür.</p>
+          <p style="font-size: 10px; color: #64748b; margin-top: 8px;">* Hesaplamada %5 stopaj kesintisi düşülmüştür.</p>
         </div>
       </div>
 
       <!-- HIZLI YÖNLENDİRMELER -->
       <div class="banknote">
         💡 <strong>Hızlı Yönlendirmeler:</strong> 
-        <a href="bankakampanyalari.html" target="_blank" style="background:#ff4500;padding:2px 10px;border-radius:4px;color:#fff;">🏦 Kampanya</a>
-        <a href="parakazan.html" target="_blank" style="background:#f59e0b;padding:2px 10px;border-radius:4px;color:#fff;">💰 Para Kazan</a>
-        <a href="https://piyasaanaliz.github.io" target="_blank" style="background:#60a5fa;padding:2px 10px;border-radius:4px;color:#fff;">🏠 Ana Sayfa</a>
-        <a href="konutaracfaizhesaplama.html" target="_blank" style="background:#0284c7;padding:2px 10px;border-radius:4px;color:#fff;">🌐 Konut Araç Faiz</a>
+        <a href="bankakampanyalari.html" target="_blank" style="background:#ff4500;padding:2px 8px;border-radius:4px;color:#fff;">🏦 Kampanya</a>
+        <a href="parakazan.html" target="_blank" style="background:#f59e0b;padding:2px 8px;border-radius:4px;color:#fff;">💰 Para Kazan</a>
+        <a href="https://piyasaanaliz.github.io" target="_blank" style="background:#60a5fa;padding:2px 8px;border-radius:4px;color:#fff;">🏠 Ana Sayfa</a>
+        <a href="konutaracfaizhesaplama.html" target="_blank" style="background:#0284c7;padding:2px 8px;border-radius:4px;color:#fff;">🌐 Faiz</a>
       </div>
 
       <div class="finance-footer">
         <p class="warning-text">⚠️ Piyasa verileri anlık olarak simüle edilmektedir. Yatırım tavsiyesi değildir.</p>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <a href="https://piyasaanaliz.github.io" target="_blank" rel="noopener" style="color: #60a5fa;">🏠 Ana Sayfa</a>
-          <a href="bankakampanyalari.html" target="_blank" rel="noopener" style="color: #ff4500; font-weight: 700;">🏦 Banka Kampanyaları</a>
+          <a href="bankakampanyalari.html" target="_blank" rel="noopener" style="color: #ff4500; font-weight: 700;">🏦 Kampanyalar</a>
           <a href="parakazan.html" target="_blank" rel="noopener" style="color: #fbbf24; font-weight: 700;">💰 Para Kazan</a>
           <a href="https://www.youtube.com/@PiyasaAnalizim" target="_blank" rel="noopener" style="color: #ff4500;">▶️ YouTube</a>
-          <a href="konutaracfaizhesaplama.html" target="_blank" rel="noopener" style="color: #38bdf8;">🌐 Konut Araç Faiz</a>
         </div>
       </div>
     </div>
 
-    <!-- ===== 4. EN ALTA TAŞINAN HOŞ GELDİNİZ, İLETİŞİM VE UYARI ALANI ===== -->
+    <!-- ===== 3. ALT TANITIM VE UYARI ALANI ===== -->
     <div class="info-card">
       <h1>👋 Merhaba, Ben Piyasa Altın Analiz!</h1>
-
       <p>Finansal piyasa analizleri, teknoloji ve çoklu kategori içerik üretimi üzerine odaklanıyorum. Piyasa trendlerini takip ediyor, analizlerimi ve projelerimi toplulukla paylaşıyorum.</p>
 
       <blockquote>
@@ -462,7 +498,6 @@
       <hr>
 
       <h3>🤝 Bağımsız Yayıncılığı Destekleyin</h3>
-
       <p>Bağımsız içeriklerimi sürdürebilmem için bana destek olabilirsiniz:</p>
       <ul>
         <li><strong>Patreon:</strong> <a href="https://www.patreon.com/MutinousTube" target="_blank" rel="noopener noreferrer">patreon.com/MutinousTube</a></li>
@@ -472,7 +507,6 @@
       <hr>
 
       <h3>📩 İletişim & Kartvizit</h3>
-
       <ul>
         <li><strong>Web Site:</strong> <a href="https://piyasaanaliz.github.io" target="_blank" rel="noopener noreferrer">piyasaanaliz.github.io</a></li>
         <li><strong>E-posta:</strong> <a href="mailto:MutinousTube@gmail.com">MutinousTube@gmail.com</a></li>
@@ -483,7 +517,7 @@
       </div>
     </div>
     
-    <div class="footer">© 2026 PiyasaAnaliz Finans | Veriler Canlı Olarak Güncellenir | <a href="https://piyasaanaliz.github.io" target="_blank">piyasaanaliz.github.io</a></div>
+    <div class="footer">© 2026 PiyasaAnaliz Finans | Veriler Canlı Güncellenir | <a href="https://piyasaanaliz.github.io" target="_blank">piyasaanaliz.github.io</a></div>
   </div>
 
   <script>
