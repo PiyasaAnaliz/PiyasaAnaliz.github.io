@@ -1,0 +1,220 @@
+import requests
+import pandas as pd
+import time
+import json
+from datetime import datetime
+
+# --- Yapılandırma ---
+# Gerçek API anahtarlarınızı ve uç noktalarınızı buraya eklemelisiniz.
+# Bu, gerçek veriye erişim için gerekli olacaktır.
+# Örneğin, bir finansal veri sağlayıcısının API'sini kullanabilirsiniz.
+API_KEY_FINANCE = "YOUR_FINANCE_API_KEY"  # Finansal veriler için
+API_KEY_EXCHANGE = "YOUR_EXCHANGE_API_KEY" # Döviz kurları için
+
+# Takip edilecek semboller/kodlar (veri sağlayıcınıza göre değişir)
+# Bu sadece bir örnektir, gerçek sembolleri veri sağlayıcınızdan öğrenmelisiniz.
+COMMODITIES = {
+    "Altın": "XAUUSD",
+    "Gümüş": "XAGUSD",
+    "Platin": "XPTUSD",
+    "Bakır": "HG=F",   # Vadeli işlem sembolü olabilir
+    "Alüminyum": "ALI=X", # Veya benzer bir sembol
+    "Demir": "IRONORE=10" # Veya benzer bir sembol
+}
+
+EXCHANGES = {
+    "Dolar/TL": "USDTRY=X",
+    "Euro/TL": "EURTRY=X",
+    "Dolar/Euro": "EURUSD=X",
+    # Daha fazla döviz kuru eklenebilir
+}
+
+WORLD_INDICES = {
+    "Dow Jones": "^DJI",
+    "S&P 500": "^GSPC",
+    "NASDAQ": "^IXIC",
+    "FTSE 100": "^FTSE",
+    "DAX": "^GDAXI",
+    "Nikkei 225": "^N225",
+    # Daha fazla dünya borsası eklenebilir
+}
+
+# --- Veri Çekme Fonksiyonları (Yer Tutucu - Placeholder) ---
+
+def get_commodity_price(symbol):
+    """
+    Belirli bir emtia için anlık fiyatı çeker.
+    Gerçek implementasyon, finansal API'nizden veri çekecektir.
+    Örnek: https://www.alphavantage.co/documentation/ veya https://financialmodelingprep.com/developer/docs/
+    """
+    print(f"'{symbol}' emtia verisi çekiliyor (Yer Tutucu)...")
+    # Örnek bir gecikmeli veya sahte veri döndürme
+    # Gerçekte API çağrısı burada yapılmalı
+    try:
+        # Gerçek veri çekme API çağrısı buraya gelecek
+        # response = requests.get(f"YOUR_FINANCE_API_ENDPOINT/price?symbol={symbol}&apikey={API_KEY_FINANCE}")
+        # data = response.json()
+        # price = data['latestPrice'] # API'nizin dönüş formatına göre ayarlayın
+        
+        # Şimdilik sahte ve rastgele veri üretiyoruz:
+        if "XAU" in symbol or "XAG" in symbol or "XPT" in symbol: # Değerli madenler için
+            price = 2000 + (hash(symbol) % 1000) / 100.0 - 500 # Rastgele ama belirli bir aralıkta
+        elif "F" in symbol or "=" in symbol: # Vadeli işlemler veya endeksler için
+            price = 5000 + (hash(symbol) % 5000) / 10.0 - 2500
+        else: # Diğer emtialar
+            price = 100 + (hash(symbol) % 100) / 10.0 - 50
+            
+        timestamp = datetime.now().isoformat()
+        return {"symbol": symbol, "price": round(price, 2), "timestamp": timestamp}
+    except Exception as e:
+        print(f"Hata: {symbol} emtia verisi çekilemedi. {e}")
+        return None
+
+def get_exchange_rate(symbol):
+    """
+    Belirli bir döviz kuru için anlık değeri çeker.
+    Gerçek implementasyon, döviz kuru API'nizden veri çekecektir.
+    Örnek: https://www.exchangerate-api.com/ veya https://www.frankfurter.app/
+    """
+    print(f"'{symbol}' döviz kuru verisi çekiliyor (Yer Tutucu)...")
+    # Örnek bir gecikmeli veya sahte veri döndürme
+    try:
+        # Gerçek veri çekme API çağrısı buraya gelecek
+        # response = requests.get(f"YOUR_EXCHANGE_API_ENDPOINT/latest/{symbol.split('=')[0].split('X')[0]}&apikey={API_KEY_EXCHANGE}")
+        # data = response.json()
+        # rate = data['rates'][symbol.split('=')[0].split('X')[1]] # API'nizin dönüş formatına göre ayarlayın
+        
+        # Şimdilik sahte ve rastgele veri üretiyoruz:
+        base_currency = symbol.split('=')[0].split('X')[0]
+        target_currency = symbol.split('=')[0].split('X')[1]
+        
+        if base_currency == "USD" and target_currency == "TRY": rate = 28.0 + (hash(symbol) % 100) / 100.0 - 50
+        elif base_currency == "EUR" and target_currency == "TRY": rate = 30.5 + (hash(symbol) % 100) / 100.0 - 50
+        elif base_currency == "EUR" and target_currency == "USD": rate = 1.08 + (hash(symbol) % 100) / 1000.0 - 50
+        else: rate = 1.0 + (hash(symbol) % 100) / 100.0 - 50
+            
+        timestamp = datetime.now().isoformat()
+        return {"symbol": symbol, "rate": round(rate, 4), "timestamp": timestamp}
+    except Exception as e:
+        print(f"Hata: {symbol} döviz kuru verisi çekilemedi. {e}")
+        return None
+
+def get_index_value(symbol):
+    """
+    Belirli bir dünya borsası endeksi için anlık değeri çeker.
+    Gerçek implementasyon, finansal API'nizden veri çekecektir.
+    """
+    print(f"'{symbol}' borsa endeksi verisi çekiliyor (Yer Tutucu)...")
+    # Örnek bir gecikmeli veya sahte veri döndürme
+    try:
+        # Gerçek veri çekme API çağrısı buraya gelecek
+        # response = requests.get(f"YOUR_FINANCE_API_ENDPOINT/index_price?symbol={symbol}&apikey={API_KEY_FINANCE}")
+        # data = response.json()
+        # value = data['latestValue'] # API'nizin dönüş formatına göre ayarlayın
+        
+        # Şimdilik sahte ve rastgele veri üretiyoruz:
+        value = 15000 + (hash(symbol) % 10000) / 1.0 - 5000
+            
+        timestamp = datetime.now().isoformat()
+        return {"symbol": symbol, "value": round(value, 2), "timestamp": timestamp}
+    except Exception as e:
+        print(f"Hata: {symbol} borsa endeksi verisi çekilemedi. {e}")
+        return None
+
+# --- Veri Toplama ve İşleme ---
+
+def collect_market_data():
+    """
+    Tüm tanımlı piyasa verilerini toplar.
+    """
+    all_data = {
+        "commodities": [],
+        "exchanges": [],
+        "indices": []
+    }
+
+    print("\n--- Emtia Verileri Toplanıyor ---")
+    for name, symbol in COMMODITIES.items():
+        data = get_commodity_price(symbol)
+        if data:
+            data["name"] = name # İnsan tarafından okunabilir adı ekle
+            all_data["commodities"].append(data)
+        time.sleep(0.5) # API kullanım limitlerine uymak için küçük bir bekleme
+
+    print("\n--- Döviz Kuru Verileri Toplanıyor ---")
+    for name, symbol in EXCHANGES.items():
+        data = get_exchange_rate(symbol)
+        if data:
+            data["name"] = name # İnsan tarafından okunabilir adı ekle
+            all_data["exchanges"].append(data)
+        time.sleep(0.5)
+
+    print("\n--- Dünya Borsası Endeksleri Toplanıyor ---")
+    for name, symbol in WORLD_INDICES.items():
+        data = get_index_value(symbol)
+        if data:
+            data["name"] = name # İnsan tarafından okunabilir adı ekle
+            all_data["indices"].append(data)
+        time.sleep(0.5)
+
+    return all_data
+
+# --- Veri Gösterme Fonksiyonu ---
+
+def display_data(market_data):
+    """
+    Toplanan piyasa verilerini okunabilir bir formatta gösterir.
+    Gerçek bir uygulamada, bu veriler bir GUI (Grafiksel Kullanıcı Arayüzü)
+    veya web arayüzünde grafiklerle birlikte gösterilir.
+    """
+    print("\n" + "="*50)
+    print(f"Piyasa Durumu - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("="*50)
+
+    print("\n--- Değerli Madenler ve Emtialar ---")
+    if market_data["commodities"]:
+        # Pandas DataFrame ile daha düzenli gösterme
+        df_commodities = pd.DataFrame(market_data["commodities"])
+        print(df_commodities[["name", "symbol", "price", "timestamp"]].to_string(index=False))
+    else:
+        print("Emtia verisi bulunamadı.")
+
+    print("\n--- Döviz Kurları ---")
+    if market_data["exchanges"]:
+        df_exchanges = pd.DataFrame(market_data["exchanges"])
+        print(df_exchanges[["name", "symbol", "rate", "timestamp"]].to_string(index=False))
+    else:
+        print("Döviz kuru verisi bulunamadı.")
+
+    print("\n--- Dünya Borsası Endeksleri ---")
+    if market_data["indices"]:
+        df_indices = pd.DataFrame(market_data["indices"])
+        print(df_indices[["name", "symbol", "value", "timestamp"]].to_string(index=False))
+    else:
+        print("Borsa endeksi verisi bulunamadı.")
+
+    print("\n" + "="*50)
+
+# --- Ana Çalıştırma Döngüsü ---
+
+def main():
+    print("Piyasa Analiz Aracı Başlatılıyor...")
+    try:
+        while True:
+            market_data = collect_market_data()
+            display_data(market_data)
+            
+            # Verileri belirli aralıklarla güncelle (örneğin her 60 saniyede bir)
+            # Gerçek zamanlı grafikler için bu aralık çok daha kısa olabilir
+            # ve GUI event loop'u ile yönetilir.
+            update_interval_seconds = 60 
+            print(f"\n{update_interval_seconds} saniye sonra tekrar güncelleniyor...")
+            time.sleep(update_interval_seconds)
+            
+    except KeyboardInterrupt:
+        print("\nPiyasa Analiz Aracı kapatılıyor. Hoşça kalın!")
+    except Exception as e:
+        print(f"\nBeklenmedik bir hata oluştu: {e}")
+
+if __name__ == "__main__":
+    main()
