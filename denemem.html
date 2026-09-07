@@ -57,7 +57,7 @@
       margin-bottom: 16px;
     }
     .badge-container {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .badge-container a {
       display: inline-block;
@@ -67,6 +67,29 @@
     }
     .badge-container img {
       vertical-align: middle;
+    }
+    /* Tablo Stilleri */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: #0d1117;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #30363d;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #21262d;
+    }
+    th {
+      background-color: #161b22;
+      color: #f0f6fc;
+      font-weight: 600;
+    }
+    tr:last-child td {
+      border-bottom: none;
     }
     ul {
       list-style-type: none;
@@ -108,12 +131,13 @@
   <div class="container">
     <!-- 1. TIKLANMA ROZETLERİ (EN BAŞTA) -->
     <div class="badge-container">
-      <!-- Site & GitHub Uzantılı Linkler -->
       <a href="https://piyasaanaliz.github.io" target="_blank" rel="noopener noreferrer">
         <img src="https://img.shields.io/badge/GitHub-PiyasaAnaliz-181717?style=flat&logo=github" alt="GitHub Page">
       </a>
-      
-      <!-- YouTube ve Diğer Yönlendirme Linkleri (Uzantılı Linklerin Altında/Devamında) -->
+    </div>
+
+    <!-- YÖNLENDİRME ROZETLERİ (SİTE UZANTISININ HEMEN ALTINDA) -->
+    <div class="badge-container">
       <a href="https://youtube.com/@PiyasaAnalizim" target="_blank" rel="noopener noreferrer">
         <img src="https://img.shields.io/badge/YouTube-PiyasaAnalizim-red?style=flat&logo=youtube" alt="YouTube PiyasaAnalizim">
       </a>
@@ -131,10 +155,12 @@
       </a>
     </div>
 
+    <hr>
+
     <!-- 2. MERHABA KISMI -->
     <h1>👋 Merhaba, Hoş Geldiniz!</h1>
 
-    <p>Finansal piyasa analizleri, döviz hareketleri, altın trendleri ve teknoloji üzerine odaklanıyorum. Piyasa trendlerini takip ediyor, analizlerimi ve projelerimi toplulukla paylaşıyorum.</p>
+    <p>Finansal piyasa analizleri, döviz kurları, altın hareketlilikleri ve teknoloji üzerine odaklanıyorum. Anlık piyasa trendlerini takip ediyor, analizlerimi ve veri tablolarımı paylaşıyorum.</p>
 
     <blockquote>
       💡 <em>"Bilgi paylaşıldıkça kıymetli ve değerlidir."</em>
@@ -142,7 +168,54 @@
 
     <hr>
 
-    <!-- 3. DESTEK KISMI -->
+    <!-- 3. CANLI DÖVİZ, ALTIN VE PİYASA ANALİZ TABLOSU -->
+    <h3>📊 Piyasa & Döviz Hareketlilikleri</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Varlık / Veri</th>
+          <th>Fiyat / Değer</th>
+          <th>Günlük Değişim</th>
+          <th>Değişim Yönü</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>USD / TRY</strong></td>
+          <td>₺00,00</td>
+          <td>%+0.00</td>
+          <td>📈</td>
+        </tr>
+        <tr>
+          <td><strong>EUR / TRY</strong></td>
+          <td>₺00,00</td>
+          <td>%-0.00</td>
+          <td>📉</td>
+        </tr>
+        <tr>
+          <td><strong>Gram Altın</strong></td>
+          <td>₺0.000,00</td>
+          <td>%+0.00</td>
+          <td>📈</td>
+        </tr>
+        <tr>
+          <td><strong>Ons Altın</strong></td>
+          <td>$0.000,00</td>
+          <td>%-0.00</td>
+          <td>📉</td>
+        </tr>
+        <tr>
+          <td><strong>BIST 100</strong></td>
+          <td>0.000,00</td>
+          <td>%+0.00</td>
+          <td>📈</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <!-- 4. DESTEK KISMI -->
     <h3>🤝 Bağımsız Yayıncılığı Destekleyin</h3>
 
     <p>Bağımsız içeriklerimi sürdürebilmem için bana destek olabilirsiniz:</p>
@@ -153,7 +226,7 @@
 
     <hr>
 
-    <!-- 4. İLETİŞİM & ADRESLER & UYARI (EN ALTA) -->
+    <!-- 5. İLETİŞİM & ADRESLER & UYARI (EN ALTA) -->
     <h3>📩 İletişim & Kartvizit</h3>
 
     <ul>
