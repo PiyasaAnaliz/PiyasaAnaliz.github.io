@@ -7,8 +7,8 @@ from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandle
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # 1. AYARLAR VE API ANAHTARLARI
-TELEGRAM_TOKEN = "TELEGRAM_BOT_TOKEN_BURAYA"
-FINNHUB_API_KEY = "FINNHUB_ANAHTARIN_BURAYA"
+TELEGRAM_TOKEN = "8730070682:AAEtuRaWhYt3gZHSCQoePxK_SmYlfheyAuk"
+FINNHUB_API_KEY = "daisvd9r01qqjcj5bmugdaisvd9r01qqjcj5bmv0"
 
 # Günlük limit yönetimi: Toplam 25 hak var.
 DAY_REQUESTS = 15
