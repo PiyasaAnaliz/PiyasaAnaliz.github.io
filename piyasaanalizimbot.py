@@ -23,33 +23,33 @@ if not FINNHUB_API_KEY:
 
 # Destek ve İletişim Metni
 DESTEK_METNI = (
-    "💎 **Bize Destek Olun** 💎\n\n"
+    "💎 *Bize Destek Olun* 💎\n\n"
     "Merhaba! YouTube Katıl Butonu, Videonun Altındaki Süper Teşekkür ve "
     "Patreon üzerinden kanalımıza destek olabilirsiniz.\n\n"
     "Desteğiniz Çok Önemli: Sosyal Medya Hesaplarımı Takip Edip Beğenip "
     "Yorum ve Abone Olmayı Unutmayın Lütfen.\n\n"
-    "🔗 **Kartvizit:** https://piyasaanaliz.github.io\n"
-    "🐙 **GitHub:** https://www.github.com/PiyasaAnaliz\n"
-    "🌐 **Web:** https://MutinousTube.github.io\n"
-    "🐙 **GitHub:** https://www.github.com/MutinousTube\n"
-    "▶️ **YouTube:** https://www.youtube.com/@PiyasaAnalizim\n"
-    "🎵 **TikTok:** https://www.tiktok.com/@piyasaanalizim\n"
-    "🎵 **TikTok:** https://www.tiktok.com/@piyasaanalizcim\n"
-    "📺 **Rumble:** https://www.rumble.com/user/MutinousTube\n"
-    "📺 **Dailymotion:** https://www.dailymotion.com/MutinousTube\n"
-    "🐦 **X:** https://www.x.com/PiyasaAnalizim\n"
-    "🐦 **X:** https://www.x.com/Piyasa_Analizi\n"
-    "📸 **Instagram:** https://www.instagram.com/PiyasaAnalizim\n"
-    "💬 **Telegram:** https://t.me/PiyasaAnalizci\n"
-    "🟢 **WhatsApp:** https://whatsapp.com/channel/0029VbCUgXf6WaKnetLyMi34\n"
-    "💬 **Telegram:** https://t.me/MutinousTube\n"
-    "🟢 **WhatsApp:** https://whatsapp.com/channel/0029Vb4JKWmIyPtbv15mol0F\n\n"
-    "🏢 **Mutinous Technology:**\n"
+    "🔗 *Kartvizit:* https://piyasaanaliz.github.io\n"
+    "🐙 *GitHub:* https://www.github.com/PiyasaAnaliz\n"
+    "🌐 *Web:* https://MutinousTube.github.io\n"
+    "🐙 *GitHub:* https://www.github.com/MutinousTube\n"
+    "▶️ *YouTube:* https://www.youtube.com/@PiyasaAnalizim\n"
+    "🎵 *TikTok:* https://www.tiktok.com/@piyasaanalizim\n"
+    "🎵 *TikTok:* https://www.tiktok.com/@piyasaanalizcim\n"
+    "📺 *Rumble:* https://www.rumble.com/user/MutinousTube\n"
+    "📺 *Dailymotion:* https://www.dailymotion.com/MutinousTube\n"
+    "🐦 *X:* https://www.x.com/PiyasaAnalizim\n"
+    "🐦 *X:* https://www.x.com/Piyasa_Analizi\n"
+    "📸 *Instagram:* https://www.instagram.com/PiyasaAnalizim\n"
+    "💬 *Telegram:* https://t.me/PiyasaAnalizci\n"
+    "🟢 *WhatsApp:* https://whatsapp.com/channel/0029VbCUgXf6WaKnetLyMi34\n"
+    "💬 *Telegram:* https://t.me/MutinousTube\n"
+    "🟢 *WhatsApp:* https://whatsapp.com/channel/0029Vb4JKWmIyPtbv15mol0F\n\n"
+    "🏢 *Mutinous Technology:*\n"
     "▶️ https://youtube.com/@MutinousTube\n"
     "📘 https://www.facebook.com/MutinousTube\n"
     "👥 https://youtube.com/@MutinousTube/community\n"
-    "📧 **İletişim:** MutinousTube@gmail.com\n\n"
-    "⚠️ **YASAL UYARI**\n"
+    "📧 *İletişim:* MutinousTube@gmail.com\n\n"
+    "⚠️ *YASAL UYARI*\n"
     "BİLGİ AMAÇLI YAPILAN PAYLAŞIMLAR YATIRIM DANIŞMANLIĞI KAPSAMINDA DEĞİLDİR. "
     "HİÇ BİR ŞEKİLDE SORUMLULUK KABUL EDİLMEKTEDİR."
 )
@@ -78,7 +78,6 @@ logger = logging.getLogger(__name__)
 
 
 # ===================== AKILLI ALGILAMA (KELİME HAZNESİ) =====================
-# Kullanıcı bu kelimeleri yazdığında bot otomatik olarak ilgili kategoriyi gönderir.
 KEYWORD_MAP = {
     "doviz": [
         "dolar", "usd", "euro", "eur", "döviz", "doviz", "kur", "kurlar", 
@@ -104,10 +103,9 @@ KEYWORD_MAP = {
     ]
 }
 
-def detect_category(text):
+def detect_category(text: str):
     """Kullanıcının yazdığı metne göre hangi kategoriye ait olduğunu bulur."""
     text_lower = text.lower()
-    # Önce en uzun kelimeleri kontrol et (örneğin "bitcoin" -> "coin"den önce)
     for category, keywords in KEYWORD_MAP.items():
         for keyword in keywords:
             if keyword in text_lower:
@@ -116,8 +114,8 @@ def detect_category(text):
 
 
 # ===================== VERİ ÇEKME (FINNHUB) =====================
-def _finnhub_quote(symbol):
-    """Finnhub /quote endpoint. Emtia, kripto ve forex için tek endpoint."""
+def _finnhub_quote(symbol: str):
+    """Finnhub /quote endpoint."""
     url = "https://finnhub.io/api/v1/quote"
     params = {"symbol": symbol, "token": FINNHUB_API_KEY}
     try:
@@ -129,40 +127,40 @@ def _finnhub_quote(symbol):
         return {}
 
 
-def fetch_asset(symbol, name, is_crypto=False):
+def fetch_asset(symbol: str, name: str, is_crypto: bool = False):
     """Tek sembol için fiyat + değişim yüzdesi çeker."""
     data = _finnhub_quote(symbol)
     price = data.get("c")
     prev = data.get("pc")
 
-    if not price or price == 0:
+    if price is None or price == 0:
         logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None döndü → {data}")
         return f"{name}: veri yok"
 
-    change_pct = ((price - prev) / prev * 100) if prev else 0
+    change_pct = ((price - prev) / prev * 100) if (prev and prev != 0) else 0
     decimals = 2 if is_crypto else 4
     return f"{name}: {price:,.{decimals}f} (%{change_pct:+.2f})"
 
 
-def fetch_forex(base, target, name):
+def fetch_forex(base: str, target: str, name: str):
     """Finnhub forex için 'OANDA:XXX_YYY' formatı kullanılır."""
     symbol = f"OANDA:{base}_{target}"
     data = _finnhub_quote(symbol)
     price = data.get("c")
 
-    if not price or price == 0:
+    if price is None or price == 0:
         logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None → {data}")
         return f"{name}: veri yok"
 
     return f"{name}: {price:.4f}"
 
 
-def fetch_emtia(symbol, name):
+def fetch_emtia(symbol: str, name: str):
     return fetch_asset(symbol, name, is_crypto=False)
 
 
 def update_all_caches():
-    """Tüm kategorileri günceller. Hata olsa bile bot çökmemeli."""
+    """Tüm kategorileri günceller."""
     logger.info("🔄 Veri güncelleme başladı...")
     
     # 1. Emtia
@@ -172,7 +170,6 @@ def update_all_caches():
             fetch_emtia("OANDA:XAG_USD", "Gümüş (ONS)"),
             fetch_emtia("OANDA:BCO_USD", "Brent Petrol"),
         ])
-        logger.info(f"Emtia güncellendi:\n{cache_data['emtia']}")
     except Exception as e:
         logger.exception(f"Emtia güncelleme hatası: {e}")
 
@@ -182,7 +179,6 @@ def update_all_caches():
             fetch_asset("BINANCE:BTCUSDT", "Bitcoin", is_crypto=True),
             fetch_asset("BINANCE:ETHUSDT", "Ethereum", is_crypto=True),
         ])
-        logger.info(f"Kripto güncellendi:\n{cache_data['kripto']}")
     except Exception as e:
         logger.exception(f"Kripto güncelleme hatası: {e}")
 
@@ -192,7 +188,6 @@ def update_all_caches():
             fetch_forex("USD", "TRY", "Dolar"),
             fetch_forex("EUR", "TRY", "Euro"),
         ])
-        logger.info(f"Döviz güncellendi:\n{cache_data['doviz']}")
     except Exception as e:
         logger.exception(f"Döviz güncelleme hatası: {e}")
 
@@ -213,44 +208,36 @@ def get_main_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
-async def send_category(update, category, edit=False):
+async def send_category(update: Update, category: str, edit: bool = False):
     """Belirtilen kategoriyi gönderir. edit=True ise mesajı düzenler."""
     if category == 'destek':
         text = cache_data.get('destek', "Destek metni yüklenemedi.")
-        if edit:
-            await update.callback_query.edit_message_text(
-                text=text,
-                reply_markup=get_main_keyboard(),
-                parse_mode='Markdown'
-            )
-        else:
-            await update.message.reply_text(
-                text=text,
-                reply_markup=get_main_keyboard(),
-                parse_mode='Markdown'
-            )
-        return
+        parse_mode = 'Markdown'
+    else:
+        text = cache_data.get(category, "Veri bulunamadı")
+        footer = f"\n\nSon Güncelleme: {cache_data['last_update']}\n⚠️ Bilgi amaçlıdır."
+        text = text + footer
+        parse_mode = None
 
-    text = cache_data.get(category, "Veri bulunamadı")
-    footer = f"\n\nSon Güncelleme: {cache_data['last_update']}\n⚠️ Bilgi amaçlıdır."
-    full_text = text + footer
-
-    if edit:
+    if edit and update.callback_query:
         try:
             await update.callback_query.edit_message_text(
-                text=full_text,
-                reply_markup=get_main_keyboard()
+                text=text,
+                reply_markup=get_main_keyboard(),
+                parse_mode=parse_mode
             )
         except Exception as e:
             logger.warning(f"edit_message_text hatası: {e}")
             await update.callback_query.message.reply_text(
-                text=full_text,
-                reply_markup=get_main_keyboard()
+                text=text,
+                reply_markup=get_main_keyboard(),
+                parse_mode=parse_mode
             )
     else:
         await update.message.reply_text(
-            text=full_text,
-            reply_markup=get_main_keyboard()
+            text=text,
+            reply_markup=get_main_keyboard(),
+            parse_mode=parse_mode
         )
 
 
@@ -303,17 +290,21 @@ def run_flask():
 def main():
     logger.info("🚀 Bot başlatılıyor...")
 
+    # İlk veri önbelleğini başlat
     threading.Thread(target=update_all_caches, daemon=True).start()
 
+    # Zamanlayıcı başlat
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_all_caches, 'cron', minute='*/30')
     scheduler.start()
     logger.info("⏰ Scheduler başlatıldı (her 30 dakikada bir).")
 
+    # Web/Health Server thread başlat
     flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
     logger.info("🌐 Flask thread başlatıldı.")
 
+    # Telegram Bot Polling
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button_handler))
