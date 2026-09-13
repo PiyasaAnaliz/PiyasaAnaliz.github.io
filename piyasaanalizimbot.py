@@ -43,42 +43,47 @@ logger = logging.getLogger(__name__)
 
 # ===================== VERİ ÇEKME (FINNHUB) =====================
 def _finnhub_quote(symbol):
+    """Finnhub /quote endpoint. Emtia, kripto ve forex için tek endpoint."""
     url = "https://finnhub.io/api/v1/quote"
     params = {"symbol": symbol, "token": FINNHUB_API_KEY}
     r = requests.get(url, params=params, timeout=10)
+    r.raise_for_status()
     return r.json()
 
 
 def fetch_asset(symbol, name, is_crypto=False):
+    """Tek sembol için fiyat + değişim yüzdesi çeker."""
     try:
         data = _finnhub_quote(symbol)
         price = data.get("c")
         prev = data.get("pc")
 
         if not price or price == 0:
+            logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None döndü → {data}")
             return f"{name}: veri yok"
 
         change_pct = ((price - prev) / prev * 100) if prev else 0
         decimals = 2 if is_crypto else 4
         return f"{name}: {price:,.{decimals}f} (%{change_pct:+.2f})"
     except Exception as e:
-        logger.warning(f"{name} verisi alınamadı: {e}")
+        logger.warning(f"❌ {name} ({symbol}) alınamadı: {e}")
         return f"{name}: veri alınamadı"
 
 
 def fetch_forex(base, target, name):
+    """Finnhub forex için 'OANDA:XXX_YYY' formatı kullanılır."""
     try:
-        url = "https://finnhub.io/api/v1/forex/rates"
-        params = {"base": base, "token": FINNHUB_API_KEY}
-        r = requests.get(url, params=params, timeout=10)
-        data = r.json()
+        symbol = f"OANDA:{base}_{target}"
+        data = _finnhub_quote(symbol)
+        price = data.get("c")
 
-        rate = data.get("quote", {}).get(target)
-        if rate is None:
+        if not price or price == 0:
+            logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None → {data}")
             return f"{name}: veri yok"
-        return f"{name}: {rate:.4f}"
+
+        return f"{name}: {price:.4f}"
     except Exception as e:
-        logger.warning(f"{name} verisi alınamadı: {e}")
+        logger.warning(f"❌ {name} alınamadı: {e}")
         return f"{name}: veri alınamadı"
 
 
@@ -87,27 +92,37 @@ def fetch_emtia(symbol, name):
 
 
 def update_all_caches():
+    """Tüm kategorileri günceller. Hata olsa bile bot çökmemeli."""
     try:
         cache_data["emtia"] = "\n".join([
             fetch_emtia("OANDA:XAU_USD", "Altın (ONS)"),
             fetch_emtia("OANDA:XAG_USD", "Gümüş (ONS)"),
             fetch_emtia("OANDA:BCO_USD", "Brent Petrol"),
         ])
+        logger.info(f"Emtia güncellendi:\n{cache_data['emtia']}")
+    except Exception as e:
+        logger.exception(f"Emtia güncelleme hatası: {e}")
 
+    try:
         cache_data["kripto"] = "\n".join([
             fetch_asset("BINANCE:BTCUSDT", "Bitcoin", is_crypto=True),
             fetch_asset("BINANCE:ETHUSDT", "Ethereum", is_crypto=True),
         ])
+        logger.info(f"Kripto güncellendi:\n{cache_data['kripto']}")
+    except Exception as e:
+        logger.exception(f"Kripto güncelleme hatası: {e}")
 
+    try:
         cache_data["doviz"] = "\n".join([
             fetch_forex("USD", "TRY", "Dolar"),
             fetch_forex("EUR", "TRY", "Euro"),
         ])
-
-        cache_data["last_update"] = datetime.now().strftime("%d-%m-%Y %H:%M")
-        logger.info("✅ Veriler güncellendi.")
+        logger.info(f"Döviz güncellendi:\n{cache_data['doviz']}")
     except Exception as e:
-        logger.exception(f"❌ Güncelleme hatası: {e}")
+        logger.exception(f"Döviz güncelleme hatası: {e}")
+
+    cache_data["last_update"] = datetime.now().strftime("%d-%m-%Y %H:%M")
+    logger.info("✅ Tüm veriler güncellendi.")
 
 
 # ===================== TELEGRAM =====================
@@ -136,10 +151,23 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = cache_data.get(query.data, "Veri bulunamadı")
     footer = f"\n\nSon Güncelleme: {cache_data['last_update']}\n⚠️ Bilgi amaçlıdır."
 
-    await query.edit_message_text(
-        text=text + footer,
-        reply_markup=get_main_keyboard()
-    )
+    full_text = text + footer
+
+    try:
+        await query.edit_message_text(
+            text=full_text,
+            reply_markup=get_main_keyboard()
+        )
+    except Exception as e:
+        # Telegram aynı içerikli mesajı düzenlemeye izin vermez
+        logger.warning(f"edit_message_text hatası: {e}")
+        try:
+            await query.message.reply_text(
+                text=full_text,
+                reply_markup=get_main_keyboard()
+            )
+        except Exception as e2:
+            logger.error(f"reply_text de başarısız: {e2}")
 
 
 async def chat_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -168,17 +196,21 @@ def run_flask():
 def main():
     logger.info("🚀 Bot başlatılıyor...")
 
+    # İlk veri çekimi
     update_all_caches()
 
+    # Scheduler
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_all_caches, 'cron', minute='*/30')
     scheduler.start()
-    logger.info("⏰ Scheduler başlatıldı.")
+    logger.info("⏰ Scheduler başlatıldı (her 30 dakikada bir).")
 
+    # Flask (health check)
     flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
     logger.info("🌐 Flask thread başlatıldı.")
 
+    # Telegram bot
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button_handler))
@@ -187,7 +219,7 @@ def main():
     )
 
     logger.info("✅ Telegram botu polling başlıyor...")
-    application.run_polling(close_loop=False, drop_pending_updates=True)
+    application.run_polling(drop_pending_updates=True)
 
 
 if __name__ == '__main__':
