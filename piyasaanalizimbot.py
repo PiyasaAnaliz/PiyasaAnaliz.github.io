@@ -13,8 +13,14 @@ from telegram.ext import (
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # ===================== AYARLAR =====================
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "BURAYA_YENI_TOKEN")
-FINNHUB_API_KEY = os.environ.get("FINNHUB_API_KEY", "BURAYA_YENI_KEY")
+# Yerel test için default değerleri buraya yaz, prod'da env var kullan
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
+FINNHUB_API_KEY = os.environ.get("FINNHUB_API_KEY", "")
+
+if not TELEGRAM_TOKEN:
+    raise SystemExit("❌ TELEGRAM_TOKEN eksik! Ortam değişkeni olarak tanımla.")
+if not FINNHUB_API_KEY:
+    raise SystemExit("❌ FINNHUB_API_KEY eksik! Ortam değişkeni olarak tanımla.")
 
 cache_data = {
     "emtia": "Veriler yükleniyor...",
@@ -37,36 +43,45 @@ logger = logging.getLogger(__name__)
 
 
 # ===================== VERİ ÇEKME (FINNHUB) =====================
-def fetch_quote(symbol, name):
-    """Finnhub quote endpoint'inden fiyat çeker."""
-    try:
-        url = "https://finnhub.io/api/v1/quote"
-        params = {"symbol": symbol, "token": FINNHUB_API_KEY}
-        r = requests.get(url, params=params, timeout=10)
-        data = r.json()
+def _finnhub_quote(symbol):
+    """Finnhub /quote endpoint'i — hisse, kripto, bazı emtia için çalışır."""
+    url = "https://finnhub.io/api/v1/quote"
+    params = {"symbol": symbol, "token": FINNHUB_API_KEY}
+    r = requests.get(url, params=params, timeout=10)
+    return r.json()
 
-        price = data.get("c")           # current price
-        prev = data.get("pc")           # previous close
+
+def fetch_asset(symbol, name, is_crypto=False):
+    """
+    Tek fonksiyon: kripto ve emtia için kullanılır.
+    is_crypto=True ise ondalık basamak 2, değilse 4.
+    """
+    try:
+        data = _finnhub_quote(symbol)
+
+        price = data.get("c")
+        prev = data.get("pc")
 
         if not price or price == 0:
             return f"{name}: veri yok"
 
         change_pct = ((price - prev) / prev * 100) if prev else 0
-        return f"{name}: {price:.2f} (%{change_pct:+.2f})"
+        decimals = 2 if is_crypto else 4
+        return f"{name}: {price:,.{decimals}f} (%{change_pct:+.2f})"
     except Exception as e:
         logger.warning(f"{name} verisi alınamadı: {e}")
         return f"{name}: veri alınamadı"
 
 
-def fetch_forex(symbol_from, symbol_to, name):
-    """Finnhub forex endpoint'i (kripto/döviz için)."""
+def fetch_forex(base, target, name):
+    """Finnhub forex rates endpoint'i."""
     try:
         url = "https://finnhub.io/api/v1/forex/rates"
-        params = {"base": symbol_from, "token": FINNHUB_API_KEY}
+        params = {"base": base, "token": FINNHUB_API_KEY}
         r = requests.get(url, params=params, timeout=10)
         data = r.json()
 
-        rate = data.get("quote", {}).get(symbol_to)
+        rate = data.get("quote", {}).get(target)
         if rate is None:
             return f"{name}: veri yok"
         return f"{name}: {rate:.4f}"
@@ -75,45 +90,40 @@ def fetch_forex(symbol_from, symbol_to, name):
         return f"{name}: veri alınamadı"
 
 
-def fetch_crypto(symbol, name):
-    """Finnhub kripto endpoint'i. Örn sembol: BINANCE:BTCUSDT"""
-    try:
-        url = "https://finnhub.io/api/v1/quote"
-        params = {"symbol": symbol, "token": FINNHUB_API_KEY}
-        r = requests.get(url, params=params, timeout=10)
-        data = r.json()
-
-        price = data.get("c")
-        prev = data.get("pc")
-        if not price:
-            return f"{name}: veri yok"
-
-        change_pct = ((price - prev) / prev * 100) if prev else 0
-        return f"{name}: {price:,.2f} (%{change_pct:+.2f})"
-    except Exception as e:
-        logger.warning(f"{name} verisi alınamadı: {e}")
-        return f"{name}: veri alınamadı"
+def fetch_emtia(symbol, name):
+    """
+    Emtia için Finnhub kripto endpoint'ini kullanır.
+    Finnhub ücretsiz planda OANDA sembolleri çalışmayabilir.
+    Çalışmazsa 'veri yok' döner, sistem çökmez.
+    """
+    return fetch_asset(symbol, name, is_crypto=False)
 
 
 def update_all_caches():
     try:
+        # Emtia (ücretsiz planda OANDA olmayabilir — çalışmazsa 'veri yok' döner)
         cache_data["emtia"] = "\n".join([
-            fetch_crypto("OANDA:XAU_USD", "Altın (ONS)"),
-            fetch_crypto("OANDA:XAG_USD", "Gümüş (ONS)"),
-            fetch_crypto("OANDA:BCO_USD", "Brent Petrol"),
+            fetch_emtia("OANDA:XAU_USD", "Altın (ONS)"),
+            fetch_emtia("OANDA:XAG_USD", "Gümüş (ONS)"),
+            fetch_emtia("OANDA:BCO_USD", "Brent Petrol"),
         ])
+
+        # Kripto (ücretsiz planda çalışır)
         cache_data["kripto"] = "\n".join([
-            fetch_crypto("BINANCE:BTCUSDT", "Bitcoin"),
-            fetch_crypto("BINANCE:ETHUSDT", "Ethereum"),
+            fetch_asset("BINANCE:BTCUSDT", "Bitcoin", is_crypto=True),
+            fetch_asset("BINANCE:ETHUSDT", "Ethereum", is_crypto=True),
         ])
+
+        # Döviz
         cache_data["doviz"] = "\n".join([
             fetch_forex("USD", "TRY", "Dolar"),
             fetch_forex("EUR", "TRY", "Euro"),
         ])
+
         cache_data["last_update"] = datetime.now().strftime("%d-%m-%Y %H:%M")
-        logger.info("Veriler güncellendi.")
+        logger.info("✅ Veriler güncellendi.")
     except Exception as e:
-        logger.exception(f"Güncelleme hatası: {e}")
+        logger.exception(f"❌ Güncelleme hatası: {e}")
 
 
 # ===================== TELEGRAM =====================
@@ -155,7 +165,7 @@ async def chat_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-# ===================== FLASK =====================
+# ===================== FLASK (Health Check) =====================
 flask_app = Flask(__name__)
 
 
@@ -171,17 +181,24 @@ def run_flask():
 
 
 # ===================== BAŞLATMA =====================
-if __name__ == '__main__':
+def main():
+    logger.info("🚀 Bot başlatılıyor...")
+
+    # 1. İlk veri yüklemesi
     update_all_caches()
 
+    # 2. Scheduler (her 30 dk)
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_all_caches, 'cron', minute='*/30')
     scheduler.start()
+    logger.info("⏰ Scheduler başlatıldı.")
 
+    # 3. Flask thread
     flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
-    logger.info("Flask thread başlatıldı.")
+    logger.info("🌐 Flask thread başlatıldı.")
 
+    # 4. Telegram bot
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button_handler))
@@ -189,5 +206,9 @@ if __name__ == '__main__':
         MessageHandler(filters.TEXT & ~filters.COMMAND, chat_handler)
     )
 
-    logger.info("Bot başlatılıyor...")
+    logger.info("✅ Telegram botu polling başlıyor...")
     application.run_polling()
+
+
+if __name__ == '__main__':
+    main()
