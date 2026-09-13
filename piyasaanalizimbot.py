@@ -125,4 +125,18 @@ if __name__ == '__main__':
 
     logging.info("Bot çalışmaya başladı...")
     application.run_polling()
-  
+
+
+from flask import Flask
+import threading
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot calisiyor"
+
+def run_web():
+    app.run(host='0.0.0.0', port=10000)
+
+threading.Thread(target=run_web).start()
