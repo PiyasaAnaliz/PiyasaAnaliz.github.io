@@ -1,11 +1,16 @@
 import logging
-from datetime import datetime
-import requests
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes, MessageHandler, filters
-from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask
+import os
 import threading
+import requests
+from datetime import datetime
+from flask import Flask
+
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import (
+    ApplicationBuilder, CallbackQueryHandler,
+    CommandHandler, ContextTypes, MessageHandler, filters
+)
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # ===================== AYARLAR =====================
 TELEGRAM_TOKEN = "8730070682:AAEtuRaWhYt3gZHSCQoePxK_SmYlfheyAuk"
@@ -15,12 +20,7 @@ cache_data = {
     "kripto": "Veriler yükleniyor...",
     "doviz": "Veriler yükleniyor...",
     "bist": "BIST100: Gün sonu kapanış verileri baz alınmıştır.",
-    "uyari": (
-        "⚠️ YASAL UYARI\n\n"
-        "Bu botta yer alan tüm veriler yalnızca bilgilendirme amaçlıdır.\n"
-        "Kesinlikle yatırım tavsiyesi niteliği taşımaz.\n"
-        "Yatırım kararlarınızdan yalnızca siz sorumlusunuz."
-    ),
+    "uyari": "⚠️ YASAL UYARI\n\nBu botta yer alan tüm veriler yalnızca bilgilendirme amaçlıdır.",
     "last_update": "Henüz güncellenmedi"
 }
 
@@ -48,30 +48,21 @@ def fetch_price(symbol, name):
 
 
 def update_all_caches():
-    """Tüm kategorileri günceller ve cache_data dict'ini korur."""
     try:
-        emtia_text = "\n".join([
+        cache_data["emtia"] = "\n".join([
             fetch_price("XAUUSD", "Altın (ONS)"),
             fetch_price("XAGUSD", "Gümüş (ONS)"),
             fetch_price("BRENT", "Brent Petrol"),
         ])
-
-        kripto_text = "\n".join([
+        cache_data["kripto"] = "\n".join([
             fetch_price("BTCUSD", "Bitcoin"),
             fetch_price("ETHUSD", "Ethereum"),
         ])
-
-        doviz_text = "\n".join([
+        cache_data["doviz"] = "\n".join([
             fetch_price("USDTRY", "Dolar"),
             fetch_price("EURTRY", "Euro"),
-            fetch_price("GBPTRY", "Sterlin"),
         ])
-
-        cache_data["emtia"] = emtia_text
-        cache_data["kripto"] = kripto_text
-        cache_data["doviz"] = doviz_text
         cache_data["last_update"] = datetime.now().strftime("%d-%m-%Y %H:%M")
-
         logger.info("Veriler güncellendi.")
     except Exception as e:
         logger.exception(f"Güncelleme hatası: {e}")
@@ -101,10 +92,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     text = cache_data.get(query.data, "Veri bulunamadı")
-    footer = (
-        f"\n\nSon Güncelleme: {cache_data['last_update']}\n"
-        "⚠️ Bilgi amaçlıdır, yatırım tavsiyesi değildir."
-    )
+    footer = f"\n\nSon Güncelleme: {cache_data['last_update']}\n⚠️ Bilgi amaçlıdır."
 
     await query.edit_message_text(
         text=text + footer,
@@ -119,30 +107,41 @@ async def chat_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+# ===================== FLASK (Ayrı Thread) =====================
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+@flask_app.route('/health')
+def home():
+    return "Bot çalışıyor"
+
+
+def run_flask():
+    port = int(os.environ.get("PORT", 10000))
+    flask_app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+
+
 # ===================== BAŞLATMA =====================
 if __name__ == '__main__':
+    # 1. Verileri yükle
     update_all_caches()
 
+    # 2. Scheduler başlat
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_all_caches, 'cron', minute='*/30')
     scheduler.start()
 
+    # 3. Flask'ı AYRI daemon thread'de çalıştır
+    #    ÖNEMLİ: use_reloader=False olmalı, yoksa iki bot başlar!
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
+    logger.info("Flask thread başlatıldı.")
+
+    # 4. Telegram botunu ANA thread'de çalıştır
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button_handler))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat_handler))
 
-    # Flask (Render/Railway gibi platformlarda port dinlemek için)
-    app = Flask(__name__)
-
-    @app.route('/')
-    def home():
-        return "Bot çalışıyor"
-
-    threading.Thread(
-        target=lambda: app.run(host='0.0.0.0', port=10000),
-        daemon=True
-    ).start()
-
-    logger.info("Bot başlatıldı...")
+    logger.info("Bot başlatılıyor...")
     application.run_polling()
