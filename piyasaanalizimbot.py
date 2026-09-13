@@ -21,6 +21,39 @@ if not TELEGRAM_TOKEN:
 if not FINNHUB_API_KEY:
     raise SystemExit("❌ FINNHUB_API_KEY eksik! Ortam değişkeni olarak tanımla.")
 
+# Destek ve İletişim Metni
+DESTEK_METNI = (
+    "💎 **Bize Destek Olun** 💎\n\n"
+    "Merhaba! YouTube Katıl Butonu, Videonun Altındaki Süper Teşekkür ve "
+    "Patreon üzerinden kanalımıza destek olabilirsiniz.\n\n"
+    "Desteğiniz Çok Önemli: Sosyal Medya Hesaplarımı Takip Edip Beğenip "
+    "Yorum ve Abone Olmayı Unutmayın Lütfen.\n\n"
+    "🔗 **Kartvizit:** https://piyasaanaliz.github.io\n"
+    "🐙 **GitHub:** https://www.github.com/PiyasaAnaliz\n"
+    "🌐 **Web:** https://MutinousTube.github.io\n"
+    "🐙 **GitHub:** https://www.github.com/MutinousTube\n"
+    "▶️ **YouTube:** https://www.youtube.com/@PiyasaAnalizim\n"
+    "🎵 **TikTok:** https://www.tiktok.com/@piyasaanalizim\n"
+    "🎵 **TikTok:** https://www.tiktok.com/@piyasaanalizcim\n"
+    "📺 **Rumble:** https://www.rumble.com/user/MutinousTube\n"
+    "📺 **Dailymotion:** https://www.dailymotion.com/MutinousTube\n"
+    "🐦 **X:** https://www.x.com/PiyasaAnalizim\n"
+    "🐦 **X:** https://www.x.com/Piyasa_Analizi\n"
+    "📸 **Instagram:** https://www.instagram.com/PiyasaAnalizim\n"
+    "💬 **Telegram:** https://t.me/PiyasaAnalizci\n"
+    "🟢 **WhatsApp:** https://whatsapp.com/channel/0029VbCUgXf6WaKnetLyMi34\n"
+    "💬 **Telegram:** https://t.me/MutinousTube\n"
+    "🟢 **WhatsApp:** https://whatsapp.com/channel/0029Vb4JKWmIyPtbv15mol0F\n\n"
+    "🏢 **Mutinous Technology:**\n"
+    "▶️ https://youtube.com/@MutinousTube\n"
+    "📘 https://www.facebook.com/MutinousTube\n"
+    "👥 https://youtube.com/@MutinousTube/community\n"
+    "📧 **İletişim:** MutinousTube@gmail.com\n\n"
+    "⚠️ **YASAL UYARI**\n"
+    "BİLGİ AMAÇLI YAPILAN PAYLAŞIMLAR YATIRIM DANIŞMANLIĞI KAPSAMINDA DEĞİLDİR. "
+    "HİÇ BİR ŞEKİLDE SORUMLULUK KABUL EDİLMEKTEDİR."
+)
+
 cache_data = {
     "emtia": "Veriler yükleniyor...",
     "kripto": "Veriler yükleniyor...",
@@ -29,8 +62,11 @@ cache_data = {
     "uyari": (
         "⚠️ YASAL UYARI\n\n"
         "Bu botta yer alan tüm veriler yalnızca bilgilendirme amaçlıdır.\n"
-        "Yatırım tavsiyesi değildir."
+        "Yatırım tavsiyesi değildir.\n\n"
+        "BİLGİ AMAÇLI YAPILAN PAYLAŞIMLAR YATIRIM DANIŞMANLIĞI KAPSAMINDA DEĞİLDİR. "
+        "HİÇ BİR ŞEKİLDE SORUMLULUK KABUL EDİLMEKTEDİR."
     ),
+    "destek": DESTEK_METNI,
     "last_update": "Henüz güncellenmedi"
 }
 
@@ -41,50 +77,84 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# ===================== AKILLI ALGILAMA (KELİME HAZNESİ) =====================
+# Kullanıcı bu kelimeleri yazdığında bot otomatik olarak ilgili kategoriyi gönderir.
+KEYWORD_MAP = {
+    "doviz": [
+        "dolar", "usd", "euro", "eur", "döviz", "doviz", "kur", "kurlar", 
+        "parite", "sterlin", "gbp", "japon", "yen", "try", "tl"
+    ],
+    "emtia": [
+        "altın", "altin", "gold", "gümüş", "gumus", "silver", "petrol", 
+        "brent", "emtia", "ons", "xau", "xag", "bco", "metal"
+    ],
+    "kripto": [
+        "bitcoin", "btc", "ethereum", "eth", "kripto", "crypto", "coin", 
+        "binance", "usdt", "dijital", "altcoin"
+    ],
+    "bist": [
+        "bist", "borsa", "hisse", "endeks", "bist100", "xu100", "istanbul"
+    ],
+    "destek": [
+        "destek", "iletişim", "iletisim", "sosyal", "medya", "youtube", 
+        "patreon", "bağış", "bagis", "kanal", "abone", "takip"
+    ],
+    "uyari": [
+        "uyarı", "uyari", "yasal", "risk", "sorumluluk", "tavsiye"
+    ]
+}
+
+def detect_category(text):
+    """Kullanıcının yazdığı metne göre hangi kategoriye ait olduğunu bulur."""
+    text_lower = text.lower()
+    # Önce en uzun kelimeleri kontrol et (örneğin "bitcoin" -> "coin"den önce)
+    for category, keywords in KEYWORD_MAP.items():
+        for keyword in keywords:
+            if keyword in text_lower:
+                return category
+    return None
+
+
 # ===================== VERİ ÇEKME (FINNHUB) =====================
 def _finnhub_quote(symbol):
     """Finnhub /quote endpoint. Emtia, kripto ve forex için tek endpoint."""
     url = "https://finnhub.io/api/v1/quote"
     params = {"symbol": symbol, "token": FINNHUB_API_KEY}
-    r = requests.get(url, params=params, timeout=10)
-    r.raise_for_status()
-    return r.json()
+    try:
+        r = requests.get(url, params=params, timeout=10)
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Finnhub istek hatası ({symbol}): {e}")
+        return {}
 
 
 def fetch_asset(symbol, name, is_crypto=False):
     """Tek sembol için fiyat + değişim yüzdesi çeker."""
-    try:
-        data = _finnhub_quote(symbol)
-        price = data.get("c")
-        prev = data.get("pc")
+    data = _finnhub_quote(symbol)
+    price = data.get("c")
+    prev = data.get("pc")
 
-        if not price or price == 0:
-            logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None döndü → {data}")
-            return f"{name}: veri yok"
+    if not price or price == 0:
+        logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None döndü → {data}")
+        return f"{name}: veri yok"
 
-        change_pct = ((price - prev) / prev * 100) if prev else 0
-        decimals = 2 if is_crypto else 4
-        return f"{name}: {price:,.{decimals}f} (%{change_pct:+.2f})"
-    except Exception as e:
-        logger.warning(f"❌ {name} ({symbol}) alınamadı: {e}")
-        return f"{name}: veri alınamadı"
+    change_pct = ((price - prev) / prev * 100) if prev else 0
+    decimals = 2 if is_crypto else 4
+    return f"{name}: {price:,.{decimals}f} (%{change_pct:+.2f})"
 
 
 def fetch_forex(base, target, name):
     """Finnhub forex için 'OANDA:XXX_YYY' formatı kullanılır."""
-    try:
-        symbol = f"OANDA:{base}_{target}"
-        data = _finnhub_quote(symbol)
-        price = data.get("c")
+    symbol = f"OANDA:{base}_{target}"
+    data = _finnhub_quote(symbol)
+    price = data.get("c")
 
-        if not price or price == 0:
-            logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None → {data}")
-            return f"{name}: veri yok"
+    if not price or price == 0:
+        logger.warning(f"⚠️ {name} ({symbol}): fiyat 0/None → {data}")
+        return f"{name}: veri yok"
 
-        return f"{name}: {price:.4f}"
-    except Exception as e:
-        logger.warning(f"❌ {name} alınamadı: {e}")
-        return f"{name}: veri alınamadı"
+    return f"{name}: {price:.4f}"
 
 
 def fetch_emtia(symbol, name):
@@ -93,6 +163,9 @@ def fetch_emtia(symbol, name):
 
 def update_all_caches():
     """Tüm kategorileri günceller. Hata olsa bile bot çökmemeli."""
+    logger.info("🔄 Veri güncelleme başladı...")
+    
+    # 1. Emtia
     try:
         cache_data["emtia"] = "\n".join([
             fetch_emtia("OANDA:XAU_USD", "Altın (ONS)"),
@@ -103,6 +176,7 @@ def update_all_caches():
     except Exception as e:
         logger.exception(f"Emtia güncelleme hatası: {e}")
 
+    # 2. Kripto
     try:
         cache_data["kripto"] = "\n".join([
             fetch_asset("BINANCE:BTCUSDT", "Bitcoin", is_crypto=True),
@@ -112,6 +186,7 @@ def update_all_caches():
     except Exception as e:
         logger.exception(f"Kripto güncelleme hatası: {e}")
 
+    # 3. Döviz
     try:
         cache_data["doviz"] = "\n".join([
             fetch_forex("USD", "TRY", "Dolar"),
@@ -132,14 +207,58 @@ def get_main_keyboard():
         [InlineKeyboardButton("Kripto Paralar", callback_data='kripto')],
         [InlineKeyboardButton("Döviz Kurları", callback_data='doviz')],
         [InlineKeyboardButton("BIST100", callback_data='bist')],
-        [InlineKeyboardButton("Yasal Uyarı", callback_data='uyari')],
+        [InlineKeyboardButton("💎 Destek Ol & İletişim", callback_data='destek')],
+        [InlineKeyboardButton("⚠️ Yasal Uyarı", callback_data='uyari')],
     ]
     return InlineKeyboardMarkup(keyboard)
 
 
+async def send_category(update, category, edit=False):
+    """Belirtilen kategoriyi gönderir. edit=True ise mesajı düzenler."""
+    if category == 'destek':
+        text = cache_data.get('destek', "Destek metni yüklenemedi.")
+        if edit:
+            await update.callback_query.edit_message_text(
+                text=text,
+                reply_markup=get_main_keyboard(),
+                parse_mode='Markdown'
+            )
+        else:
+            await update.message.reply_text(
+                text=text,
+                reply_markup=get_main_keyboard(),
+                parse_mode='Markdown'
+            )
+        return
+
+    text = cache_data.get(category, "Veri bulunamadı")
+    footer = f"\n\nSon Güncelleme: {cache_data['last_update']}\n⚠️ Bilgi amaçlıdır."
+    full_text = text + footer
+
+    if edit:
+        try:
+            await update.callback_query.edit_message_text(
+                text=full_text,
+                reply_markup=get_main_keyboard()
+            )
+        except Exception as e:
+            logger.warning(f"edit_message_text hatası: {e}")
+            await update.callback_query.message.reply_text(
+                text=full_text,
+                reply_markup=get_main_keyboard()
+            )
+    else:
+        await update.message.reply_text(
+            text=full_text,
+            reply_markup=get_main_keyboard()
+        )
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Merhaba! Piyasa takip botuna hoş geldin.\nAşağıdan istediğin kategoriyi seç.",
+        "Merhaba! Piyasa takip botuna hoş geldin.\n\n"
+        "💡 **Akıllı Bot:** Aşağıdaki menüyü kullanabilir veya doğrudan "
+        "\"dolar\", \"altın\", \"bitcoin\" gibi kelimeler yazabilirsin.",
         reply_markup=get_main_keyboard()
     )
 
@@ -147,34 +266,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-
-    text = cache_data.get(query.data, "Veri bulunamadı")
-    footer = f"\n\nSon Güncelleme: {cache_data['last_update']}\n⚠️ Bilgi amaçlıdır."
-
-    full_text = text + footer
-
-    try:
-        await query.edit_message_text(
-            text=full_text,
-            reply_markup=get_main_keyboard()
-        )
-    except Exception as e:
-        # Telegram aynı içerikli mesajı düzenlemeye izin vermez
-        logger.warning(f"edit_message_text hatası: {e}")
-        try:
-            await query.message.reply_text(
-                text=full_text,
-                reply_markup=get_main_keyboard()
-            )
-        except Exception as e2:
-            logger.error(f"reply_text de başarısız: {e2}")
+    await send_category(update, query.data, edit=True)
 
 
 async def chat_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Menüden seçim yapabilirsin.",
-        reply_markup=get_main_keyboard()
-    )
+    """Kullanıcının yazdığı metni analiz eder ve akıllı yanıt verir."""
+    user_text = update.message.text
+    category = detect_category(user_text)
+
+    if category:
+        await send_category(update, category, edit=False)
+    else:
+        await update.message.reply_text(
+            "🤔 Seni tam anlayamadım. Lütfen aşağıdaki menüden bir seçim yap "
+            "veya \"dolar\", \"altın\", \"bitcoin\" gibi kelimeler yaz.",
+            reply_markup=get_main_keyboard()
+        )
 
 
 # ===================== FLASK (Health Check) =====================
@@ -196,21 +303,17 @@ def run_flask():
 def main():
     logger.info("🚀 Bot başlatılıyor...")
 
-    # İlk veri çekimi
-    update_all_caches()
+    threading.Thread(target=update_all_caches, daemon=True).start()
 
-    # Scheduler
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_all_caches, 'cron', minute='*/30')
     scheduler.start()
     logger.info("⏰ Scheduler başlatıldı (her 30 dakikada bir).")
 
-    # Flask (health check)
     flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
     logger.info("🌐 Flask thread başlatıldı.")
 
-    # Telegram bot
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button_handler))
