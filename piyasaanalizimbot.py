@@ -10,82 +10,48 @@ import os
 
 # ===================== AYARLAR =====================
 TELEGRAM_TOKEN = "8730070682:AAEtuRaWhYt3gZHSCQoePxK_SmYlfheyAuk"
-FINNHUB_API_KEY = "daisvd9r01qqjcj5bmugdaisvd9r01qqjcj5bmv0"
-
-# Günlük toplam 25 istek limiti
-MAX_DAILY_CALLS = 25
-daily_call_count = 0
-last_reset_date = datetime.now().date()
 
 # Cache
 cache_data = {
-    "emitallar": "Veriler yükleniyor...",
+    "emtia": "Veriler yükleniyor...",
     "kripto": "Veriler yükleniyor...",
-    "bist": "BIST100: Gün sonu kapanış verileri baz alınmıştır. Anlık işlem içermez.",
+    "doviz": "Veriler yükleniyor...",
+    "bist": "BIST100: Gün sonu kapanış verileri baz alınmıştır.",
     "last_update": "Henüz güncellenmedi"
 }
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# ===================== LIMIT KONTROL =====================
-def can_make_request():
-    global daily_call_count, last_reset_date
-    today = datetime.now().date()
-    if today != last_reset_date:
-        daily_call_count = 0
-        last_reset_date = today
-    return daily_call_count < MAX_DAILY_CALLS
-
-def increment_call():
-    global daily_call_count
-    daily_call_count += 1
-
 # ===================== VERİ ÇEKME =====================
-def fetch_metal_data():
-    if not can_make_request():
-        return cache_data try:
-        url = f"https://finnhub.io/api/v1/quote?symbol=OANDA:XAUUSD&token={FINNHUB_API_KEY}"
-        response = requests.get(url, timeout=10).json()
-        price = response.get('c', 'N/A')
-        increment_call()
-        return f"Altın (ONS): ${price}"
+def fetch_price(symbol, name):
+    try:
+        url = f"https://biquote.io/api/{symbol}"
+        data = requests.get(url, timeout=10).json()
+        price = data.get('mid', 'N/A')
+        change = data.get('dayDiffPercent', 0)
+        return f"{name}: {price:.2f} (%{change:+.2f})"
     except:
-        return "Emtia verisi alınamadı."
-
-def fetch_crypto_data():
-    if not can_make_request():
-        return cache_data try:
-        url = f"https://finnhub.io/api/v1/quote?symbol=BINANCE:BTCUSDT&token={FINNHUB_API_KEY}"
-        response = requests.get(url, timeout=10).json()
-        price = response.get('c', 'N/A')
-        increment_call()
-        return f"Bitcoin (BTC): ${price}"
-    except:
-        return "Kripto verisi alınamadı."
+        return f"{name} verisi alınamadı."
 
 def update_all_caches():
-    if not can_make_request():
-        logging.warning("Günlük limit doldu, cache güncellenmedi.")
-        return
-    
-    cache_data = fetch_metal_data()
-    cache_data["kripto"] = fetch_crypto_data()
-    cache_data = datetime.now().strftime("%d-%m-%Y %H:%M")
-    logging.info(f"Cache güncellendi. Bugün kullanılan: {daily_call_count}/{MAX_DAILY_CALLS}")
+    cache_data = fetch_price("XAUUSD", "Altın (ONS)")
+    cache_data = fetch_price("BTCUSD", "Bitcoin")
+    cache_data = f"Dolar: {fetch_price('USDTRY', 'Dolar')}\nEuro: {fetch_price('EURTRY', 'Euro')}"
+    cache_data["last_update"] = datetime.now().strftime("%d-%m-%Y %H:%M")
 
 # ===================== TELEGRAM =====================
 def get_main_keyboard():
     keyboard = [
-        [InlineKeyboardButton("Emtialar ve Metaller", callback_data='emitallar')],
-        [InlineKeyboardButton("Kripto Paralar", callback_data='kripto')],
-        [InlineKeyboardButton("Borsa İstanbul (BİST)", callback_data='bist')],
+        [InlineKeyboardButton("Emtialar", callback_data='emtia')], ,
+        [InlineKeyboardButton("Döviz Kurları", callback_data='doviz')],
+        [InlineKeyboardButton("Borsa İstanbul", callback_data='bist')],
         [InlineKeyboardButton("Yasal Uyarı", callback_data='uyari')]
     ]
     return InlineKeyboardMarkup(keyboard)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Hoş geldiniz!\n\nPiyasa takip botuna hoş geldiniz.\nAşağıdaki menüden istediğiniz kategoriyi seçebilirsiniz.",
+        "Merhaba! Piyasa takip botuna hoş geldin.\nAşağıdan istediğin kategoriyi seç.",
         reply_markup=get_main_keyboard()
     )
 
@@ -93,25 +59,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    update_text = f"\n\nSon Güncelleme: {cache_data['last_update']}"
-    warning = "\n\n⚠️ Bilgi amaçlıdır, yatırım tavsiyesi değildir."
-
-    if query.data == 'emitallar':
-        text = cache_data + update_text + warning
-    elif query.data == 'kripto':
-        text = cache_data["kripto"] + update_text + warning
-    elif query.data == 'bist':
-        text = cache_data + update_text + warning
-    elif query.data == 'uyari':
-        text = "Bu sistem tamamen bilgilendirme amaçlıdır.\nVerilerin doğruluğu garanti edilmez."
-    else:
-        text = "Bilinmeyen işlem."
-
-    await query.edit_message_text(text=text, reply_markup=get_main_keyboard())
+    text = cache_data.get(query.data, "Veri bulunamadı")
+    footer = f"\n\nSon Güncelleme: {cache_data }\n⚠️ Bilgi amaçlıdır, yatırım tavsiyesi değildir."
+    
+    await query.edit_message_text(text=text + footer, reply_markup=get_main_keyboard())
 
 async def chat_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Menüden seçim yapabilirsin veya /start yazabilirsin.",
+        "Menüden seçim yapabilirsin. Hangi piyasa hakkında bilgi istersin?",
         reply_markup=get_main_keyboard()
     )
 
@@ -120,7 +75,7 @@ if __name__ == '__main__':
     update_all_caches()
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(update_all_caches, 'cron', hour='9,11,13,15,17,20,23,2,5', minute=0)
+    scheduler.add_job(update_all_caches, 'cron', minute='*/30')  # Her 30 dakikada bir
     scheduler.start()
 
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
