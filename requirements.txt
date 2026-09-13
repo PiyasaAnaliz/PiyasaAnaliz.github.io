@@ -2,3 +2,5 @@ python-telegram-bot
 requests
 apscheduler
 flask
+python-telegram-bot
+requests
