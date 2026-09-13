@@ -13,7 +13,6 @@ from telegram.ext import (
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # ===================== AYARLAR =====================
-# Yerel test için default değerleri buraya yaz, prod'da env var kullan
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 FINNHUB_API_KEY = os.environ.get("FINNHUB_API_KEY", "")
 
@@ -44,7 +43,6 @@ logger = logging.getLogger(__name__)
 
 # ===================== VERİ ÇEKME (FINNHUB) =====================
 def _finnhub_quote(symbol):
-    """Finnhub /quote endpoint'i — hisse, kripto, bazı emtia için çalışır."""
     url = "https://finnhub.io/api/v1/quote"
     params = {"symbol": symbol, "token": FINNHUB_API_KEY}
     r = requests.get(url, params=params, timeout=10)
@@ -52,13 +50,8 @@ def _finnhub_quote(symbol):
 
 
 def fetch_asset(symbol, name, is_crypto=False):
-    """
-    Tek fonksiyon: kripto ve emtia için kullanılır.
-    is_crypto=True ise ondalık basamak 2, değilse 4.
-    """
     try:
         data = _finnhub_quote(symbol)
-
         price = data.get("c")
         prev = data.get("pc")
 
@@ -74,7 +67,6 @@ def fetch_asset(symbol, name, is_crypto=False):
 
 
 def fetch_forex(base, target, name):
-    """Finnhub forex rates endpoint'i."""
     try:
         url = "https://finnhub.io/api/v1/forex/rates"
         params = {"base": base, "token": FINNHUB_API_KEY}
@@ -91,30 +83,22 @@ def fetch_forex(base, target, name):
 
 
 def fetch_emtia(symbol, name):
-    """
-    Emtia için Finnhub kripto endpoint'ini kullanır.
-    Finnhub ücretsiz planda OANDA sembolleri çalışmayabilir.
-    Çalışmazsa 'veri yok' döner, sistem çökmez.
-    """
     return fetch_asset(symbol, name, is_crypto=False)
 
 
 def update_all_caches():
     try:
-        # Emtia (ücretsiz planda OANDA olmayabilir — çalışmazsa 'veri yok' döner)
         cache_data["emtia"] = "\n".join([
             fetch_emtia("OANDA:XAU_USD", "Altın (ONS)"),
             fetch_emtia("OANDA:XAG_USD", "Gümüş (ONS)"),
             fetch_emtia("OANDA:BCO_USD", "Brent Petrol"),
         ])
 
-        # Kripto (ücretsiz planda çalışır)
         cache_data["kripto"] = "\n".join([
             fetch_asset("BINANCE:BTCUSDT", "Bitcoin", is_crypto=True),
             fetch_asset("BINANCE:ETHUSDT", "Ethereum", is_crypto=True),
         ])
 
-        # Döviz
         cache_data["doviz"] = "\n".join([
             fetch_forex("USD", "TRY", "Dolar"),
             fetch_forex("EUR", "TRY", "Euro"),
@@ -184,21 +168,17 @@ def run_flask():
 def main():
     logger.info("🚀 Bot başlatılıyor...")
 
-    # 1. İlk veri yüklemesi
     update_all_caches()
 
-    # 2. Scheduler (her 30 dk)
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_all_caches, 'cron', minute='*/30')
     scheduler.start()
     logger.info("⏰ Scheduler başlatıldı.")
 
-    # 3. Flask thread
     flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
     logger.info("🌐 Flask thread başlatıldı.")
 
-    # 4. Telegram bot
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button_handler))
@@ -207,7 +187,7 @@ def main():
     )
 
     logger.info("✅ Telegram botu polling başlıyor...")
-    application.run_polling()
+    application.run_polling(close_loop=False, drop_pending_updates=True)
 
 
 if __name__ == '__main__':
